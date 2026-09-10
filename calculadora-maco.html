@@ -1,0 +1,3738 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing Studio · Calculadora MACO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#F3F4F6;
+  --surface:#FFFFFF;
+  --surface-alt:#F8F9FB;
+  --ink:#12151C;
+  --ink-soft:#5B6472;
+  --ink-faint:#98A1AC;
+  --border:#E4E7EC;
+  --border-strong:#CBD1D9;
+  --accent:#17324A;
+  --accent-ink:#17324A;
+  --accent-soft:#E9EFF3;
+  --good:#1F8A70;
+  --good-soft:#E7F4F0;
+  --warn:#A9781F;
+  --warn-soft:#F5EEDD;
+  --bad:#C1443C;
+  --bad-soft:#FBEAE8;
+  --mono:'JetBrains Mono', ui-monospace, monospace;
+  --display:'Space Grotesk', sans-serif;
+  --body:'Inter', sans-serif;
+  --radius:10px;
+  --shadow: 0 1px 2px rgba(16,24,40,.04), 0 1px 6px rgba(16,24,40,.04);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:14px;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--accent-soft);}
+input,select,button{font-family:inherit;font-size:inherit;color:inherit;}
+h1,h2,h3,h4{font-family:var(--display);margin:0;letter-spacing:-0.01em;}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums;}
+.app{max-width:1520px;margin:0 auto;padding:0 24px 64px;}
+
+/* Topbar */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  background:var(--bg);
+  padding:16px 0 0;
+  margin-bottom:16px;
+}
+.topbar-inner{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  border-bottom:1px solid var(--border-strong);
+  padding-bottom:0;
+}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+.brand-upload{display:flex;align-items:center;gap:8px;margin-left:14px;padding-left:14px;border-left:1px solid var(--border-strong);}
+.brand-upload .hint{margin:0;font-size:11.5px;white-space:nowrap;}
+.brand-upload .check-inline{white-space:nowrap;}
+.brand-mark{
+  width:28px;height:28px;border-radius:7px;background:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-family:var(--display);font-weight:700;font-size:13px;
+}
+.brand-text h1{font-size:16px;font-weight:600;}
+.brand-text span{font-size:11px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em;}
+.tabs{display:flex;gap:2px;}
+.tab-btn{
+  appearance:none;border:none;background:transparent;cursor:pointer;
+  padding:10px 18px 12px;font-size:13.5px;font-weight:600;color:var(--ink-faint);
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+  transition:color .15s;
+}
+.tab-btn:hover{color:var(--ink-soft);}
+.tab-btn.active{color:var(--accent-ink);border-bottom-color:var(--accent);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* Columns */
+.cols{display:grid;grid-template-columns:1fr 1.15fr 1.15fr;gap:16px;align-items:stretch;}
+@media(max-width:1080px){.cols{grid-template-columns:1fr;}}
+
+.col{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);border-top:4px solid var(--border-strong);overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.col.col-blue{border-top-color:#33409B;}
+.col.col-amber{border-top-color:#B87A16;}
+.col.col-green{border-top-color:#0E8F5F;}
+.col > .card{box-shadow:none;border:none;border-radius:0;margin-bottom:0;padding:18px;border-bottom:1px solid var(--border);}
+.col > .card:last-child{border-bottom:none;}
+
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px 18px;margin-bottom:14px;box-shadow:var(--shadow);
+}
+.card-compact{padding:14px 18px;}
+.card-fill{flex:1;display:flex;flex-direction:column;}
+.card-fill .btn{margin-top:auto;}
+.card h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-faint);font-weight:600;margin-bottom:13px;}
+.card h3 .n{color:var(--accent);margin-right:6px;}
+
+.datasrc-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.upload-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:2px 2px;}
+.col > .upload-row{padding:14px 18px;margin-bottom:0;border-bottom:1px solid var(--border);}
+.btn-file-icon{
+  position:relative;overflow:hidden;flex-shrink:0;width:30px;height:30px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent-ink);
+  border:1px solid var(--border-strong);cursor:pointer;transition:.15s;
+}
+.btn-file-icon:hover{background:var(--accent);color:#fff;}
+.btn-file-icon input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.upload-row .hint{margin:0;flex:1;}
+.check-inline{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-soft);font-weight:500;cursor:pointer;}
+.check-inline input{width:auto;margin:0;}
+.price-final{margin-top:8px;border-top:1px solid var(--border);padding-top:10px;}
+.price-final .v{font-size:16px;}
+
+.field{margin-bottom:10px;}
+.field label{display:block;font-size:11.5px;color:var(--ink-soft);margin-bottom:4px;font-weight:500;}
+.field input[type=text],.field input[type=number],.field select{
+  width:100%;padding:7px 10px;border:1px solid var(--border-strong);border-radius:7px;
+  background:var(--surface-alt);color:var(--ink);
+}
+.card .field:last-child,.card > .row2:last-child .field{margin-bottom:0;}
+.field input:disabled{color:var(--ink-faint);background:#F3F4F6;}
+.field input:focus,.field select:focus{outline:2px solid var(--accent-soft);outline-offset:0;border-color:var(--accent);}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.hint{font-size:11px;color:var(--ink-faint);margin-top:4px;}
+
+.btn{
+  appearance:none;border:1px solid var(--border-strong);background:var(--surface);
+  color:var(--ink);padding:8px 14px;border-radius:7px;font-size:12.5px;font-weight:600;
+  cursor:pointer;transition:.15s;
+}
+.btn:hover{border-color:var(--accent);color:var(--accent-ink);}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent-ink);color:#fff;}
+.btn-ghost{border-color:transparent;background:transparent;}
+.btn-ghost:hover{background:var(--accent-soft);}
+.btn-sm{padding:5px 10px;font-size:11.5px;}
+.btn-file{position:relative;overflow:hidden;display:inline-block;}
+.btn-file input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+
+.pill-group{display:flex;border:1px solid var(--border-strong);border-radius:8px;overflow:hidden;}
+.pill{flex:1;text-align:center;padding:8px 6px;font-size:12px;font-weight:600;cursor:pointer;background:var(--surface-alt);color:var(--ink-soft);border-right:1px solid var(--border-strong);}
+.pill:last-child{border-right:none;}
+.pill.active{background:var(--accent);color:#fff;}
+
+.switch{display:flex;align-items:center;gap:10px;}
+.switch-track{width:38px;height:21px;border-radius:11px;background:var(--border-strong);position:relative;cursor:pointer;transition:.15s;flex-shrink:0;}
+.switch-track.on{background:var(--accent);}
+.switch-thumb{position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+.switch-track.on .switch-thumb{left:19px;}
+
+/* Ledger / waterfall — signature element */
+.ledger{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface);}
+.wf-row{display:grid;grid-template-columns:96px 1fr 88px;gap:8px;align-items:center;padding:3px 0;}
+.wf-label{font-size:11px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.wf-bar-track{background:var(--surface-alt);border-radius:4px;height:16px;overflow:hidden;}
+.wf-bar{height:100%;border-radius:4px;transition:width .25s ease;}
+.wf-row.wf-start .wf-bar{background:var(--accent);}
+.wf-row.wf-start .wf-label{font-weight:600;color:var(--ink);}
+.wf-row.wf-deduction .wf-bar{background:var(--bad);}
+.wf-row.wf-final .wf-bar{background:var(--good);}
+.wf-row.wf-final .wf-label,.wf-row.wf-final .wf-value{font-weight:700;color:var(--good);}
+.wf-value{text-align:right;font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--ink);}
+.ledger-row{
+  display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;
+  padding:9px 14px;border-bottom:1px solid var(--border);font-size:13px;
+}
+.ledger-row:last-child{border-bottom:none;}
+.ledger-row .op{font-family:var(--mono);color:var(--ink-faint);font-size:12px;text-align:center;}
+.ledger-row .lbl{color:var(--ink-soft);}
+.ledger-row .val{font-family:var(--mono);font-weight:600;text-align:right;}
+.ledger-row.neg .val{color:var(--bad);}
+.ledger-row.subtotal{background:var(--surface-alt);}
+.ledger-row.subtotal .lbl{font-weight:700;color:var(--ink);}
+.ledger-row.subtotal .val{font-weight:700;}
+.ledger-row.final{background:var(--accent);}
+.ledger-row.final .lbl{font-weight:700;color:#fff;}
+.ledger-row.final .val{font-weight:700;color:#fff;font-size:15px;}
+
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.kpi{border:1px solid var(--border);border-radius:8px;padding:10px 12px;background:var(--surface-alt);}
+.kpi .k-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);margin-bottom:3px;}
+.kpi .k-val{font-family:var(--mono);font-size:17px;font-weight:600;}
+
+.semaphore{display:flex;align-items:center;gap:8px;margin-top:14px;font-weight:600;font-size:12.5px;color:var(--ink-soft);}
+.semaphore.good .dot{background:var(--good);}
+.semaphore.warn .dot{background:var(--warn);}
+.semaphore.bad .dot{background:var(--bad);}
+.semaphore .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+th,td{padding:7px 9px;border-bottom:1px solid var(--border);text-align:left;}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);font-weight:600;background:var(--surface-alt);}
+td.num{font-family:var(--mono);text-align:right;}
+td input{width:80px;padding:4px 6px;border:1px solid var(--border-strong);border-radius:5px;background:var(--surface-alt);font-family:var(--mono);text-align:right;}
+tr.editable-row td{cursor:default;}
+
+.section-title{display:flex;align-items:baseline;gap:10px;margin:36px 0 16px;padding-top:8px;border-top:1px solid var(--border-strong);}
+.section-title h2{font-size:19px;}
+.section-title p{font-size:12.5px;color:var(--ink-faint);margin:0;}
+
+.scn-grid{display:grid;grid-template-columns:1.1fr 1fr 1.4fr;gap:16px;align-items:start;}
+@media(max-width:1080px){.scn-grid{grid-template-columns:1fr;}}
+
+.quick-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.result-line{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--border);font-size:13px;}
+.result-line:last-child{border-bottom:none;}
+.result-line .v{font-family:var(--mono);font-weight:600;}
+.delta{font-family:var(--mono);font-size:11.5px;margin-left:6px;}
+.delta.up{color:var(--good);}
+.delta.down{color:var(--bad);}
+
+.scn-table-wrap{overflow-x:auto;}
+.mv-title-input{
+  font-family:var(--display);font-size:15px;font-weight:600;color:var(--ink);
+  border:1px solid transparent;background:transparent;padding:4px 6px;margin-bottom:10px;
+  width:100%;max-width:420px;border-radius:6px;
+}
+.mv-title-input:hover{border-color:var(--border);}
+.mv-title-input:focus{border-color:var(--accent);background:var(--surface);outline:none;}
+#mvTable{border:1px solid var(--border-strong);}
+#mvTable.hide-ptc .mv-ptc-col{display:none;}
+#mvTable thead th{background:var(--accent);color:#fff;font-weight:600;text-align:center;border:1px solid var(--accent);}
+#mvTable tbody tr:hover td{filter:brightness(0.94);}
+#mvTable td, #mvTable th{padding:7px 8px;border:1px solid var(--border);text-align:center;}
+#mvTable input.mv-producto-input{width:110px;font-size:11px;border:1px solid transparent;background:transparent;padding:2px 4px;text-align:center;}
+#mvTable input.mv-producto-input:hover, #mvTable input.mv-producto-input:focus{border-color:var(--border-strong);background:var(--surface);}
+.empty-note{color:var(--ink-faint);font-size:12.5px;padding:14px;border:1px dashed var(--border-strong);border-radius:8px;text-align:center;}
+
+.obj-answer{margin-top:12px;padding:12px 14px;border-radius:8px;background:var(--accent-soft);border:1px solid var(--border);}
+.obj-answer .headline{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--accent-ink);}
+.obj-answer .formula{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);margin-top:6px;white-space:pre-wrap;}
+
+.sens-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-top:8px;}
+.sens-card{border:1px solid var(--border);border-radius:8px;padding:9px 11px;background:var(--surface-alt);cursor:pointer;transition:.15s;}
+.sens-card:hover{border-color:var(--accent);background:var(--accent-soft);}
+.sens-card .q{font-size:11.5px;color:var(--ink-soft);}
+.sens-card .a{font-family:var(--mono);font-size:13px;font-weight:600;margin-top:3px;}
+
+.kpi-hero{background:var(--accent);border:1px solid var(--accent);border-radius:10px;padding:16px 18px;text-align:center;}
+.kpi-hero-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.6);font-weight:600;margin-bottom:4px;}
+.kpi-hero-val{font-family:var(--mono);font-size:32px;font-weight:700;color:#fff;}
+.card-simulador{border-top:4px solid var(--accent);}
+.sim-inputs-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.elas-compact-row{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  background:var(--surface-alt);border:1px solid var(--border);border-radius:8px;
+  padding:10px 14px;font-size:12.5px;
+}
+.elas-compact-row .switch-track{flex-shrink:0;}
+.elas-compact-row .btn{margin-left:auto;}
+.switch.disabled{opacity:.55;cursor:not-allowed;}
+.switch.disabled .switch-track{cursor:not-allowed;}
+.costos-adic-list{display:flex;flex-direction:column;gap:6px;}
+.costos-adic-row{display:grid;grid-template-columns:1fr 74px 78px;gap:6px;align-items:center;font-size:11px;color:var(--ink-faint);padding:2px 0;}
+.costos-adic-row select{font-size:10px;padding:2px 2px;color:var(--ink);border-color:var(--border);background:var(--surface);}
+.costos-adic-row .val{color:var(--ink-faint);font-weight:400;}
+.costos-adic-row input.costadic-inline-pct{color:var(--ink);border-color:var(--border);background:var(--surface);font-weight:500;font-size:11px;padding:2px 3px;width:56px;text-align:right;font-family:var(--mono);}
+.costos-adic-row .val{text-align:right;font-family:var(--mono);color:var(--ink-soft);}
+.resumen-ppt-card{border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:14px;background:var(--surface-alt);}
+.resumen-ppt-card h4{font-size:18px;font-weight:700;color:var(--accent);margin-bottom:4px;}
+.resumen-ppt-card .sub{font-size:12px;color:var(--ink-faint);margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em;}
+.resumen-ppt-card .line{font-size:15px;line-height:1.7;color:var(--ink);}
+.resumen-ppt-card .line b{color:var(--good);}
+.ct-comision-row{display:grid;grid-template-columns:1fr 55px 130px 22px;gap:6px;align-items:center;margin-bottom:6px;}
+.ct-comision-row input[type="text"]{font-size:11.5px;padding:4px 6px;}
+.ct-comision-row input[type="number"]{width:100%;text-align:right;font-family:var(--mono);font-size:11.5px;padding:4px 4px;}
+.ct-comision-row select{font-size:10.5px;padding:3px 2px;}
+.vt-verdict{
+  display:inline-block;font-size:11px;font-weight:700;line-height:1.4;
+  padding:3px 9px;border-radius:20px;cursor:pointer;white-space:nowrap;
+}
+.vt-verdict-good{background:var(--good-soft);color:var(--good);}
+.vt-verdict-warn{background:var(--warn-soft);color:var(--warn);}
+.vt-verdict-bad{background:var(--bad-soft);color:var(--bad);}
+.vt-verdict-pending{background:var(--surface-alt);color:var(--ink-faint);border:1px dashed var(--border-strong);}
+.vt-detail-row td{background:var(--surface-alt);padding:10px 14px;}
+.vt-detail-strip{display:flex;gap:22px;flex-wrap:wrap;}
+.vt-detail-strip > div{display:flex;flex-direction:column;gap:2px;}
+.vt-detail-strip .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);font-weight:600;}
+.vt-detail-strip .val{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--ink);}
+.vs-politica-box{
+  display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--border);border-radius:8px;overflow:hidden;
+}
+.vs-politica-item{padding:8px 10px;text-align:center;border-right:1px solid var(--border);}
+.vs-politica-item:last-child{border-right:none;}
+.vs-politica-item .k-label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);font-weight:600;margin-bottom:2px;}
+.vs-politica-item .k-val{font-family:var(--mono);font-size:13px;font-weight:500;}
+.vs-politica-item.vp-up .k-val{color:var(--good);}
+.vs-politica-item.vp-down .k-val{color:var(--bad);}
+.kpi.kpi-good{background:var(--good-soft);border-color:var(--good);}
+.kpi.kpi-good .k-val{color:var(--good);}
+.kpi.kpi-warn{background:var(--warn-soft);border-color:var(--warn);}
+.kpi.kpi-warn .k-val{color:var(--warn);}
+.kpi.kpi-bad{background:var(--bad-soft);border-color:var(--bad);}
+.kpi.kpi-bad .k-val{color:var(--bad);}
+.kpi.kpi-up{border-color:var(--good);}
+.kpi.kpi-down{border-color:var(--bad);}
+.export-row{display:flex;gap:10px;margin-bottom:20px;}
+.elas-line{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  background:var(--surface-alt);border:1px solid var(--border);border-radius:8px;
+  padding:9px 14px;margin-top:10px;font-size:12.5px;
+}
+.elas-line b{color:var(--ink);}
+.elas-line .elas-val-inline{font-family:var(--mono);font-weight:700;color:var(--accent-ink);}
+.elas-line .btn{margin-left:auto;}
+.elas-change{
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  background:var(--accent-soft);border:1px solid var(--border);border-radius:8px;
+  padding:12px 16px;margin-top:10px;
+}
+.elas-change .grp{text-align:center;}
+.elas-change .grp .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);font-weight:600;}
+.elas-change .grp .val{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink);}
+.elas-change .arrow{color:var(--ink-faint);font-size:16px;}
+.elas-change .delta-tag{font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;margin-top:2px;display:inline-block;}
+.elas-change .delta-tag.up{background:var(--good-soft);color:var(--good);}
+.elas-change .delta-tag.down{background:var(--bad-soft);color:var(--bad);}
+.impacto-box{background:var(--surface-alt);border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
+.impacto-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:11.5px;font-weight:600;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.05em;}
+.impacto-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:13.5px;font-weight:600;}
+.impacto-row .v{font-family:var(--mono);}
+.impacto-row.up{color:var(--good);}
+.impacto-row.down{color:var(--bad);}
+.impacto-row.flat{color:var(--ink-faint);}
+
+.obj-radio-group{display:flex;flex-direction:column;gap:10px;}
+.obj-radio{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border-strong);border-radius:8px;cursor:pointer;font-size:13.5px;}
+.obj-radio:has(input:checked){border-color:var(--accent);background:var(--accent-soft);}
+.obj-radio input[type=radio]{width:auto;flex-shrink:0;}
+.obj-inline-input{width:80px;padding:4px 7px;border:1px solid var(--border-strong);border-radius:5px;background:var(--surface);font-family:var(--mono);text-align:right;margin:0 2px;}
+
+.tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;background:var(--accent-soft);color:var(--accent-ink);font-weight:600;margin-left:6px;}
+.icon-btn{background:none;border:none;cursor:pointer;color:var(--ink-faint);padding:2px;}
+.icon-btn:hover{color:var(--bad);}
+.small-input{width:64px !important;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.chip{font-size:11px;padding:4px 9px;border-radius:20px;background:var(--surface-alt);border:1px solid var(--border-strong);cursor:pointer;}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+footer.note{margin-top:40px;font-size:11.5px;color:var(--ink-faint);text-align:center;padding-bottom:10px;}
+
+@page{ margin:10mm; }
+
+@media print{
+  .topbar, .back-btn, .upload-row, footer.note, #appMenu, #moduleVentas { display:none !important; }
+  .btn-file-icon, #scnExportPdf, #exEditVlc, #exEditVic, #nwPtrUd, .icon-btn, #elasEditBtn, #objComercialCalcBtn { display:none !important; }
+  #resumenExportBtn, #resumenExportPptBtn, #resumenClearBtn, #exAddResumenBtn, #nwAddResumenBtn, #ctAddResumenBtn { display:none !important; }
+  #mvAddRowBtn, #mvExportBtn, #mvEscenarioInput, #mvPtcInput { display:none !important; }
+  #mvTitleInput { border:none !important; background:transparent !important; }
+  body.print-mv-only .cols, body.print-mv-only .card-simulador, body.print-mv-only #scnExportPdf { display:none !important; }
+  body.print-mv-only .card:not(#mvCard) { display:none !important; }
+  body.print-mv-only #mvCard .row2 { display:none !important; }
+  .tabs{ display:none !important; }
+  body{ background:#fff; }
+  .cols{ grid-template-columns:1fr 1.15fr 1.15fr !important; }
+  .col{ box-shadow:none; }
+  .card{ break-inside:avoid; }
+}
+
+/* Menú principal */
+.menu-screen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,#EEF0F6 0%,var(--bg) 60%);padding:40px 24px;
+}
+.menu-inner{max-width:820px;width:100%;text-align:center;}
+.menu-brand{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px;}
+.menu-brand .brand-text{text-align:left;}
+.menu-brand h1{font-size:17px;font-weight:600;}
+.menu-brand span{font-size:11px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em;}
+.menu-title{font-size:28px;font-weight:700;margin-bottom:8px;color:var(--ink);font-family:var(--display);letter-spacing:-.01em;}
+.menu-subtitle{font-size:13.5px;color:var(--ink-soft);margin:0 0 32px;max-width:520px;margin-left:auto;margin-right:auto;}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+@media(max-width:640px){.menu-grid{grid-template-columns:1fr;}}
+.menu-card{
+  text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:22px 24px;transition:.15s;box-shadow:var(--shadow);border-top:3px solid var(--border-strong);
+  display:flex;align-items:center;gap:16px;
+}
+.menu-card:nth-child(1){border-top-color:#33409B;}
+.menu-card:nth-child(2){border-top-color:#B08B2E;}
+.menu-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 18px rgba(30,38,104,.12);}
+.menu-card-icon{
+  width:44px;height:44px;border-radius:10px;background:var(--accent-soft);color:var(--accent-ink);
+  display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:18px;flex-shrink:0;
+}
+.menu-card-title{font-family:var(--display);font-size:15px;font-weight:600;color:var(--ink);flex:1;}
+.menu-card-btn{flex-shrink:0;}
+.menu-footnote{margin-top:28px;font-size:11.5px;color:var(--ink-faint);}
+.login-hero{margin-bottom:28px;}
+.login-hero-mark{
+  width:56px;height:56px;border-radius:14px;background:var(--accent);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;
+  margin:0 auto 16px;box-shadow:0 8px 24px rgba(23,50,74,.25);
+}
+.login-hero h1{font-family:var(--display);font-size:24px;font-weight:700;color:var(--ink);letter-spacing:-.01em;}
+.login-hero span{display:block;font-size:12px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;margin-top:6px;}
+.login-card{border-top:3px solid var(--accent);box-shadow:0 10px 30px rgba(23,50,74,.10);}
+.login-footnote{margin-top:20px;font-size:11px;color:var(--ink-faint);}
+
+.back-btn{
+  appearance:none;border:none;background:none;cursor:pointer;color:var(--ink-faint);
+  font-size:12px;font-weight:600;padding:0 4px 0 0;margin-right:2px;
+}
+.back-btn:hover{color:var(--accent-ink);}
+
+.vt-add-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
+.vt-add-grid-main{grid-template-columns:1.6fr 1.2fr 1.3fr 0.75fr 0.9fr 0.65fr 0.8fr;}
+@media(max-width:1200px){.vt-add-grid, .vt-add-grid-main{grid-template-columns:repeat(4,1fr);}}
+@media(max-width:640px){.vt-add-grid, .vt-add-grid-main{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+
+<!-- ======================= LOGIN ======================= -->
+<div id="loginScreen" class="menu-screen">
+  <div class="menu-inner" style="max-width:400px;">
+    <div class="login-hero">
+      <div class="login-hero-mark">₪</div>
+      <h1>Pricing Studio</h1>
+      <span>Valencia Citrus · Centro de Herramientas de Pricing</span>
+    </div>
+    <div class="card login-card" style="text-align:left;">
+      <div class="field"><label>Usuario</label><input type="text" id="loginUser" autocomplete="username" placeholder="ej. usuario.vc"></div>
+      <div class="field"><label>Contraseña</label><input type="password" id="loginPass" autocomplete="current-password"></div>
+      <div id="loginMsg" style="margin-top:6px;"></div>
+      <button class="btn btn-primary btn-sm" id="loginBtn" style="width:100%;margin-top:10px;">Ingresar</button>
+    </div>
+    <p class="login-footnote">Acceso restringido a cuentas autorizadas por Valencia Citrus.</p>
+  </div>
+</div>
+
+<!-- ======================= BIENVENIDA ======================= -->
+<div id="welcomeScreen" class="menu-screen" style="display:none;">
+  <div class="menu-inner" style="max-width:420px;">
+    <div class="obj-answer" style="background:var(--good-soft);text-align:center;">
+      <div class="headline" style="font-size:15px;color:var(--good);" id="welcomeText">Bienvenido/a</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= MENÚ PRINCIPAL ======================= -->
+<div id="appMenu" class="menu-screen" style="display:none;">
+  <div class="menu-inner">
+    <div class="menu-brand">
+      <div class="brand-mark">₪</div>
+      <div class="brand-text">
+        <h1>Pricing Studio</h1>
+        <span>Valencia Citrus</span>
+      </div>
+      <button class="btn btn-sm" id="logoutBtn" style="margin-left:auto;">Salir</button>
+    </div>
+    <h2 class="menu-title">Centro de Herramientas de Pricing</h2>
+    <p class="menu-subtitle">Un mismo lugar para calcular rentabilidad, simular precios y tomar decisiones comerciales con datos.</p>
+    <div class="menu-grid">
+      <div class="menu-card" data-role-card="rentabilidad">
+        <div class="menu-card-icon">₪</div>
+        <div class="menu-card-title">Calculadora de Rentabilidad</div>
+        <button class="btn btn-primary btn-sm menu-card-btn" data-goto="rentabilidad">Abrir</button>
+      </div>
+      <div class="menu-card" data-role-card="ventas">
+        <div class="menu-card-icon">%</div>
+        <div class="menu-card-title">Simulador de Precios</div>
+        <button class="btn btn-primary btn-sm menu-card-btn" data-goto="ventas">Abrir</button>
+      </div>
+    </div>
+    <div class="menu-footnote">Más herramientas de Pricing se irán agregando a este centro.</div>
+  </div>
+</div>
+
+<!-- ======================= MÓDULO: RENTABILIDAD ======================= -->
+<div id="moduleRentabilidad" style="display:none;">
+<div class="app">
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <div class="brand">
+          <button class="back-btn" data-goto="menu">← Menú</button>
+          <div class="brand-mark">₪</div>
+          <div class="brand-text">
+            <h1>Pricing Studio</h1>
+          </div>
+          <div class="brand-upload">
+            <button class="btn-file-icon" id="linkFileBtn" title="Vincular tu Excel (se vuelve a leer solo cada vez que abrís la calculadora)">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </button>
+            <button class="btn-file-icon" title="Importar Excel">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <input type="file" id="fileInput" accept=".xlsx,.xls">
+            </button>
+            <button class="btn-file-icon" id="cloudLoadBtn" title="Actualizar datos desde la nube">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h.79a4.5 4.5 0 1 1 0 9z"/><path d="M12 12v6M9.5 15.5 12 13l2.5 2.5"/></svg>
+            </button>
+            <span class="hint" id="fileStatus" title="">Sin datos</span>
+            <label class="check-inline"><input type="checkbox" id="chkSoloActivos" checked>Solo activos</label>
+          </div>
+        </div>
+      </div>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="existing">Producto existente</button>
+        <button class="tab-btn" data-tab="new">Producto nuevo</button>
+        <button class="tab-btn" data-tab="costos">Costos</button>
+        <button class="tab-btn" data-tab="resumen">Resumen</button>
+        <button class="tab-btn" data-tab="config" id="tabConfigBtn">Configuración</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= TAB 1: PRODUCTO EXISTENTE ======================= -->
+  <section class="tab-panel active" data-tab="existing">
+    <div class="cols">
+
+      <!-- LEFT: selection + costs -->
+      <div class="col col-blue">
+        <div class="card">
+          <h3><span class="n">01</span>Selección del producto</h3>
+          <div class="row2">
+            <div class="field"><label>Categoría</label><select id="selCategoria" disabled></select></div>
+            <div class="field"><label>Marca</label><select id="selMarca" disabled></select></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label>Calibre</label><select id="selCalibre" disabled></select></div>
+            <div class="field"><label>Empaque</label><select id="selEmpaque" disabled></select></div>
+          </div>
+          <div class="field"><label>SKU</label><select id="selSku" disabled></select></div>
+          <div class="field"><label>Lista de precio</label><select id="selListaPrecio" disabled></select></div>
+        </div>
+
+        <div class="card">
+          <h3><span class="n">02</span>Costos</h3>
+          <div class="row2">
+            <div class="field"><label>VLC (Bs)</label><input type="number" step="0.01" id="exVlc" disabled></div>
+            <div class="field"><label>&nbsp;</label><button class="btn btn-sm" id="exEditVlc" style="width:100%;">Editar VLC</button></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label>VIC (Bs)</label><input type="number" step="0.01" id="exVic" disabled></div>
+            <div class="field"><label>&nbsp;</label><button class="btn btn-sm" id="exEditVic" style="width:100%;">Editar VIC</button></div>
+          </div>
+          <div class="switch" id="exMaquilaSwitch">
+            <div class="switch-track"><div class="switch-thumb"></div></div>
+            <span>¿Aplica Maquila?</span>
+          </div>
+          <div class="field" style="margin-top:10px;display:none;" id="exMaquilaWrap">
+            <label>Maquila (Bs)</label><input type="number" step="0.01" id="exMaquila" value="0">
+          </div>
+          <div class="switch" id="exCostosAdicSwitch" style="margin-top:10px;">
+            <div class="switch-track"><div class="switch-thumb"></div></div>
+            <span>¿Aplicar Costos?</span>
+          </div>
+          <div id="exCostosAdicWrap" style="display:none;margin-top:8px;">
+            <div id="exCostosAdicList" class="costos-adic-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CENTER: price + royalty + results -->
+      <div class="col col-amber">
+        <div class="card">
+          <h3><span class="n">03</span>Método de precio</h3>
+          <div class="pill-group" id="exPriceMethod">
+            <div class="pill active" data-m="actual">Política</div>
+            <div class="pill" data-m="propuesto">Propuesto</div>
+            <div class="pill" data-m="ptc">Desde PTC</div>
+          </div>
+
+          <div id="exM_actual" style="margin-top:14px;">
+            <div class="field"><label>Precio vigente (Bs/paquete)</label><input type="number" step="0.01" id="exPrecioVigente" disabled></div>
+          </div>
+
+          <div id="exM_propuesto" style="margin-top:14px;display:none;">
+            <div class="field"><label>Precio propuesto (Bs/paquete)</label><input type="number" step="0.01" id="exPrecioPropuesto" value="0"></div>
+          </div>
+
+          <div id="exM_ptc" style="margin-top:14px;display:none;">
+            <div class="row2">
+              <div class="field"><label>PTC (Bs/unidad)</label><input type="number" step="0.01" id="exPtc" value="0"></div>
+              <div class="field"><label>Margen canal (%)</label><input type="number" step="0.01" id="exMargenCanal" value="0"></div>
+            </div>
+            <div class="result-line"><span>PTR / unidad</span><span class="v mono" id="exPtrUd">—</span></div>
+          </div>
+
+          <div class="result-line price-final">
+            <strong id="exPrecioFinalLabel">Precio por paquete</strong><span class="v mono" id="exPrecioFinal">—</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><span class="n">04</span>Royalty</h3>
+          <div class="switch" id="exRoyaltySwitch">
+            <div class="switch-track"><div class="switch-thumb"></div></div>
+            <span>¿Aplica Royalty?</span>
+          </div>
+          <div class="field" style="margin-top:10px;display:none;" id="exRoyaltyPctWrap">
+            <label>Porcentaje de Royalty (%)</label><input type="number" step="0.01" id="exRoyaltyPct" value="3">
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><span class="n">05</span>Resultados</h3>
+          <div class="pill-group" id="exViewUnitPills" style="max-width:220px;margin-bottom:12px;">
+            <div class="pill active" data-v="paq">Por paquete</div>
+            <div class="pill" data-v="unidad">Por unidad</div>
+          </div>
+          <div class="kpi-hero">
+            <div class="kpi-hero-label">MACO con Royalty</div>
+            <div class="kpi-hero-val" id="exKpiMacoRoy">—</div>
+          </div>
+          <div class="kpi-grid" style="grid-template-columns:repeat(2,1fr);margin-top:10px;">
+            <div class="kpi" id="exKpiMacoPctWrap"><div class="k-label">MACO %</div><div class="k-val" id="exKpiMacoPct">—</div></div>
+            <div class="kpi"><div class="k-label" id="exKpiMacoUsdHlLabel">MACO USD/HL</div><div class="k-val" id="exKpiMacoUsdHl">—</div></div>
+          </div>
+          <div id="exPoliticaCompareWrap" style="display:none;">
+            <div class="hint" style="margin:14px 0 4px;font-weight:600;color:var(--ink-soft);">vs. Precio Política</div>
+            <div id="exPoliticaCompare" class="vs-politica-box"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: breakdown -->
+      <div class="col col-green">
+        <div class="card card-fill">
+          <h3><span class="n">06</span>Estado de Rentabilidad</h3>
+          <div class="ledger" id="exLedger"></div>
+          <button class="btn btn-primary btn-sm" id="exAddResumenBtn" style="width:100%;">+ Añadir al resumen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ======================= TAB 2: PRODUCTO NUEVO ======================= -->
+  <section class="tab-panel" data-tab="new">
+    <div class="cols">
+
+      <div class="col col-blue">
+        <div class="card">
+          <h3><span class="n">01</span>Identificación</h3>
+          <div class="field"><label>Nombre del producto</label><input type="text" id="nwNombre" placeholder="Nombre del producto"></div>
+          <div class="field"><label>Categoría</label>
+            <select id="nwCategoria"></select>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><span class="n">02</span>Contenido y empaque</h3>
+          <div class="row2">
+            <div class="field"><label>Cantidad</label><input type="number" step="0.01" id="nwCantidad" value="500"></div>
+            <div class="field"><label>Unidad de medida</label>
+              <select id="nwUnidad">
+                <option value="ml">ml</option>
+                <option value="l">L</option>
+                <option value="cc">cc</option>
+                <option value="cl">cl</option>
+                <option value="g">g</option>
+                <option value="kg">kg</option>
+                <option value="oz">oz (fl.)</option>
+                <option value="lb">lb</option>
+                <option value="gal">gal</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label>Empaque (unidades/paquete)</label><input type="number" step="1" id="nwEmpaque" value="12"></div>
+          <div class="hint">Equivalencia calculada: <strong class="mono" id="nwLitrosUnidad">—</strong> L/unidad · <strong class="mono" id="nwLitrosPaq">—</strong> L/paquete</div>
+        </div>
+
+        <div class="card">
+          <h3><span class="n">03</span>Costos</h3>
+          <div class="row2">
+            <div class="field"><label>VIC (Bs)</label><input type="number" step="0.01" id="nwVic" value="0"></div>
+            <div class="field"><label>VLC (Bs)</label><input type="number" step="0.01" id="nwVlc" value="0"></div>
+          </div>
+          <div class="switch" id="nwMaquilaSwitch">
+            <div class="switch-track"><div class="switch-thumb"></div></div>
+            <span>¿Aplica Maquila?</span>
+          </div>
+          <div class="field" style="margin-top:10px;display:none;" id="nwMaquilaWrap">
+            <label>Maquila (Bs)</label><input type="number" step="0.01" id="nwMaquila" value="0">
+          </div>
+          <div class="switch" id="nwCostosAdicSwitch" style="margin-top:10px;">
+            <div class="switch-track"><div class="switch-thumb"></div></div>
+            <span>¿Aplicar Costos?</span>
+          </div>
+          <div id="nwCostosAdicWrap" style="display:none;margin-top:8px;">
+            <div id="nwCostosAdicList" class="costos-adic-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col col-amber">
+        <div class="card">
+          <h3><span class="n">04</span>Método de precio</h3>
+          <div class="pill-group" id="nwPriceMethod">
+            <div class="pill active" data-m="propuesto">Propuesto</div>
+            <div class="pill" data-m="ptc">Desde PTC</div>
+          </div>
+
+          <div id="nwM_propuesto" style="margin-top:14px;">
+            <div class="field"><label>Precio propuesto (Bs/paquete)</label><input type="number" step="0.01" id="nwPrecioPropuesto" value="50"></div>
+          </div>
+          <div id="nwM_ptc" style="margin-top:14px;display:none;">
+            <div class="row2">
+              <div class="field"><label>PTC (Bs/unidad)</label><input type="number" step="0.01" id="nwPtc" value="0"></div>
+              <div class="field"><label>Margen canal (%)</label><input type="number" step="0.01" id="nwMargenCanal" value="0"></div>
+            </div>
+            <div class="result-line"><span>PTR / unidad</span><span class="v mono" id="nwPtrUd">—</span></div>
+          </div>
+          <div class="result-line price-final">
+            <strong id="nwPrecioFinalLabel">Precio por paquete</strong><span class="v mono" id="nwPrecioFinal">—</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><span class="n">05</span>Royalty</h3>
+          <div class="switch" id="nwRoyaltySwitch">
+            <div class="switch-track"><div class="switch-thumb"></div></div>
+            <span>¿Aplica Royalty?</span>
+          </div>
+          <div class="field" style="margin-top:10px;display:none;" id="nwRoyaltyPctWrap">
+            <label>Porcentaje de Royalty (%)</label><input type="number" step="0.01" id="nwRoyaltyPct" value="3">
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><span class="n">06</span>Resultados</h3>
+          <div class="pill-group" id="nwViewUnitPills" style="max-width:220px;margin-bottom:12px;">
+            <div class="pill active" data-v="paq">Por paquete</div>
+            <div class="pill" data-v="unidad">Por unidad</div>
+          </div>
+          <div class="kpi-hero">
+            <div class="kpi-hero-label">MACO con Royalty</div>
+            <div class="kpi-hero-val" id="nwKpiMacoRoy">—</div>
+          </div>
+          <div class="kpi-grid" style="grid-template-columns:repeat(2,1fr);margin-top:10px;">
+            <div class="kpi" id="nwKpiMacoPctWrap"><div class="k-label">MACO %</div><div class="k-val" id="nwKpiMacoPct">—</div></div>
+            <div class="kpi"><div class="k-label" id="nwKpiMacoUsdHlLabel">MACO USD/HL</div><div class="k-val" id="nwKpiMacoUsdHl">—</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col col-green">
+        <div class="card card-fill">
+          <h3><span class="n">07</span>Estado de Rentabilidad</h3>
+          <div class="ledger" id="nwLedger"></div>
+          <button class="btn btn-primary btn-sm" id="nwAddResumenBtn" style="width:100%;">+ Añadir al resumen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ======================= TAB: COSTOS ======================= -->
+  <section class="tab-panel" data-tab="costos">
+    <div class="cols">
+
+      <div class="col col-blue">
+        <div class="card">
+          <h3><span class="n">01</span>Identificación</h3>
+          <div class="field"><label>Nombre del producto</label><input type="text" id="ctNombre" placeholder="Nombre del producto"></div>
+          <div class="pill-group" id="ctUnitMode" style="max-width:220px;">
+            <div class="pill active" data-m="unidad">Por unidad</div>
+            <div class="pill" data-m="paquete">Por paquete</div>
+          </div>
+          <div class="field" id="ctUnidPorPaqWrap" style="margin-top:10px;display:none;"><label>Unidades por paquete</label><input type="number" step="1" id="ctUnidPorPaq" value="1"></div>
+          <div class="field" style="margin-top:10px;"><label id="ctCostoUnitLabel">VIC — Costo unitario (Bs)</label><input type="number" step="0.01" id="ctCostoUnit" value="0"></div>
+          <div class="field"><label>Costo adicional (Bs, opcional)</label><input type="number" step="0.01" id="ctCostoAdic" value="0"></div>
+        </div>
+
+        <div class="card">
+          <h3><span class="n">02</span>Camión (VLC / Flete)</h3>
+          <div class="row2">
+            <div class="field"><label>Costo del camión (Bs)</label><input type="number" step="1" id="ctCamionCosto" value="5000"></div>
+            <div class="field"><label>Pallets por camión</label><input type="number" step="1" id="ctPallets" value="22"></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label>Cajas por pallet</label><input type="number" step="1" id="ctCajasPallet" value="70"></div>
+            <div class="field"><label>Unidades por caja</label><input type="number" step="1" id="ctUnidCaja" value="300"></div>
+          </div>
+          <div class="hint" id="ctFleteHint" style="margin-top:6px;">—</div>
+        </div>
+
+        <div class="card">
+          <h3><span class="n">03</span>Comisiones</h3>
+          <div class="hint" style="margin-bottom:8px;">Cada comisión se calcula sobre la base que elijas.</div>
+          <div id="ctComisionesList"></div>
+          <button class="btn btn-sm" id="ctAddComisionBtn" style="margin-top:8px;">+ Agregar comisión / costo</button>
+        </div>
+      </div>
+
+      <div class="col col-amber">
+        <div class="card">
+          <h3><span class="n">04</span>Impuestos</h3>
+          <div class="row2">
+            <div class="field"><label>IVA (%)</label><input type="number" step="0.1" id="ctIva" value="13"></div>
+            <div class="field"><label>IT (%)</label><input type="number" step="0.1" id="ctIt" value="3"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><span class="n">05</span>Método de precio</h3>
+          <div class="pill-group" id="ctPriceMethod">
+            <div class="pill active" data-m="manual">Manual</div>
+            <div class="pill" data-m="margen">Por margen deseado</div>
+            <div class="pill" data-m="ptc">Desde PTC</div>
+          </div>
+          <div id="ctM_manual" style="margin-top:14px;">
+            <div class="field"><label id="ctPrecioVentaLabel">Precio de venta (Bs/unidad)</label><input type="number" step="0.01" id="ctPrecioVenta" value="0"></div>
+          </div>
+          <div id="ctM_margen" style="margin-top:14px;display:none;">
+            <div class="field"><label>Margen deseado sobre VIC (%)</label><input type="number" step="1" id="ctMargenDeseado" value="30"></div>
+            <div class="hint">Precio = VIC ÷ (1 − Margen%)</div>
+          </div>
+          <div id="ctM_ptc" style="margin-top:14px;display:none;">
+            <div class="row2">
+              <div class="field"><label>PTC (Bs)</label><input type="number" step="0.01" id="ctPtc" value="0"></div>
+              <div class="field"><label>Margen canal (%)</label><input type="number" step="0.01" id="ctMargenCanal" value="0"></div>
+            </div>
+            <div class="hint">Precio = PTC ÷ (1 + Margen canal%)</div>
+          </div>
+          <div class="result-line price-final">
+            <strong>Precio final</strong><span class="v mono" id="ctPrecioFinal">—</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><span class="n">06</span>Resultados</h3>
+          <div class="kpi-hero">
+            <div class="kpi-hero-label">Margen</div>
+            <div class="kpi-hero-val" id="ctKpiMargen">—</div>
+          </div>
+          <div class="kpi-grid" style="grid-template-columns:repeat(1,1fr);margin-top:10px;">
+            <div class="kpi" id="ctKpiMargenPctWrap"><div class="k-label">Margen %</div><div class="k-val" id="ctKpiMargenPct">—</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col col-green">
+        <div class="card card-fill">
+          <h3><span class="n">07</span>Estado de Rentabilidad</h3>
+          <div class="ledger" id="ctLedger"></div>
+          <button class="btn btn-primary btn-sm" id="ctAddResumenBtn" style="width:100%;">+ Añadir al resumen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ======================= TAB: RESUMEN ======================= -->
+  <section class="tab-panel" data-tab="resumen">
+    <div class="card">
+      <h3>Resumen</h3>
+      <div class="scn-table-wrap" id="resumenTableWrap">
+        <table id="resumenTable">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Tipo</th>
+              <th style="text-align:left;">Producto</th>
+              <th style="text-align:left;">Método</th>
+              <th style="text-align:right;">Precio</th>
+              <th style="text-align:right;">MACO (Bs)</th>
+              <th style="text-align:right;">MACO (%)</th>
+              <th style="text-align:right;">USD/HL</th>
+              <th style="text-align:left;">Fecha</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="resumenTableBody"></tbody>
+        </table>
+      </div>
+      <div id="resumenPresentacion" style="display:none;"></div>
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm" id="resumenExportBtn">Exportar PDF</button>
+        <button class="btn btn-sm" id="resumenExportPptBtn">Exportar PPT</button>
+        <button class="btn btn-sm" id="resumenClearBtn">Vaciar resumen</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= TAB 3: CONFIGURACIÓN ======================= -->
+  <section class="tab-panel" data-tab="config">
+    <div class="cols" style="grid-template-columns:1.3fr 1fr;">
+      <div class="col col-blue">
+        <div class="card">
+          <h3><span class="n">01</span>Impuestos por categoría</h3>
+          <table id="taxTable">
+            <thead><tr><th>Categoría</th><th>ICE Bs/L</th><th>IVA %</th><th>IT %</th><th>Alícuota %</th><th>Categorías Excel</th><th></th></tr></thead>
+            <tbody id="taxTableBody"></tbody>
+          </table>
+          <button class="btn btn-sm" style="margin-top:10px;" id="addCategoriaBtn">+ Agregar categoría</button>
+        </div>
+
+        <div class="card">
+          <h3><span class="n">02</span>Lista de precio → Departamento</h3>
+          <table id="listaDeptoTable">
+            <thead><tr><th>Listo de precio</th><th>DPTO</th><th></th></tr></thead>
+            <tbody id="listaDeptoTableBody"></tbody>
+          </table>
+          <button class="btn btn-sm" style="margin-top:10px;" id="addListaDeptoBtn">+ Agregar lista de precio</button>
+        </div>
+
+        <div class="card">
+          <h3><span class="n">03</span>VLC por Departamento</h3>
+          <table id="vlcTable">
+            <thead><tr><th>DPTO</th><th>VLC</th><th></th></tr></thead>
+            <tbody id="vlcTableBody"></tbody>
+          </table>
+          <button class="btn btn-sm" style="margin-top:10px;" id="addDeptoBtn">+ Agregar departamento</button>
+        </div>
+
+        <div class="card">
+          <h3><span class="n">04</span>Elasticidad por Categoría + Calibre</h3>
+          <div class="hint" style="margin-bottom:8px;">Usa la categoría tal como aparece en tu Excel (ej. FLOW, AGUAS), no la categoría de impuesto.</div>
+          <table id="elasTable">
+            <thead><tr><th>Categoría</th><th>Calibre</th><th>Elasticidad</th><th></th></tr></thead>
+            <tbody id="elasTableBody"></tbody>
+          </table>
+          <button class="btn btn-sm" style="margin-top:10px;" id="addElasBtn">+ Agregar combinación</button>
+        </div>
+      </div>
+
+      <div class="col col-amber">
+        <div class="card">
+          <h3><span class="n">05</span>Tipo de cambio</h3>
+          <div class="field"><label>USD/BOB</label><input type="number" step="0.01" id="cfgTc"></div>
+          <div class="hint">Usado para convertir MACO Bs/HL a MACO USD/HL.</div>
+        </div>
+        <div class="card">
+          <h3><span class="n">06</span>Umbral de semáforo</h3>
+          <div class="row2">
+            <div class="field"><label>Verde desde MACO % ≥</label><input type="number" step="0.5" id="cfgUmbralVerde" value="25"></div>
+            <div class="field"><label>Amarillo desde MACO % ≥</label><input type="number" step="0.5" id="cfgUmbralAmarillo" value="12"></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3><span class="n">07</span>Datos</h3>
+          <div class="hint">Todo se guarda automáticamente en este navegador (LocalStorage). Al reabrir el archivo se mantiene.</div>
+          <button class="btn btn-sm" style="margin-top:10px;" id="resetConfigBtn">Restaurar valores iniciales</button>
+          <div class="field" style="margin-top:14px;">
+            <label>URL de datos en la nube (Google Sheets publicado como CSV)</label>
+            <input type="text" id="cfgSheetUrl" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv">
+          </div>
+          <div class="hint">Se guarda en este navegador. Botón ☁️ en el topbar de cada módulo trae siempre la última versión sin tener que reenviar el archivo.</div>
+        </div>
+        <div class="card">
+          <h3><span class="n">08</span>Usuarios y accesos</h3>
+          <div class="hint" style="margin-bottom:8px;">Solo vos (administrador) ves esta sección. Ojo: es un control de acceso simple dentro de la página, no reemplaza una contraseña real — cualquiera con el archivo y conocimientos técnicos podría ver el código.</div>
+          <table id="usersTable">
+            <thead><tr><th>Usuario</th><th>Contraseña</th><th>Rol</th><th></th></tr></thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
+          <button class="btn btn-sm" style="margin-top:10px;" id="addUserBtn">+ Agregar usuario</button>
+          <div class="hint" style="margin:14px 0 6px;font-weight:600;color:var(--ink-soft);">Últimos accesos</div>
+          <div id="accessLogList" style="max-height:180px;overflow-y:auto;font-size:11.5px;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= ESCENARIOS Y SIMULACIÓN ======================= -->
+  <div id="scenariosWrap">
+
+  <div id="scenariosRoot">
+    <div class="empty-note" id="scnEmptyNote">Calculá un producto en la pestaña «Producto existente» o «Producto nuevo» para habilitar esta sección.</div>
+
+    <div id="scnContent" style="display:none;">
+
+      <!-- Simulador Comercial -->
+      <div class="card card-simulador">
+        <div class="switch" id="simShowSwitch">
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+          <span>Simulador</span>
+        </div>
+
+        <div id="simBody" style="display:none;margin-top:16px;">
+
+        <!-- Modo 1: Simulación Comercial (oculto) -->
+        <div id="simMode_ventas" class="sim-mode" style="margin-top:16px;display:none;">
+          <div class="sim-inputs-row">
+            <div class="pill-group" id="simVolUnitPills" style="max-width:220px;">
+              <div class="pill active" data-unit="paq">Paquetes</div>
+              <div class="pill" data-unit="hl">Hectolitros</div>
+            </div>
+            <div class="elas-compact-row" style="flex:1;">
+              <div class="switch" id="simElasSwitch"><div class="switch-track"><div class="switch-thumb"></div></div></div>
+              <span id="simElasSummaryText">Aplicar elasticidad</span>
+              <button class="btn btn-sm" id="elasEditBtn" style="display:none;">Editar</button>
+            </div>
+          </div>
+          <div class="field" style="max-width:220px;margin-top:10px;"><label id="simPaquetesLabel">Paquetes a vender</label><input type="number" step="1" id="simPaquetes" value="1000"></div>
+          <div class="hint" id="simPaquetesEquiv" style="margin-bottom:6px;"></div>
+
+          <div class="hint" style="margin:18px 0 6px;font-weight:600;color:var(--ink-soft);">Resumen del escenario</div>
+          <div class="kpi-grid" id="simResumenEscenario" style="grid-template-columns:repeat(3,1fr);"></div>
+
+          <div id="simComparacionWrap" style="display:none;">
+            <div class="hint" style="margin:18px 0 6px;font-weight:600;color:var(--ink-soft);">Impacto vs. Precio Política</div>
+            <div class="kpi-grid" id="simComparacion" style="grid-template-columns:repeat(3,1fr);"></div>
+            <div class="kpi-grid" id="simComparacion2" style="grid-template-columns:repeat(3,1fr);margin-top:8px;"></div>
+            <div id="simConclusion" style="margin-top:10px;"></div>
+          </div>
+
+          <div class="hint" style="margin:18px 0 6px;font-weight:600;color:var(--ink-soft);">KPIs</div>
+          <div class="kpi-grid" id="simVentasResults" style="grid-template-columns:repeat(5,1fr);"></div>
+
+          <div class="hint" style="margin:18px 0 6px;font-weight:600;color:var(--ink-soft);">Estado de Rentabilidad</div>
+          <div class="ledger" id="simVentasLedger"></div>
+        </div>
+
+        <!-- Modo 2: Objetivo -->
+        <div id="simMode_objetivo" class="sim-mode" style="margin-top:16px;display:block;">
+          <div id="descuentoRoiWrap" style="display:none;margin-bottom:20px;">
+            <div class="hint" style="margin-bottom:6px;font-weight:600;color:var(--ink-soft);">Evaluación del descuento</div>
+            <div class="kpi-grid" id="descuentoRoiKpis" style="grid-template-columns:repeat(4,1fr);"></div>
+            <div id="descuentoRoiConclusion" style="margin-top:10px;"></div>
+          </div>
+
+          <div class="field"><label>Seleccionar escenario</label>
+            <select id="objComercialType">
+              <option value="" selected disabled>Elegir opción</option>
+              <option value="utilvol">Meta de utilidad o volumen</option>
+              <option value="preciomaco">Precio objetivo de MACO</option>
+              <option value="roi">Retorno de inversión</option>
+              <option value="reparto">Reparto de utilidad</option>
+            </select>
+          </div>
+
+          <div id="objUtilVolWrap" style="display:none;">
+            <div class="pill-group" id="objUtilVolPills" style="max-width:320px;">
+              <div class="pill active" data-m="utilidad">Utilidad objetivo (Bs)</div>
+              <div class="pill" data-m="volumen">Volumen objetivo</div>
+            </div>
+            <div class="row2" style="max-width:360px;margin-top:10px;">
+              <div class="field"><label id="objUtilVolValueLabel">Utilidad objetivo (Bs)</label><input type="number" step="0.01" id="objUtilVolValue" value="50000"></div>
+              <div class="field" id="objUtilVolUnitWrap" style="display:none;"><label>Unidad</label>
+                <select id="objUtilVolUnit"><option value="paq">Paquetes</option><option value="hl">Hectolitros</option></select>
+              </div>
+            </div>
+          </div>
+
+          <div id="objPrecioMacoWrap" style="display:none;">
+            <div class="pill-group" id="objPrecioMacoPills" style="max-width:280px;">
+              <div class="pill active" data-m="bspq">MACO Bs/Paq</div>
+              <div class="pill" data-m="pct">MACO %</div>
+            </div>
+            <div class="field" style="max-width:220px;margin-top:10px;"><label id="objPrecioMacoValueLabel">MACO objetivo (Bs/Paq)</label><input type="number" step="0.01" id="objPrecioMacoValue" value="10"></div>
+          </div>
+
+          <div class="row2" style="max-width:360px;" id="objComercialValueRow">
+            <div class="field"><label id="objComercialValueLabel">Utilidad objetivo (Bs)</label><input type="number" step="0.01" id="objComercialValue" value="50000"></div>
+            <div class="field" id="objComercialUnitWrap" style="display:none;"><label>Unidad</label>
+              <select id="objComercialUnit"><option value="paq">Paquetes</option><option value="hl">Hectolitros</option></select>
+            </div>
+            <div class="field" id="objRoiPaquetesWrap" style="display:none;"><label>Paquetes a vender (referencia)</label><input type="number" step="1" id="objRoiPaquetes" value="1000"></div>
+          </div>
+
+          <div id="objRepartoWrap" style="display:none;">
+            <div class="row2" style="max-width:360px;">
+              <div class="field"><label>% para mi empresa</label><input type="number" step="0.1" min="0" max="100" id="objRepartoPctEmpresa" value="60"></div>
+              <div class="field"><label>% para el socio</label><input type="number" step="0.1" id="objRepartoPctOtro" value="40" disabled></div>
+            </div>
+            <div class="pill-group" id="objRepartoUnitPills" style="max-width:220px;margin-top:8px;">
+              <div class="pill active" data-unit="paq">Paquetes</div>
+              <div class="pill" data-unit="hl">Hectolitros</div>
+            </div>
+            <div class="field" style="max-width:220px;margin-top:8px;"><label id="objRepartoVolLabel">Paquetes a vender</label><input type="number" step="1" id="objRepartoVolumen" value="1000"></div>
+            <div class="switch" id="objRepartoCostosAdicSwitch" style="margin-top:10px;">
+              <div class="switch-track"><div class="switch-thumb"></div></div>
+              <span>¿Sumar costos?</span>
+            </div>
+            <div class="hint" style="margin-top:4px;">La inversión del socio se calcula sola: VIC + VLC (+ Costos si activás el switch) × volumen. Análisis en dólares.</div>
+          </div>
+
+          <button class="btn btn-primary btn-sm" id="objComercialCalcBtn" style="margin-top:6px;">Calcular</button>
+          <div id="objComercialAnswer"></div>
+        </div>
+        </div>
+
+      </div>
+
+      <button class="btn btn-primary btn-sm" id="scnExportPdf" style="margin-top:16px;">Exportar PDF</button>
+
+    </div>
+  </div>
+  </div>
+
+  <!-- ======================= CALCULADORA MASIVA ======================= -->
+  <div class="card" id="mvCard" style="margin-top:20px;">
+    <input type="text" id="mvTitleInput" class="mv-title-input" value="Calculadora Masiva" placeholder="Escribí un título...">
+    <div class="row2" style="max-width:360px;margin-bottom:6px;">
+      <div class="field"><label>Escenario</label><input type="text" id="mvEscenarioInput" placeholder="Ej. Actual, Propuesto" value="Actual"></div>
+      <div class="field" id="mvPtcFieldWrap" style="display:none;"><label>PTC/ud (Bs)</label><input type="number" step="0.01" id="mvPtcInput" value="0"></div>
+    </div>
+    <div class="switch" id="mvPtcSwitch" style="margin-bottom:10px;">
+      <div class="switch-track"><div class="switch-thumb"></div></div>
+      <span>¿Incluir PTC?</span>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-primary btn-sm" id="mvAddRowBtn">+ Añadir fila</button>
+      <button class="btn btn-sm" id="mvExportBtn">Exportar PDF</button>
+    </div>
+    <div class="scn-table-wrap" id="mvTableWrap" style="margin-top:14px;">
+      <table id="mvTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Escenario</th>
+            <th>Producto</th>
+            <th>Calibre</th>
+            <th>Empaque</th>
+            <th>Precio (Bs)</th>
+            <th>VIC (Bs)</th>
+            <th>VLC (Bs)</th>
+            <th>Costos (Bs)</th>
+            <th>MACO (Bs)</th>
+            <th>MACO %</th>
+            <th>Δ MACO (Bs)</th>
+            <th>Δ MACO (pp)</th>
+            <th class="mv-ptc-col">PTC/ud (Bs)</th>
+            <th class="mv-ptc-col">Margen PDV %</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="mvTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer class="note">Calculadora de rentabilidad · uso interno · todos los valores editables desde la pestaña Configuración</footer>
+</div>
+</div>
+<!-- ======================= /MÓDULO: RENTABILIDAD ======================= -->
+
+<!-- ======================= MÓDULO: CALCULADORA VENTAS ======================= -->
+<div id="moduleVentas" style="display:none;">
+<div class="app">
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <div class="brand">
+          <button class="back-btn" data-goto="menu">← Menú</button>
+          <div class="brand-mark">%</div>
+          <div class="brand-text">
+            <h1>Simulador de Precios</h1>
+            <span>Precio C.E. y margen estimado por ítem</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="upload-row" id="vtUploadRow">
+    <button class="btn-file-icon" title="Importar Excel">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      <input type="file" id="vtFileInput" accept=".xlsx,.xls">
+    </button>
+    <button class="btn-file-icon" id="vtCloudLoadBtn" title="Actualizar datos desde la nube">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h.79a4.5 4.5 0 1 1 0 9z"/><path d="M12 12v6M9.5 15.5 12 13l2.5 2.5"/></svg>
+    </button>
+    <span class="hint" id="vtFileStatus">Importar Excel para poder buscar ítems</span>
+  </div>
+
+  <div class="card">
+    <h3><span class="n">01</span>Agregar ítem</h3>
+    <div class="vt-add-grid vt-add-grid-main">
+      <div class="field"><label>Lista de precio</label><select id="vtSelLista" disabled></select></div>
+      <div class="field"><label>Línea</label><select id="vtSelLinea" disabled></select></div>
+      <div class="field"><label>Marca</label><select id="vtSelMarca" disabled></select></div>
+      <div class="field"><label>Calibre</label><select id="vtSelCalibre" disabled></select></div>
+      <div class="field"><label>Sabor</label><select id="vtSelSabor" disabled></select></div>
+      <div class="field"><label>Empaque</label><select id="vtSelEmpaque" disabled></select></div>
+      <div class="field"><label>Retiro fáb.</label>
+        <select id="vtSelRetiro"><option value="no">No</option><option value="si">Sí</option></select>
+      </div>
+    </div>
+    <div class="vt-add-grid" style="grid-template-columns:repeat(3,1fr);margin-top:10px;">
+      <div class="field"><label>Tipo de evaluación</label>
+        <select id="vtSelTipo">
+          <option value="Oferta promocional">Oferta promocional</option>
+          <option value="Descuento">Descuento</option>
+          <option value="Bonificación">Bonificación</option>
+          <option value="Regulación de precio">Regulación de precio</option>
+          <option value="Ciclo comercial">Ciclo comercial</option>
+          <option value="Lanzamiento">Lanzamiento</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+      <div class="field"><label>Vigencia desde</label><input type="date" id="vtSelFechaInicio"></div>
+      <div class="field"><label>Vigencia hasta</label><input type="date" id="vtSelFechaLimite"></div>
+    </div>
+    <button class="btn btn-primary btn-sm" id="vtAddRow" disabled style="margin-top:10px;">+ Agregar a la lista</button>
+  </div>
+
+  <div class="card">
+    <h3><span class="n">02</span>Estimación</h3>
+    <div class="scn-table-wrap">
+      <table id="vtTable">
+        <thead>
+          <tr>
+            <th style="text-align:left;">Producto</th>
+            <th style="text-align:right;">Precio política</th>
+            <th style="text-align:left;">Tipo de ingreso</th>
+            <th style="text-align:right;">% Desc. / Precio neto</th>
+            <th style="text-align:right;">Cantidad</th>
+            <th style="text-align:right;">Margen Bs/Paq</th>
+            <th style="text-align:right;">Margen total</th>
+            <th style="text-align:right;">Costo descuento</th>
+            <th style="text-align:right;">ROI</th>
+            <th style="text-align:left;width:90px;">Estado</th>
+            <th style="text-align:left;">Comentario</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="vtTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer class="note">Calculadora de ventas · el margen de contribución se estima con la cantidad de paquetes indicada</footer>
+</div>
+</div>
+<!-- ======================= /MÓDULO: CALCULADORA VENTAS ======================= -->
+
+
+<script>
+(function(){
+"use strict";
+
+/* ============================= UTILIDADES ============================= */
+const fmt = (n, dec=2) => {
+  if (n===null || n===undefined || isNaN(n)) return "—";
+  return Number(n).toLocaleString('es-BO', {minimumFractionDigits:dec, maximumFractionDigits:dec});
+};
+const fmtBs = (n, dec=2) => n===null||n===undefined||isNaN(n) ? "—" : "Bs " + fmt(n, dec);
+const fmtUsd = (n, dec=2) => n===null||n===undefined||isNaN(n) ? "—" : "$us " + fmt(n, dec);
+const fmtPct = (n, dec=1) => n===null||n===undefined||isNaN(n) ? "—" : fmt(n, dec) + "%";
+const num = (v, d=0) => { const x = parseFloat(v); return isNaN(x) ? d : x; };
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+const UNIT_TO_LITERS = { ml:0.001, l:1, cc:0.001, cl:0.01, g:0.001, kg:1, oz:0.0295735, lb:0.453592, gal:3.78541 };
+
+/* ============================= NAVEGACIÓN ============================= */
+function showScreen(name){
+  if(name!=='menu' && currentUser && currentUser.rol!=='admin' && currentUser.rol!==name){
+    alert('No tenés acceso a esa herramienta. Comunicate con el administrador.');
+    return;
+  }
+  $('#appMenu').style.display = name==='menu' ? 'flex' : 'none';
+  $('#moduleRentabilidad').style.display = name==='rentabilidad' ? 'block' : 'none';
+  $('#moduleVentas').style.display = name==='ventas' ? 'block' : 'none';
+  if(name==='ventas' && typeof vtOnDataLoaded==='function') vtOnDataLoaded();
+  window.scrollTo(0,0);
+}
+$$('[data-goto]').forEach(el=>{
+  el.addEventListener('click', ()=> showScreen(el.dataset.goto));
+});
+
+/* ============================= AUTENTICACIÓN (usuario / contraseña interno) ============================= */
+const DEFAULT_USERS = [
+  {usuario:'arioja', password:'arioja2026', rol:'admin'},
+  {usuario:'ccamargo', password:'ccamargo2026', rol:'admin'},
+  {usuario:'a.alexander', password:'a.alexander2026', rol:'admin'},
+  {usuario:'s.cardona', password:'s.cardona2026', rol:'rentabilidad'},
+  {usuario:'c.suarez', password:'c.suarez2026', rol:'ventas'},
+  {usuario:'f.rivero', password:'f.rivero2026', rol:'ventas'},
+  {usuario:'p.olmos', password:'p.olmos2026', rol:'ventas'},
+  {usuario:'n.dominguez', password:'n.dominguez2026', rol:'ventas'},
+  {usuario:'w.bascope', password:'w.bascope2026', rol:'ventas'},
+  {usuario:'p.udaeta', password:'p.udaeta2026', rol:'ventas'},
+  {usuario:'m.muñoz', password:'m.muñoz2026', rol:'ventas'},
+  {usuario:'c.vargas', password:'c.vargas2026', rol:'ventas'},
+  {usuario:'a.hurtado', password:'a.hurtado2026', rol:'ventas'},
+  {usuario:'p.rojas', password:'p.rojas2026', rol:'ventas'},
+  {usuario:'p.arzabe', password:'p.arzabe2026', rol:'ventas'},
+  {usuario:'a.roman', password:'a.roman2026', rol:'ventas'}
+];
+function loadUsers(){
+  try{
+    const raw = localStorage.getItem('mc_users_v1');
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT_USERS));
+}
+function saveUsers(){ localStorage.setItem('mc_users_v1', JSON.stringify(USERS)); }
+let USERS = loadUsers();
+let currentUser = null;
+
+function logAccess(usuario){
+  try{
+    const log = JSON.parse(localStorage.getItem('mc_access_log_v1')||'[]');
+    log.unshift({usuario, fecha: new Date().toLocaleString('es-BO')});
+    localStorage.setItem('mc_access_log_v1', JSON.stringify(log.slice(0,300)));
+  }catch(e){}
+}
+function getAccessLog(){
+  try{ return JSON.parse(localStorage.getItem('mc_access_log_v1')||'[]'); }catch(e){ return []; }
+}
+
+function doLogin(){
+  const u = $('#loginUser').value.trim().toLowerCase();
+  const p = $('#loginPass').value;
+  const found = USERS.find(x=>x.usuario.toLowerCase()===u && x.password===p);
+  if(!found){
+    $('#loginMsg').innerHTML = '<div class="hint" style="color:var(--bad);">❌ No tenés acceso. Comunicate con el administrador.</div>';
+    return;
+  }
+  currentUser = found;
+  logAccess(found.usuario);
+  const fecha = new Date().toLocaleString('es-BO');
+  $('#welcomeText').textContent = `Hola, bienvenido/a ${found.usuario}. Tu ingreso quedó registrado el ${fecha}.`;
+  $('#loginScreen').style.display = 'none';
+  $('#welcomeScreen').style.display = 'flex';
+  setTimeout(async ()=>{
+    $('#welcomeScreen').style.display = 'none';
+    applyRoleUI();
+    showScreen('menu');
+    if(loadEmbeddedData()) return;
+    const linked = await tryAutoLoadLinkedFile();
+    if(!linked){
+      loadFromCloud('#fileStatus', true);
+      loadFromCloud('#vtFileStatus', true);
+    }
+  }, 1600);
+}
+$('#loginBtn').addEventListener('click', doLogin);
+$('#loginPass').addEventListener('keydown', (e)=>{ if(e.key==='Enter') doLogin(); });
+$('#loginUser').addEventListener('keydown', (e)=>{ if(e.key==='Enter') doLogin(); });
+
+function applyRoleUI(){
+  if(!currentUser) return;
+  $$('.menu-card[data-role-card]').forEach(card=>{
+    const role = card.dataset.roleCard;
+    const visible = currentUser.rol==='admin' || currentUser.rol===role;
+    card.style.display = visible ? '' : 'none';
+  });
+  $('#tabConfigBtn').style.display = currentUser.rol==='admin' ? '' : 'none';
+  renderUsersTable();
+  renderAccessLog();
+}
+
+$('#logoutBtn').addEventListener('click', ()=>{
+  currentUser = null;
+  $('#loginUser').value=''; $('#loginPass').value=''; $('#loginMsg').innerHTML='';
+  $('#appMenu').style.display='none';
+  $('#moduleRentabilidad').style.display='none';
+  $('#moduleVentas').style.display='none';
+  $('#loginScreen').style.display='flex';
+});
+
+function renderUsersTable(){
+  const body = $('#usersTableBody');
+  if(!body) return;
+  body.innerHTML = USERS.map((u,i)=>`
+    <tr data-idx="${i}">
+      <td><input type="text" class="user-usuario" value="${u.usuario}" style="width:110px;"></td>
+      <td><input type="text" class="user-password" value="${u.password}" style="width:110px;"></td>
+      <td>
+        <select class="user-rol" style="width:110px;">
+          <option value="admin" ${u.rol==='admin'?'selected':''}>Admin</option>
+          <option value="rentabilidad" ${u.rol==='rentabilidad'?'selected':''}>Rentabilidad</option>
+          <option value="ventas" ${u.rol==='ventas'?'selected':''}>Ventas</option>
+        </select>
+      </td>
+      <td><button class="icon-btn" title="Eliminar">✕</button></td>
+    </tr>`).join('');
+  body.querySelectorAll('tr').forEach(tr=>{
+    const idx = Number(tr.dataset.idx);
+    tr.querySelector('.user-usuario').addEventListener('input', e=>{ USERS[idx].usuario = e.target.value; saveUsers(); });
+    tr.querySelector('.user-password').addEventListener('input', e=>{ USERS[idx].password = e.target.value; saveUsers(); });
+    tr.querySelector('.user-rol').addEventListener('change', e=>{ USERS[idx].rol = e.target.value; saveUsers(); });
+    tr.querySelector('.icon-btn').addEventListener('click', ()=>{
+      USERS.splice(idx,1); saveUsers(); renderUsersTable();
+    });
+  });
+}
+const addUserBtnEl = $('#addUserBtn');
+if(addUserBtnEl) addUserBtnEl.addEventListener('click', ()=>{
+  const usuario = prompt('Nombre de usuario:');
+  if(!usuario) return;
+  USERS.push({usuario: usuario.trim(), password: usuario.trim()+'2026', rol:'ventas'});
+  saveUsers(); renderUsersTable();
+});
+
+function renderAccessLog(){
+  const el = $('#accessLogList');
+  if(!el) return;
+  const log = getAccessLog();
+  if(!log.length){ el.innerHTML = '<div class="hint">Sin accesos registrados todavía.</div>'; return; }
+  el.innerHTML = log.slice(0,50).map(a=>`<div class="result-line"><span>${a.usuario}${a.email?' · '+a.email:''}</span><span class="v">${a.fecha}</span></div>`).join('');
+}
+
+
+
+function parseCalibreToLiters(str){
+  if(str===undefined||str===null) return 0;
+  const s = String(str).toLowerCase().replace(',', '.');
+  const m = s.match(/([\d.]+)\s*(ml|mililitros|l\b|litros|cc|cl|gal|galon|oz|lb|kg|g\b)/);
+  if(!m) {
+    const n = parseFloat(s);
+    return isNaN(n) ? 0 : n/1000; // asume ml si viene solo el número
+  }
+  const qty = parseFloat(m[1]);
+  let unit = m[2];
+  if(unit.startsWith('mililitro')) unit='ml';
+  if(unit.startsWith('litro')||unit==='l') unit='l';
+  if(unit.startsWith('galon')) unit='gal';
+  const factor = UNIT_TO_LITERS[unit] !== undefined ? UNIT_TO_LITERS[unit] : 0.001;
+  return qty * factor;
+}
+
+function parseCalibreUnit(str){
+  if(str===undefined||str===null) return 'ml';
+  const s = String(str).toLowerCase().replace(',', '.');
+  const m = s.match(/([\d.]+)\s*(ml|mililitros|l\b|litros|cc|cl|gal|galon|oz|lb|kg|g\b)/);
+  if(!m) return 'ml';
+  let unit = m[2];
+  if(unit.startsWith('mililitro')) unit='ml';
+  if(unit.startsWith('litro')||unit==='l') unit='l';
+  if(unit.startsWith('galon')) unit='gal';
+  return unit;
+}
+function isMassUnit(unit){ return ['g','kg','lb'].includes(unit); }
+function findTaxCfg(categoria){
+  if(!categoria) return null;
+  const trimmed = String(categoria).trim();
+  if(CONFIG.taxes[trimmed]) return CONFIG.taxes[trimmed];
+  const lower = trimmed.toLowerCase();
+  const key = Object.keys(CONFIG.taxes).find(k=>k.toLowerCase()===lower);
+  return key ? CONFIG.taxes[key] : null;
+}
+
+/* ============================= ESTADO Y CONFIG ============================= */
+const DEFAULT_CONFIG = {
+  taxes: {
+    "Sin ICE": {ice:0.00, iva:13, it:3, alicuota:0, excelCategorias:["AGUAS","POLVO"]},
+    "Néctares": {ice:0.47, iva:13, it:3, alicuota:0, excelCategorias:[]},
+    "Isotónicos": {ice:0.60, iva:13, it:3, alicuota:0, excelCategorias:["ISOTONICOS","ISOTÓNICOS"]},
+    "Bebidas no alcohólicas": {ice:0.60, iva:13, it:3, alicuota:0, excelCategorias:[]},
+    "Energizantes": {ice:6.78, iva:13, it:3, alicuota:0, excelCategorias:[]},
+    "RTD": {ice:2.30, iva:13, it:3, alicuota:0, excelCategorias:["FLOW"]},
+    "Cerveza": {ice:5.08, iva:13, it:3, alicuota:1, excelCategorias:[]},
+    "Vinos": {ice:4.65, iva:13, it:3, alicuota:5, excelCategorias:[]},
+    "Destilados": {ice:4.65, iva:13, it:3, alicuota:0, excelCategorias:[]},
+    "Whisky": {ice:19.48, iva:13, it:3, alicuota:10, excelCategorias:[]}
+  },
+  listaToDepto: {
+    "SZC - EMPLEADOS": "SANTA CRUZ",
+    "SZC-SUPERMERCADOS": "SANTA CRUZ",
+    "SCZ-HORIZONTAL": "SANTA CRUZ",
+    "SCZ-PROVINCIA": "SANTA CRUZ",
+    "Lista promoción": "SANTA CRUZ",
+    "CBB-LISTA PRECIO MODERNO": "COCHABAMBA",
+    "LPZ-LISTA PRECIO MODERNO": "LA PAZ",
+    "PEDIDOS YA -LISTA PRECIO MODERNO": "SANTA CRUZ",
+    "LISTA DE PRECIO MAYORISTA": "SANTA CRUZ",
+    "HIPERMAXI + FARMACIAS": "SANTA CRUZ",
+    "SCZ - LISTA PROMOCION": "SANTA CRUZ",
+    "FARMACORP": "SANTA CRUZ",
+    "Lista de precios Tarija": "LA PAZ",
+    "ZUMO EDUCATIVO": "SANTA CRUZ",
+    "LISTA DE PRECIO TADA": "SANTA CRUZ",
+    "LISTA DE PRECIO TRESBE": "SANTA CRUZ",
+    "LISTA DE PRECIO EXPANCIONES": "PROVINCIAS",
+    "LISTA DE PRECIO MICROMERCADO": "SANTA CRUZ",
+    "CBB-LISTA DE PRECIO HORIZONTAL": "COCHABAMBA",
+    "CBB-LISTA DE PRECIO PROMOCION": "COCHABAMBA",
+    "CBB-LISTA DE PRECIO PROMOCION MAYORISTA": "COCHABAMBA",
+    "LPZ - LISTA DE PRECIO HORIZONTAL": "LA PAZ",
+    "LPZ - LISTA DE PRECIO PROMOCION": "LA PAZ",
+    "LPZ - LISTA DE PRECIO PROMOCION MAYORIST": "LA PAZ",
+    "LPZ-LISTA DE PRECIO FARMACIAS": "LA PAZ"
+  },
+  vlcPorDepto: {
+    "SANTA CRUZ": 5.5,
+    "COCHABAMBA": 6.6,
+    "LA PAZ": 8.2,
+    "PROVINCIAS": 10
+  },
+  elasticidades: {
+    "AGUAS|300 Ml": -0.80,
+    "AGUAS|600 Ml": -0.75,
+    "AGUAS|750 Ml": -0.70,
+    "AGUAS|1,750 L": -0.60,
+    "FLOW|300 Ml": -1.30,
+    "FLOW|355 Ml": -1.20,
+    "FLOW|473 Ml": -1.10,
+    "FLOW|1000 Ml": -0.90,
+    "ISOTÓNICOS|500 Ml": -0.90,
+    "ISOTÓNICOS|1000 Ml": -0.75,
+    "POLVO|1,1 Kg": -0.50
+  },
+  tc: 6.96,
+  umbralVerde: 25,
+  umbralAmarillo: 12,
+  costosAdicionales: {
+    almacenaje: {label:'Almacenaje', pct:1.5, base:'vic'},
+    costoVenta: {label:'Costo de venta', pct:5, base:'neto'},
+    costoAdmin: {label:'Costo de administración', pct:5, base:'neto'},
+    margenMaquilarVC: {label:'Margen x Maquilar VC', pct:0, base:'vic'},
+    otro: {label:'Otro', pct:0, base:'vic'}
+  }
+};
+
+const CONFIG_VERSION = 5;
+let CONFIG = loadConfig();
+
+function loadConfig(){
+  try{
+    const raw = localStorage.getItem('mc_config_v1');
+    if(raw){
+      const parsed = JSON.parse(raw);
+      const stale = (parsed.__ver||0) < CONFIG_VERSION;
+      return Object.assign({}, DEFAULT_CONFIG, parsed, {
+        __ver: CONFIG_VERSION,
+        taxes: stale ? JSON.parse(JSON.stringify(DEFAULT_CONFIG.taxes)) : Object.assign({}, DEFAULT_CONFIG.taxes, parsed.taxes||{}),
+        listaToDepto: stale ? JSON.parse(JSON.stringify(DEFAULT_CONFIG.listaToDepto)) : Object.assign({}, DEFAULT_CONFIG.listaToDepto, parsed.listaToDepto||{}),
+        vlcPorDepto: stale ? JSON.parse(JSON.stringify(DEFAULT_CONFIG.vlcPorDepto)) : Object.assign({}, DEFAULT_CONFIG.vlcPorDepto, parsed.vlcPorDepto||{}),
+        elasticidades: Object.assign({}, DEFAULT_CONFIG.elasticidades, parsed.elasticidades||{}),
+        costosAdicionales: Object.keys(DEFAULT_CONFIG.costosAdicionales).reduce((acc, key)=>{
+          const def = DEFAULT_CONFIG.costosAdicionales[key];
+          const savedItem = (parsed.costosAdicionales||{})[key];
+          acc[key] = {
+            label: def.label,
+            base: def.base,
+            pct: (savedItem && savedItem.pct!==undefined) ? savedItem.pct : def.pct
+          };
+          return acc;
+        }, {})
+      });
+    }
+  }catch(e){}
+  return Object.assign({}, JSON.parse(JSON.stringify(DEFAULT_CONFIG)), {__ver: CONFIG_VERSION});
+}
+function saveConfig(){ localStorage.setItem('mc_config_v1', JSON.stringify(CONFIG)); }
+
+let EXCEL_ROWS = [];
+let EXCEL_ALL_ROWS = [];
+/* Este bloque lo completa automáticamente el script generar_calculadora.py — no editar a mano. */
+const EMBEDDED_EXCEL_DATA = /*__EMBEDDED_DATA_START__*/null/*__EMBEDDED_DATA_END__*/;
+const EMBEDDED_EXCEL_DATE = /*__EMBEDDED_DATE_START__*/null/*__EMBEDDED_DATE_END__*/;
+function loadEmbeddedData(){
+  if(!EMBEDDED_EXCEL_DATA || !EMBEDDED_EXCEL_DATA.length) return false;
+  EXCEL_ALL_ROWS = EMBEDDED_EXCEL_DATA;
+  applyActivoFilterAndRefresh();
+  const statusEl1 = $('#fileStatus'), statusEl2 = $('#vtFileStatus');
+  const msg = `Datos incorporados · actualizado ${EMBEDDED_EXCEL_DATE||''} · ${EMBEDDED_EXCEL_DATA.length} SKU-lista`;
+  if(statusEl1){ statusEl1.textContent = 'Cargado'; statusEl1.title = msg; }
+  if(statusEl2){ statusEl2.textContent = 'Cargado'; statusEl2.title = msg; }
+  if(typeof vtOnDataLoaded==='function') vtOnDataLoaded();
+  return true;
+}
+let currentProduct = null; // último producto calculado (base para escenarios)
+
+/* ============================= MOTOR DE CÁLCULO ============================= */
+// input: {categoria, precioPaquete, litrosPorPaquete, vic, vlc, royaltyApplies, royaltyPct, tc, taxOverride}
+function computeBreakdown(input){
+  const cat = (input.categoria||"").trim();
+  const taxCfg = input.taxOverride || findTaxCfg(cat) || {ice:0, iva:13, it:3, alicuota:0};
+  const precio = num(input.precioPaquete);
+  const litros = num(input.litrosPorPaquete);
+  const vic = num(input.vic);
+  const vlc = num(input.vlc);
+  const maquila = num(input.maquila);
+  const tc = num(input.tc, CONFIG.tc);
+
+  const ice = litros * num(taxCfg.ice);
+  const base = precio - ice;
+  const iva = base * (num(taxCfg.iva)/100);
+  const it = base * (num(taxCfg.it)/100);
+  const alicuota = precio * (num(taxCfg.alicuota)/100);
+  const netoImponible = precio - ice - iva - it - alicuota;
+
+  const costosAdicApplies = !!input.costosAdicApplies;
+  const costosAdicDetalle = Object.keys(CONFIG.costosAdicionales||{}).map(key=>{
+    const c = CONFIG.costosAdicionales[key];
+    let baseVal;
+    if(c.base==='neto') baseVal = netoImponible;
+    else if(c.base==='precio') baseVal = precio;
+    else if(c.base==='vlc') baseVal = vlc;
+    else baseVal = vic;
+    return {key, label:c.label, pct:num(c.pct), base:c.base||'vic', monto: baseVal * (num(c.pct)/100)};
+  });
+  const costosAdicTotal = costosAdicApplies ? costosAdicDetalle.reduce((s,c)=>s+c.monto,0) : 0;
+
+  const macoSinRoyalty = netoImponible - vic - vlc - maquila - costosAdicTotal;
+  const royaltyPct = num(input.royaltyPct);
+  const royaltyMonto = input.royaltyApplies ? macoSinRoyalty * (royaltyPct/100) : 0;
+  const macoConRoyalty = macoSinRoyalty - royaltyMonto;
+
+  const macoPct = precio !== 0 ? (macoConRoyalty/precio)*100 : 0;
+  const macoBsHl = litros>0 ? (macoConRoyalty/litros)*100 : 0;
+  const macoUsdHl = tc>0 ? macoBsHl/tc : 0;
+  const macoBsKg = litros>0 ? macoConRoyalty/litros : 0;
+  const macoUsdKg = tc>0 ? macoBsKg/tc : 0;
+  const isMass = !!input.isMass;
+
+  return {
+    categoria:cat, precio, litros, taxCfg, ice, iva, it, alicuota, netoImponible,
+    vic, vlc, maquila, costosAdicApplies, costosAdicDetalle, costosAdicTotal,
+    royaltyApplies:!!input.royaltyApplies, royaltyPct, royaltyMonto,
+    macoSinRoyalty, macoConRoyalty, macoPct, macoBsHl, macoUsdHl, macoBsKg, macoUsdKg, isMass, tc
+  };
+}
+
+function semaphoreClass(macoPct){
+  if(macoPct >= CONFIG.umbralVerde) return {cls:'good', label:'Rentable'};
+  if(macoPct >= CONFIG.umbralAmarillo) return {cls:'warn', label:'Margen bajo'};
+  return {cls:'bad', label:'No rentable'};
+}
+
+function renderWaterfall(container, rows){
+  const maxVal = Math.max(...rows.map(r=>Math.abs(r.val)), 1);
+  container.innerHTML = rows.map(r=>{
+    const pct = Math.max(2, Math.min(100, (Math.abs(r.val)/maxVal)*100));
+    return `<div class="wf-row wf-${r.cls}">
+      <div class="wf-label">${r.lbl}</div>
+      <div class="wf-bar-track"><div class="wf-bar" style="width:${pct}%"></div></div>
+      <div class="wf-value">${fmtBs(r.val, r.dec!==undefined?r.dec:2)}</div>
+    </div>`;
+  }).join('');
+}
+
+function scaleBdForView(bd, divisor){
+  if(!divisor || divisor<=1) return bd;
+  const scaled = Object.assign({}, bd);
+  ['precio','ice','iva','it','alicuota','netoImponible','vic','vlc','maquila','costosAdicTotal','royaltyMonto','macoSinRoyalty','macoConRoyalty'].forEach(k=>{
+    if(typeof bd[k]==='number') scaled[k] = bd[k]/divisor;
+  });
+  if(bd.costosAdicDetalle) scaled.costosAdicDetalle = bd.costosAdicDetalle.map(c=>Object.assign({}, c, {monto: c.monto/divisor}));
+  return scaled;
+}
+
+function renderLedger(container, bd){
+  const rows = [
+    {op:'', lbl:'Precio bruto', val:bd.precio, cls:'subtotal'},
+    {op:'−', lbl:'ICE', val:bd.ice, cls:'neg'},
+    {op:'−', lbl:'IVA', val:bd.iva, cls:'neg'},
+    {op:'−', lbl:'IT', val:bd.it, cls:'neg'},
+    {op:'−', lbl:'Alícuota', val:bd.alicuota, cls:'neg'},
+    {op:'=', lbl:'Neto imponible', val:bd.netoImponible, cls:'subtotal'},
+    {op:'−', lbl:'VIC', val:bd.vic, cls:'neg'},
+    {op:'−', lbl:'VLC', val:bd.vlc, cls:'neg'},
+  ];
+  if(bd.maquila) rows.push({op:'−', lbl:'Maquila', val:bd.maquila, cls:'neg'});
+  if(bd.costosAdicApplies){
+    (bd.costosAdicDetalle||[]).forEach(c=>{
+      rows.push({op:'−', lbl:`${c.label} (${fmt(c.pct,1)}%)`, val:c.monto, cls:'neg'});
+    });
+    rows.push({op:'=', lbl:'Total Costos', val: bd.vic + bd.vlc + bd.costosAdicTotal, cls:'subtotal'});
+  }
+  rows.push({op:'=', lbl:'MACO sin Royalty', val:bd.macoSinRoyalty, cls:'subtotal'});
+  if(bd.royaltyApplies){
+    rows.push({op:'−', lbl:`Royalty (${fmt(bd.royaltyPct,1)}%)`, val:bd.royaltyMonto, cls:'neg'});
+    rows.push({op:'=', lbl:'MACO con Royalty', val:bd.macoConRoyalty, cls:'final'});
+  } else {
+    rows.push({op:'=', lbl:'MACO', val:bd.macoConRoyalty, cls:'final'});
+  }
+  container.innerHTML = rows.map(r=>`
+    <div class="ledger-row ${r.cls||''}">
+      <span class="op">${r.op}</span>
+      <span class="lbl">${r.lbl}</span>
+      <span class="val">${fmtBs(r.val)}</span>
+    </div>`).join('');
+}
+
+const COSTADIC_BASE_LABELS = {precio:'% Precio', vic:'% VIC', vlc:'% VLC', neto:'% Neto'};
+function renderCostosAdicList(container, bd){
+  if(!container) return;
+  container.innerHTML = (bd.costosAdicDetalle||[]).map(c=>`
+    <div class="costos-adic-row">
+      <span>${c.label}</span>
+      <div style="display:flex;align-items:center;gap:2px;justify-content:flex-end;">
+        <input type="number" step="0.1" class="costadic-inline-pct" data-key="${c.key}" value="${Number(c.pct).toFixed(1)}">
+        <span>%</span>
+      </div>
+      <select class="costadic-inline-base" data-key="${c.key}">
+        <option value="precio" ${c.base==='precio'?'selected':''}>${COSTADIC_BASE_LABELS.precio}</option>
+        <option value="vic" ${c.base==='vic'?'selected':''}>${COSTADIC_BASE_LABELS.vic}</option>
+        <option value="vlc" ${c.base==='vlc'?'selected':''}>${COSTADIC_BASE_LABELS.vlc}</option>
+        <option value="neto" ${c.base==='neto'?'selected':''}>${COSTADIC_BASE_LABELS.neto}</option>
+      </select>
+    </div>`).join('');
+  container.querySelectorAll('.costadic-inline-pct').forEach(inp=>{
+    inp.addEventListener('change', e=>{
+      const key = e.target.dataset.key;
+      CONFIG.costosAdicionales[key].pct = num(e.target.value);
+      saveConfig();
+      recalcAll();
+    });
+  });
+  container.querySelectorAll('.costadic-inline-base').forEach(sel=>{
+    sel.addEventListener('change', e=>{
+      const key = e.target.dataset.key;
+      CONFIG.costosAdicionales[key].base = e.target.value;
+      saveConfig();
+      recalcAll();
+    });
+  });
+}
+
+/* ============================= TABS ============================= */
+$$('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    $$('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    $$('.tab-panel').forEach(p=>p.classList.toggle('active', p.dataset.tab===tab));
+    $('#scenariosWrap').style.display = (tab==='config' || tab==='resumen') ? 'none' : '';
+    if(tab==='existing'){ currentProduct = null; recalcExisting(); }
+    else if(tab==='new'){ currentProduct = null; recalcNew(); }
+    else if(tab==='costos'){ recalcCostos(); }
+    if(!currentProduct){
+      $('#scnEmptyNote').style.display = 'block';
+      $('#scnContent').style.display = 'none';
+    }
+  });
+});
+
+/* ============================= PILL GROUPS (método de precio) ============================= */
+function wirePillGroup(groupId, onChange){
+  const group = $(groupId);
+  group.querySelectorAll('.pill').forEach(p=>{
+    p.addEventListener('click', ()=>{
+      group.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));
+      p.classList.add('active');
+      onChange(p.dataset.m);
+    });
+  });
+}
+
+/* ============================= SWITCH (royalty) ============================= */
+function wireSwitch(switchId, wrapId, onChange){
+  const sw = $(switchId);
+  const track = sw.querySelector('.switch-track');
+  let on = false;
+  sw.addEventListener('click', ()=>{
+    on = !on;
+    track.classList.toggle('on', on);
+    if(wrapId){ const w = $(wrapId); if(w) w.style.display = on ? 'block' : 'none'; }
+    onChange(on);
+  });
+  return ()=>on;
+}
+
+/* ======================================================================
+   TAB 1 — PRODUCTO EXISTENTE
+   ====================================================================== */
+const exState = { rows:[], selected:null, priceMethod:'actual', royaltyApplies:false, vlcEditable:false, vicEditable:false };
+
+/* ============================= ARCHIVO VINCULADO (se relee solo, sin depender de internet ni de nadie) ============================= */
+const FS_ACCESS_SUPPORTED = 'showOpenFilePicker' in window;
+
+function idbOpen(){
+  return new Promise((resolve, reject)=>{
+    const req = indexedDB.open('mc_linked_file_db', 1);
+    req.onupgradeneeded = ()=> req.result.createObjectStore('handles');
+    req.onsuccess = ()=> resolve(req.result);
+    req.onerror = ()=> reject(req.error);
+  });
+}
+async function idbSetHandle(handle){
+  const db = await idbOpen();
+  return new Promise((resolve, reject)=>{
+    const tx = db.transaction('handles','readwrite');
+    tx.objectStore('handles').put(handle, 'excel');
+    tx.oncomplete = ()=>resolve();
+    tx.onerror = ()=>reject(tx.error);
+  });
+}
+async function idbGetHandle(){
+  const db = await idbOpen();
+  return new Promise((resolve, reject)=>{
+    const tx = db.transaction('handles','readonly');
+    const req = tx.objectStore('handles').get('excel');
+    req.onsuccess = ()=>resolve(req.result || null);
+    req.onerror = ()=>reject(req.error);
+  });
+}
+
+async function importFileFromHandle(handle, statusSelector){
+  const statusEl = $(statusSelector);
+  const file = await handle.getFile();
+  const buf = await file.arrayBuffer();
+  const data = new Uint8Array(buf);
+  const wb = XLSX.read(data, {type:'array'});
+  const sheetName = pickBestSheet(wb);
+  const ws = wb.Sheets[sheetName];
+  const json = XLSX.utils.sheet_to_json(ws, {defval:''});
+  const kept = importExcelRows(json);
+  const fecha = new Date().toLocaleString('es-BO');
+  if(statusEl){
+    statusEl.textContent = 'Vinculado';
+    statusEl.title = `${file.name} · vinculado · actualizado ${fecha} · ${json.length} filas → ${kept} SKU-lista válidos`;
+  }
+  if(typeof vtOnDataLoaded==='function') vtOnDataLoaded();
+}
+
+async function linkExcelFile(){
+  if(!FS_ACCESS_SUPPORTED){
+    alert('Tu navegador no soporta vincular archivos automáticamente (esta función solo anda en Chrome o Edge de escritorio). Usá el botón de "Importar Excel" como siempre.');
+    return;
+  }
+  try{
+    const [handle] = await window.showOpenFilePicker({
+      types: [{ description: 'Excel', accept: {'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'], 'application/vnd.ms-excel': ['.xls']} }]
+    });
+    await idbSetHandle(handle);
+    await importFileFromHandle(handle, '#fileStatus');
+    alert('Archivo vinculado. La próxima vez que abras la calculadora en este mismo navegador, se va a releer solo — no hace falta que lo vuelvas a cargar, ni que nadie te mande un archivo nuevo.');
+  }catch(err){
+    if(err.name !== 'AbortError') console.error('linkExcelFile error:', err);
+  }
+}
+
+async function tryAutoLoadLinkedFile(){
+  if(!FS_ACCESS_SUPPORTED) return false;
+  try{
+    const handle = await idbGetHandle();
+    if(!handle) return false;
+    let perm = await handle.queryPermission({mode:'read'});
+    if(perm !== 'granted'){
+      perm = await handle.requestPermission({mode:'read'});
+    }
+    if(perm !== 'granted') return false;
+    await importFileFromHandle(handle, '#fileStatus');
+    await importFileFromHandle(handle, '#vtFileStatus').catch(()=>{});
+    return true;
+  }catch(err){
+    console.error('tryAutoLoadLinkedFile error:', err);
+    return false;
+  }
+}
+
+$('#linkFileBtn').addEventListener('click', linkExcelFile);
+if(!FS_ACCESS_SUPPORTED){ $('#linkFileBtn').style.opacity = '0.4'; }
+
+$('#fileInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    try{
+      const data = new Uint8Array(evt.target.result);
+      const wb = XLSX.read(data, {type:'array'});
+      const sheetName = pickBestSheet(wb);
+      const ws = wb.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(ws, {defval:''});
+      const kept = importExcelRows(json);
+      $('#fileStatus').textContent = 'Cargado';
+      $('#fileStatus').title = `${file.name} · hoja "${sheetName}" · ${json.length} filas leídas → ${kept} SKU-lista válidos`;
+    }catch(err){
+      $('#fileStatus').textContent = 'Error';
+      $('#fileStatus').title = err.message;
+    }
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+/* ============================= CARGA DESDE LA NUBE (Google Sheets publicado como CSV) ============================= */
+/* Reemplazá esta URL por la de tu Google Sheet: Archivo → Compartir → Publicar en la web → CSV.
+   También se puede fijar/editar desde Configuración → Datos (queda guardada en este navegador). */
+const DEFAULT_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4pHxDABgSQtNWMNNC17-P8HKkyMWRjrGUpzmzu2SwcNzEvLPWFNCcyKbNnB8_Tya4r3fUkV1efFG7/pub?gid=1919097294&single=true&output=csv';
+
+function getSheetUrl(){
+  return localStorage.getItem('mc_sheet_url_v1') || DEFAULT_SHEET_CSV_URL;
+}
+function saveSheetUrl(url){
+  localStorage.setItem('mc_sheet_url_v1', url || '');
+}
+
+async function loadFromCloud(statusSelector, silent){
+  const url = getSheetUrl();
+  const statusEl = $(statusSelector);
+  if(!url){
+    if(statusEl){ statusEl.textContent = 'Sin URL configurada'; statusEl.title = 'Configurá la URL en Configuración → Datos.'; }
+    if(!silent) alert('No hay una URL de Google Sheets configurada. Andá a Configuración → Datos y pegala ahí.');
+    return;
+  }
+  if(statusEl){ statusEl.textContent = 'Actualizando…'; statusEl.title = url; }
+  try{
+    const resp = await fetch(url, {cache:'no-store'});
+    if(!resp.ok) throw new Error('HTTP ' + resp.status);
+    const csvText = await resp.text();
+    const wb = XLSX.read(csvText, {type:'string'});
+    const sheetName = pickBestSheet(wb);
+    const ws = wb.Sheets[sheetName];
+    const json = XLSX.utils.sheet_to_json(ws, {defval:''});
+    const kept = importExcelRows(json);
+    const fecha = new Date().toLocaleString('es-BO');
+    if(statusEl){
+      statusEl.textContent = 'Cargado';
+      statusEl.title = `Desde la nube · ${fecha} · ${json.length} filas leídas → ${kept} SKU-lista válidos`;
+    }
+    if(typeof vtOnDataLoaded==='function') vtOnDataLoaded();
+  }catch(err){
+    const detalle = 'No se pudo actualizar desde la nube.\n\nMotivo técnico: ' + err.message + '\n\nURL usada:\n' + url + '\n\nSi el navegador bloqueó el pedido por seguridad (típico al abrir el archivo con doble clic), probá subiendo la calculadora a un hosting real (Cloudflare Pages) — ahí debería funcionar. Mientras tanto podés seguir usando "Importar Excel".';
+    if(statusEl){
+      statusEl.textContent = 'Error al actualizar';
+      statusEl.title = detalle;
+    }
+    if(!silent) alert(detalle);
+    console.error('loadFromCloud error:', err);
+  }
+}
+$('#cloudLoadBtn').addEventListener('click', ()=> loadFromCloud('#fileStatus'));
+$('#vtCloudLoadBtn').addEventListener('click', ()=> loadFromCloud('#vtFileStatus'));
+$('#cfgSheetUrl').value = getSheetUrl();
+$('#cfgSheetUrl').addEventListener('input', ()=> saveSheetUrl($('#cfgSheetUrl').value.trim()));
+
+function pickBestSheet(wb){
+  // Prefer a sheet whose name suggests "lista de precio"; otherwise the sheet
+  // whose header row best matches the expected columns; otherwise the first sheet.
+  const byName = wb.SheetNames.find(n => /lista.*precio/i.test(n));
+  if(byName) return byName;
+  let best = wb.SheetNames[0], bestScore = -1;
+  wb.SheetNames.forEach(name=>{
+    const ws = wb.Sheets[name];
+    const json = XLSX.utils.sheet_to_json(ws, {defval:'', range:0});
+    if(!json.length) return;
+    const headers = Object.keys(json[0]).map(h=>String(h).toLowerCase());
+    const score = ['categor','marca','calibre','empaque','sku','producto_id','vic']
+      .reduce((acc,k)=> acc + (headers.some(h=>h.includes(k)) ? 1 : 0), 0);
+    if(score > bestScore){ bestScore = score; best = name; }
+  });
+  return best;
+}
+
+function findHeaderIndices(headers){
+  const norm = headers.map(h=>String(h).toLowerCase().trim());
+  const findAll = (re) => norm.map((h,i)=>re.test(h)?i:-1).filter(i=>i>=0);
+  const findLast = (re) => { const all = findAll(re); return all.length ? all[all.length-1] : -1; };
+  const findFirst = (re) => { const all = findAll(re); return all.length ? all[0] : -1; };
+  return {
+    categoria: findFirst(/categor/),
+    marca: findFirst(/^marca$|marca/),
+    calibre: findFirst(/calibre/),
+    empaque: findFirst(/empaque/),
+    sabor: findFirst(/sabor/),
+    sku: findFirst(/producto_id|^sku$|codigo/),
+    precioVigente: findFirst(/precio_vigente|precio vigente/),
+    vicLast: findLast(/^vic$|\bvic\b/),
+    vicFirst: findFirst(/^vic$|\bvic\b/),
+    estado: findFirst(/estado.*sku|estado_sku/),
+    listaPrecio: (()=>{
+      const exact = findFirst(/^list[ao] de precio$/);
+      if(exact>=0) return exact;
+      const broad = findFirst(/list[ao].*precio/);
+      return (broad>=0 && !/_id$|\bid\b/.test(norm[broad])) ? broad : -1;
+    })()
+  };
+}
+
+function importExcelRows(json){
+  if(!json.length) return 0;
+  const headers = Object.keys(json[0]);
+  const idx = findHeaderIndices(headers);
+  let rows = json.map(r=>{
+    const get = (key) => idx[key]>=0 ? r[headers[idx[key]]] : '';
+    let vic = get('vicLast');
+    if(vic===''||vic===undefined||vic===null) vic = get('vicFirst');
+    return {
+      categoria: String(get('categoria')||'').trim(),
+      marca: String(get('marca')||'').trim(),
+      calibre: String(get('calibre')||'').trim(),
+      empaque: String(get('empaque')||'').trim(),
+      sabor: String(get('sabor')||'').trim(),
+      sku: String(get('sku')||'').trim(),
+      precioVigente: parseFloat(get('precioVigente'))||0,
+      vic: parseFloat(vic)||0,
+      estado: String(get('estado')||'').trim(),
+      listaPrecio: String(get('listaPrecio')||'').trim()
+    };
+  }).filter(r=>r.categoria && r.sku);
+
+  EXCEL_ALL_ROWS = rows;
+  applyActivoFilterAndRefresh();
+  return exState.rows.length;
+}
+
+function applyActivoFilterAndRefresh(){
+  const soloActivos = $('#chkSoloActivos').checked;
+  const rows = soloActivos ? EXCEL_ALL_ROWS.filter(r=>r.estado.toLowerCase()==='activo') : EXCEL_ALL_ROWS.slice();
+  EXCEL_ROWS = rows;
+  exState.rows = rows;
+  populateCategoriaSelect();
+  ['#selMarca','#selCalibre','#selEmpaque','#selSku','#selListaPrecio'].forEach(s=>{ $(s).disabled = true; $(s).innerHTML=''; });
+  $('#selCategoria').disabled = false;
+}
+
+function uniq(arr){ return Array.from(new Set(arr)).sort(); }
+
+function populateCategoriaSelect(){
+  const cats = uniq(exState.rows.map(r=>r.categoria));
+  $('#selCategoria').innerHTML = '<option value="">Seleccionar…</option>' + cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+}
+
+function cascadeFrom(level){
+  const catSel = $('#selCategoria').value;
+  const marcaSel = $('#selMarca').value;
+  const calibreSel = $('#selCalibre').value;
+  const empaqueSel = $('#selEmpaque').value;
+  const base = exState.rows;
+
+  if(level<=1){
+    let filtered = base.filter(r=>r.categoria===catSel);
+    const marcas = uniq(filtered.map(r=>r.marca));
+    $('#selMarca').innerHTML = '<option value="">Seleccionar…</option>' + marcas.map(m=>`<option value="${m}">${m}</option>`).join('');
+    $('#selMarca').disabled = !catSel;
+    $('#selCalibre').innerHTML=''; $('#selCalibre').disabled=true;
+    $('#selEmpaque').innerHTML=''; $('#selEmpaque').disabled=true;
+    $('#selSku').innerHTML=''; $('#selSku').disabled=true;
+    $('#selListaPrecio').innerHTML=''; $('#selListaPrecio').disabled=true;
+  }
+  if(level<=2){
+    let filtered = base.filter(r=>r.categoria===catSel && r.marca===marcaSel);
+    const calibres = uniq(filtered.map(r=>r.calibre));
+    $('#selCalibre').innerHTML = '<option value="">Seleccionar…</option>' + calibres.map(c=>`<option value="${c}">${c}</option>`).join('');
+    $('#selCalibre').disabled = !marcaSel;
+    $('#selEmpaque').innerHTML=''; $('#selEmpaque').disabled=true;
+    $('#selSku').innerHTML=''; $('#selSku').disabled=true;
+    $('#selListaPrecio').innerHTML=''; $('#selListaPrecio').disabled=true;
+  }
+  if(level<=3){
+    let filtered = base.filter(r=>r.categoria===catSel && r.marca===marcaSel && r.calibre===calibreSel);
+    const empaques = uniq(filtered.map(r=>r.empaque));
+    $('#selEmpaque').innerHTML = '<option value="">Seleccionar…</option>' + empaques.map(e=>`<option value="${e}">${e}</option>`).join('');
+    $('#selEmpaque').disabled = !calibreSel;
+    $('#selSku').innerHTML=''; $('#selSku').disabled=true;
+    $('#selListaPrecio').innerHTML=''; $('#selListaPrecio').disabled=true;
+  }
+  if(level<=4){
+    let filtered = base.filter(r=>r.categoria===catSel && r.marca===marcaSel && r.calibre===calibreSel && r.empaque===empaqueSel);
+    const skus = uniq(filtered.map(r=>r.sku));
+    $('#selSku').innerHTML = '<option value="">Seleccionar…</option>' + skus.map(s=>`<option value="${s}">${s}</option>`).join('');
+    $('#selSku').disabled = !empaqueSel;
+    $('#selListaPrecio').innerHTML=''; $('#selListaPrecio').disabled=true;
+  }
+}
+
+function populateListaPrecioForSku(){
+  const skuSel = $('#selSku').value;
+  const filtered = exState.rows.filter(r=>
+    r.categoria===$('#selCategoria').value && r.marca===$('#selMarca').value &&
+    r.calibre===$('#selCalibre').value && r.empaque===$('#selEmpaque').value && r.sku===skuSel);
+  const listas = uniq(filtered.map(r=>r.listaPrecio).filter(Boolean));
+  const sel = $('#selListaPrecio');
+  if(listas.length){
+    sel.innerHTML = '<option value="">Seleccionar…</option>' + listas.map(l=>`<option value="${l}">${l}</option>`).join('');
+    sel.disabled = false;
+    if(listas.length===1){ sel.value = listas[0]; loadSelectedExistingRow(); }
+  } else {
+    sel.innerHTML = '';
+    sel.disabled = true;
+  }
+}
+
+function resolveTaxCategoria(categoriaExcel){
+  const lower = (categoriaExcel||'').toLowerCase().trim();
+  for(const key of Object.keys(CONFIG.taxes)){
+    const list = CONFIG.taxes[key].excelCategorias||[];
+    if(list.some(c=>c.toLowerCase().trim()===lower)) return key;
+  }
+  return categoriaExcel;
+}
+
+function vlcForLista(lista){
+  const depto = CONFIG.listaToDepto[lista];
+  if(depto===undefined || CONFIG.vlcPorDepto[depto]===undefined) return 0;
+  return CONFIG.vlcPorDepto[depto];
+}
+
+function loadSelectedExistingRow(){
+  const row = exState.rows.find(r=>
+    r.categoria===$('#selCategoria').value && r.marca===$('#selMarca').value &&
+    r.calibre===$('#selCalibre').value && r.empaque===$('#selEmpaque').value &&
+    r.sku===$('#selSku').value && r.listaPrecio===$('#selListaPrecio').value);
+  if(!row) return;
+  exState.selected = row;
+  if(!exState.vicEditable) $('#exVic').value = Math.round(row.vic*100)/100;
+  const vlcVal = vlcForLista(row.listaPrecio);
+  if(!exState.vlcEditable) $('#exVlc').value = vlcVal;
+  $('#exPrecioVigente').value = row.precioVigente;
+  recalcExisting();
+}
+
+$('#selCategoria').addEventListener('change', ()=>cascadeFrom(1));
+$('#selMarca').addEventListener('change', ()=>cascadeFrom(2));
+$('#selCalibre').addEventListener('change', ()=>cascadeFrom(3));
+$('#selEmpaque').addEventListener('change', ()=>cascadeFrom(4));
+$('#selSku').addEventListener('change', populateListaPrecioForSku);
+$('#selListaPrecio').addEventListener('change', loadSelectedExistingRow);
+$('#chkSoloActivos').addEventListener('change', ()=>{
+  if(EXCEL_ALL_ROWS.length) applyActivoFilterAndRefresh();
+});
+
+$('#exEditVlc').addEventListener('click', ()=>{
+  exState.vlcEditable = !exState.vlcEditable;
+  $('#exVlc').disabled = !exState.vlcEditable;
+  $('#exEditVlc').textContent = exState.vlcEditable ? 'Bloquear VLC' : 'Editar VLC';
+  if(exState.vlcEditable) $('#exVlc').focus();
+});
+$('#exEditVic').addEventListener('click', ()=>{
+  exState.vicEditable = !exState.vicEditable;
+  $('#exVic').disabled = !exState.vicEditable;
+  $('#exEditVic').textContent = exState.vicEditable ? 'Bloquear VIC' : 'Editar VIC';
+  if(exState.vicEditable) $('#exVic').focus();
+});
+$('#exVlc').addEventListener('input', recalcExisting);
+$('#exVic').addEventListener('input', recalcExisting);
+const exMaquilaGetter = wireSwitch('#exMaquilaSwitch', '#exMaquilaWrap', recalcExisting);
+wirePillGroup('#exViewUnitPills', recalcExisting);
+$('#exMaquila').addEventListener('input', recalcExisting);
+const exCostosAdicGetter = wireSwitch('#exCostosAdicSwitch', '#exCostosAdicWrap', recalcExisting);
+
+wirePillGroup('#exPriceMethod', (m)=>{
+  exState.priceMethod = m;
+  $('#exM_actual').style.display = m==='actual' ? 'block' : 'none';
+  $('#exM_propuesto').style.display = m==='propuesto' ? 'block' : 'none';
+  $('#exM_ptc').style.display = m==='ptc' ? 'block' : 'none';
+  recalcExisting();
+});
+['#exPrecioPropuesto','#exPtc','#exMargenCanal'].forEach(id=> $(id).addEventListener('input', recalcExisting));
+
+const exRoyaltyGetter = wireSwitch('#exRoyaltySwitch', '#exRoyaltyPctWrap', recalcExisting);
+$('#exRoyaltyPct').addEventListener('input', recalcExisting);
+
+function getExistingPrecio(){
+  if(exState.priceMethod==='actual') return num($('#exPrecioVigente').value);
+  if(exState.priceMethod==='propuesto') return num($('#exPrecioPropuesto').value);
+  if(exState.priceMethod==='ptc'){
+    const ptc = num($('#exPtc').value);
+    const margen = num($('#exMargenCanal').value);
+    const empaque = exState.selected ? num(exState.selected.empaque, 1) : 1;
+    const ptrUd = ptc / (1 + margen/100);
+    const ptrPaq = ptrUd * empaque;
+    $('#exPtrUd').textContent = fmtBs(ptrUd);
+    return ptrPaq;
+  }
+  return 0;
+}
+
+function recalcExisting(){
+  const row = exState.selected;
+  const categoriaExcel = row ? row.categoria : ($('#selCategoria').value||'');
+  const categoria = resolveTaxCategoria(categoriaExcel);
+  const empaque = row ? num(row.empaque,1) : 1;
+  const litrosUnidad = row ? parseCalibreToLiters(row.calibre) : 0;
+  const litrosPaq = litrosUnidad * empaque;
+  const precio = getExistingPrecio();
+
+  $('#exPrecioFinal').textContent = fmtBs(precio);
+
+  const bd = computeBreakdown({
+    categoria, precioPaquete: precio, litrosPorPaquete: litrosPaq,
+    vic: num($('#exVic').value), vlc: num($('#exVlc').value),
+    maquila: exMaquilaGetter() ? num($('#exMaquila').value) : 0,
+    costosAdicApplies: exCostosAdicGetter(),
+    royaltyApplies: exRoyaltyGetter(), royaltyPct: num($('#exRoyaltyPct').value), tc: CONFIG.tc,
+    isMass: isMassUnit(parseCalibreUnit(row ? row.calibre : ''))
+  });
+
+  renderCostosAdicList($('#exCostosAdicList'), bd);
+
+  $('#exKpiMacoUsdHlLabel').textContent = bd.isMass ? 'MACO USD/Kg' : 'MACO USD/HL';
+  $('#exPrecioFinalLabel').textContent = bd.isMass ? 'Precio por unidad' : 'Precio por paquete';
+
+  const exViewUnit = $('#exViewUnitPills .pill.active').dataset.v;
+  const exEmpaque = row ? num(row.empaque,1) : 1;
+  const exDivisor = exViewUnit==='unidad' ? exEmpaque : 1;
+  const exDisplayBd = scaleBdForView(bd, exDivisor);
+
+  renderLedger($('#exLedger'), exDisplayBd);
+  $('#exKpiMacoRoy').textContent = fmtBs(exDisplayBd.macoConRoyalty);
+  $('#exKpiMacoPct').textContent = fmtPct(bd.macoPct);
+  $('#exKpiMacoUsdHl').textContent = fmtUsd(bd.isMass ? bd.macoUsdKg : bd.macoUsdHl);
+
+  const sem = semaphoreClass(bd.macoPct);
+  $('#exKpiMacoPctWrap').className = 'kpi kpi-' + sem.cls;
+
+  renderPoliticaCompare(bd, categoria, litrosPaq);
+
+  if(precio>0){
+    currentProduct = Object.assign({source:'existing', nombre: row ? `${row.marca} ${row.sabor} ${row.calibre}` : 'Producto existente',
+      calibre: row ? row.calibre : '', marca: row ? row.marca : '', empaque: row ? num(row.empaque,1) : 1,
+      categoriaExcel: categoriaExcel, precioReferencia: num($('#exPrecioVigente').value), priceMethod: exState.priceMethod}, bd);
+    showScenarios();
+  }
+}
+
+function renderPoliticaCompare(bd, categoria, litrosPaq){
+  const wrap = $('#exPoliticaCompareWrap');
+  const precioPolitica = num($('#exPrecioVigente').value);
+  if(exState.priceMethod==='actual' || !precioPolitica || precioPolitica===bd.precio){
+    wrap.style.display = 'none';
+    return;
+  }
+  const bdPolitica = computeBreakdown({
+    categoria, precioPaquete: precioPolitica, litrosPorPaquete: litrosPaq,
+    vic: bd.vic, vlc: bd.vlc, maquila: bd.maquila,
+    royaltyApplies: bd.royaltyApplies, royaltyPct: bd.royaltyPct, tc: bd.tc, isMass: bd.isMass
+  });
+  const precioDelta = precioPolitica ? (bd.precio-precioPolitica)/precioPolitica*100 : 0;
+  const macoDelta = bdPolitica.macoConRoyalty ? (bd.macoConRoyalty-bdPolitica.macoConRoyalty)/Math.abs(bdPolitica.macoConRoyalty)*100 : 0;
+  const macoBsDelta = bd.macoConRoyalty - bdPolitica.macoConRoyalty;
+  const macoPctDelta = bd.macoPct - bdPolitica.macoPct;
+  const usdA = bd.isMass ? bd.macoUsdKg : bd.macoUsdHl;
+  const usdB = bdPolitica.isMass ? bdPolitica.macoUsdKg : bdPolitica.macoUsdHl;
+  const usdDelta = usdA - usdB;
+  const mejora = macoBsDelta >= 0;
+  wrap.style.display = 'block';
+  const cls = (v)=> v>=0 ? 'vp-up' : 'vp-down';
+  $('#exPoliticaCompare').innerHTML = `
+    <div class="vs-politica-item ${cls(macoBsDelta)}"><div class="k-label">MACO Bs/Paq</div><div class="k-val">${macoBsDelta>=0?'+':''}${fmtBs(macoBsDelta)}</div></div>
+    <div class="vs-politica-item ${cls(macoPctDelta)}"><div class="k-label">MACO %</div><div class="k-val">${macoPctDelta>=0?'+':''}${fmt(macoPctDelta,1)} pp</div></div>
+    <div class="vs-politica-item ${cls(usdDelta)}"><div class="k-label">MACO USD/${bd.isMass?'Kg':'HL'}</div><div class="k-val">${usdDelta>=0?'+':''}${fmtUsd(usdDelta)}</div></div>
+  `;
+}
+
+/* ======================================================================
+   TAB 2 — PRODUCTO NUEVO
+   ====================================================================== */
+function populateNewCategoriaSelect(){
+  const cats = Object.keys(CONFIG.taxes);
+  $('#nwCategoria').innerHTML = cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+}
+populateNewCategoriaSelect();
+
+const nwState = { priceMethod:'propuesto', royaltyApplies:false };
+
+wirePillGroup('#nwPriceMethod', (m)=>{
+  nwState.priceMethod = m;
+  $('#nwM_propuesto').style.display = m==='propuesto' ? 'block' : 'none';
+  $('#nwM_ptc').style.display = m==='ptc' ? 'block' : 'none';
+  recalcNew();
+});
+const nwRoyaltyGetter = wireSwitch('#nwRoyaltySwitch', '#nwRoyaltyPctWrap', recalcNew);
+const nwMaquilaGetter = wireSwitch('#nwMaquilaSwitch', '#nwMaquilaWrap', recalcNew);
+wirePillGroup('#nwViewUnitPills', recalcNew);
+$('#nwMaquila').addEventListener('input', recalcNew);
+const nwCostosAdicGetter = wireSwitch('#nwCostosAdicSwitch', '#nwCostosAdicWrap', recalcNew);
+
+['#nwNombre','#nwCategoria','#nwCantidad','#nwUnidad','#nwEmpaque','#nwVic','#nwVlc',
+ '#nwPrecioPropuesto','#nwPtc','#nwMargenCanal','#nwRoyaltyPct'].forEach(id=>{
+  $(id).addEventListener('input', recalcNew);
+  $(id).addEventListener('change', recalcNew);
+});
+
+function getNewPrecio(){
+  if(nwState.priceMethod==='propuesto') return num($('#nwPrecioPropuesto').value);
+  if(nwState.priceMethod==='ptc'){
+    const ptc = num($('#nwPtc').value);
+    const margen = num($('#nwMargenCanal').value);
+    const empaque = num($('#nwEmpaque').value, 1);
+    const ptrUd = ptc / (1 + margen/100);
+    const ptrPaq = ptrUd * empaque;
+    $('#nwPtrUd').textContent = fmtBs(ptrUd);
+    return ptrPaq;
+  }
+  return 0;
+}
+
+function recalcNew(){
+  const categoria = $('#nwCategoria').value;
+  const cantidad = num($('#nwCantidad').value);
+  const unidad = $('#nwUnidad').value;
+  const empaque = num($('#nwEmpaque').value,1);
+  const litrosUnidad = cantidad * (UNIT_TO_LITERS[unidad]||0);
+  const litrosPaq = litrosUnidad * empaque;
+  const precio = getNewPrecio();
+
+  $('#nwLitrosUnidad').textContent = fmt(litrosUnidad,3);
+  $('#nwLitrosPaq').textContent = fmt(litrosPaq,3);
+  $('#nwPrecioFinal').textContent = fmtBs(precio);
+
+  const bd = computeBreakdown({
+    categoria, precioPaquete: precio, litrosPorPaquete: litrosPaq,
+    vic: num($('#nwVic').value), vlc: num($('#nwVlc').value),
+    maquila: nwMaquilaGetter() ? num($('#nwMaquila').value) : 0,
+    costosAdicApplies: nwCostosAdicGetter(),
+    royaltyApplies: nwRoyaltyGetter(), royaltyPct: num($('#nwRoyaltyPct').value), tc: CONFIG.tc,
+    isMass: isMassUnit(unidad)
+  });
+
+  renderCostosAdicList($('#nwCostosAdicList'), bd);
+
+  $('#nwKpiMacoUsdHlLabel').textContent = bd.isMass ? 'MACO USD/Kg' : 'MACO USD/HL';
+  $('#nwPrecioFinalLabel').textContent = bd.isMass ? 'Precio por unidad' : 'Precio por paquete';
+
+  const nwViewUnit = $('#nwViewUnitPills .pill.active').dataset.v;
+  const nwEmpaque = num($('#nwEmpaque').value,1);
+  const nwDivisor = nwViewUnit==='unidad' ? nwEmpaque : 1;
+  const nwDisplayBd = scaleBdForView(bd, nwDivisor);
+
+  renderLedger($('#nwLedger'), nwDisplayBd);
+  $('#nwKpiMacoRoy').textContent = fmtBs(nwDisplayBd.macoConRoyalty);
+  $('#nwKpiMacoPct').textContent = fmtPct(bd.macoPct);
+  $('#nwKpiMacoUsdHl').textContent = fmtUsd(bd.isMass ? bd.macoUsdKg : bd.macoUsdHl);
+
+  const sem = semaphoreClass(bd.macoPct);
+  $('#nwKpiMacoPctWrap').className = 'kpi kpi-' + sem.cls;
+
+  if(precio>0){
+    currentProduct = Object.assign({source:'new', nombre: $('#nwNombre').value.trim() || `Producto nuevo · ${categoria||'s/categoría'}`,
+      calibre: `${$('#nwCantidad').value}${$('#nwUnidad').value}`, marca: $('#nwNombre').value.trim(), empaque: num($('#nwEmpaque').value,1),
+      precioReferencia: precio, priceMethod: nwState.priceMethod}, bd);
+    showScenarios();
+  }
+}
+
+/* ======================================================================
+   TAB 3 — CONFIGURACIÓN
+   ====================================================================== */
+function renderTaxTable(){
+  const body = $('#taxTableBody');
+  body.innerHTML = Object.keys(CONFIG.taxes).map(cat=>{
+    const t = CONFIG.taxes[cat];
+    const excelCats = (t.excelCategorias||[]).join(', ');
+    return `<tr data-cat="${cat}">
+      <td>${cat}</td>
+      <td class="num"><input type="number" step="0.01" class="tax-ice" value="${t.ice}"></td>
+      <td class="num"><input type="number" step="0.01" class="tax-iva" value="${t.iva}"></td>
+      <td class="num"><input type="number" step="0.01" class="tax-it" value="${t.it}"></td>
+      <td class="num"><input type="number" step="0.01" class="tax-alicuota" value="${t.alicuota}"></td>
+      <td><input type="text" class="tax-excel" value="${excelCats}" placeholder="Ej. FLOW, AGUAS" style="width:140px;text-align:left;"></td>
+      <td><button class="icon-btn" title="Eliminar categoría">✕</button></td>
+    </tr>`;
+  }).join('');
+
+  body.querySelectorAll('tr').forEach(tr=>{
+    const cat = tr.dataset.cat;
+    tr.querySelector('.tax-ice').addEventListener('input', e=>{ CONFIG.taxes[cat].ice = num(e.target.value); saveConfig(); recalcAll(); });
+    tr.querySelector('.tax-iva').addEventListener('input', e=>{ CONFIG.taxes[cat].iva = num(e.target.value); saveConfig(); recalcAll(); });
+    tr.querySelector('.tax-it').addEventListener('input', e=>{ CONFIG.taxes[cat].it = num(e.target.value); saveConfig(); recalcAll(); });
+    tr.querySelector('.tax-alicuota').addEventListener('input', e=>{ CONFIG.taxes[cat].alicuota = num(e.target.value); saveConfig(); recalcAll(); });
+    tr.querySelector('.tax-excel').addEventListener('input', e=>{
+      CONFIG.taxes[cat].excelCategorias = e.target.value.split(',').map(s=>s.trim()).filter(Boolean);
+      saveConfig(); recalcAll();
+    });
+    tr.querySelector('.icon-btn').addEventListener('click', ()=>{
+      delete CONFIG.taxes[cat]; saveConfig(); renderTaxTable(); populateNewCategoriaSelect(); recalcAll();
+    });
+  });
+}
+$('#addCategoriaBtn').addEventListener('click', ()=>{
+  const name = prompt('Nombre de la nueva categoría (ej. AGUA):');
+  if(!name) return;
+  const key = name.trim().toUpperCase();
+  if(CONFIG.taxes[key]) { alert('Esa categoría ya existe.'); return; }
+  CONFIG.taxes[key] = {ice:0, iva:13, it:3, alicuota:0, excelCategorias:[]};
+  saveConfig(); renderTaxTable(); populateNewCategoriaSelect();
+});
+
+function renderListaDeptoTable(){
+  const body = $('#listaDeptoTableBody');
+  const deptoOptions = Object.keys(CONFIG.vlcPorDepto);
+  const keys = Object.keys(CONFIG.listaToDepto).sort();
+  body.innerHTML = keys.map(lista=>`
+    <tr data-lista="${lista}">
+      <td style="font-size:11.5px;">${lista}</td>
+      <td><select class="lista-depto-val">${deptoOptions.map(d=>`<option value="${d}" ${CONFIG.listaToDepto[lista]===d?'selected':''}>${d}</option>`).join('')}</select></td>
+      <td><button class="icon-btn" title="Eliminar">✕</button></td>
+    </tr>`).join('');
+  body.querySelectorAll('tr').forEach(tr=>{
+    const lista = tr.dataset.lista;
+    tr.querySelector('.lista-depto-val').addEventListener('change', e=>{ CONFIG.listaToDepto[lista] = e.target.value; saveConfig(); recalcExisting(); });
+    tr.querySelector('.icon-btn').addEventListener('click', ()=>{
+      delete CONFIG.listaToDepto[lista]; saveConfig(); renderListaDeptoTable();
+    });
+  });
+}
+$('#addListaDeptoBtn').addEventListener('click', ()=>{
+  const name = prompt('Nombre de la lista de precio (tal como aparece en tu Excel):');
+  if(!name) return;
+  if(CONFIG.listaToDepto[name]!==undefined){ alert('Ya existe.'); return; }
+  const deptos = Object.keys(CONFIG.vlcPorDepto);
+  CONFIG.listaToDepto[name] = deptos[0] || '';
+  saveConfig(); renderListaDeptoTable();
+});
+
+function renderVlcTable(){
+  const body = $('#vlcTableBody');
+  const keys = Object.keys(CONFIG.vlcPorDepto).sort();
+  body.innerHTML = keys.map(depto=>`
+    <tr data-depto="${depto}">
+      <td>${depto}</td>
+      <td class="num"><input type="number" step="0.01" class="vlc-val" value="${CONFIG.vlcPorDepto[depto]}"></td>
+      <td><button class="icon-btn" title="Eliminar">✕</button></td>
+    </tr>`).join('');
+  body.querySelectorAll('tr').forEach(tr=>{
+    const depto = tr.dataset.depto;
+    tr.querySelector('.vlc-val').addEventListener('input', e=>{ CONFIG.vlcPorDepto[depto] = num(e.target.value); saveConfig(); recalcExisting(); });
+    tr.querySelector('.icon-btn').addEventListener('click', ()=>{
+      delete CONFIG.vlcPorDepto[depto]; saveConfig(); renderVlcTable(); renderListaDeptoTable();
+    });
+  });
+}
+$('#addDeptoBtn').addEventListener('click', ()=>{
+  const name = prompt('Nombre del departamento:');
+  if(!name) return;
+  const key = name.trim().toUpperCase();
+  if(CONFIG.vlcPorDepto[key]!==undefined){ alert('Ya existe.'); return; }
+  CONFIG.vlcPorDepto[key] = 0;
+  saveConfig(); renderVlcTable(); renderListaDeptoTable();
+});
+
+function renderElasTable(){
+  const body = $('#elasTableBody');
+  const keys = Object.keys(CONFIG.elasticidades).sort();
+  if(!keys.length){
+    body.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--ink-faint);padding:12px;">Sin combinaciones cargadas.</td></tr>`;
+    return;
+  }
+  body.innerHTML = keys.map(key=>{
+    const [cat, calibre] = key.split('|');
+    return `<tr data-key="${key}">
+      <td>${cat}</td>
+      <td>${calibre}</td>
+      <td class="num"><input type="number" step="0.01" class="elas-val" value="${CONFIG.elasticidades[key]}"></td>
+      <td><button class="icon-btn" title="Eliminar">✕</button></td>
+    </tr>`;
+  }).join('');
+  body.querySelectorAll('tr').forEach(tr=>{
+    const key = tr.dataset.key;
+    tr.querySelector('.elas-val').addEventListener('input', e=>{
+      CONFIG.elasticidades[key] = num(e.target.value);
+      saveConfig(); renderModeVentas(); renderElasBox();
+    });
+    tr.querySelector('.icon-btn').addEventListener('click', ()=>{
+      delete CONFIG.elasticidades[key]; saveConfig(); renderElasTable();
+    });
+  });
+}
+$('#addElasBtn').addEventListener('click', ()=>{
+  const cat = prompt('Categoría (tal como aparece en tu Excel, ej. FLOW):');
+  if(!cat) return;
+  const calibre = prompt('Calibre (ej. 500 Ml):');
+  if(!calibre) return;
+  const key = `${cat.trim()}|${calibre.trim()}`;
+  if(CONFIG.elasticidades[key]!==undefined){ alert('Esa combinación ya existe.'); return; }
+  CONFIG.elasticidades[key] = -1.0;
+  saveConfig(); renderElasTable();
+});
+
+$('#cfgTc').addEventListener('input', ()=>{ CONFIG.tc = num($('#cfgTc').value, DEFAULT_CONFIG.tc); saveConfig(); recalcAll(); });
+$('#cfgUmbralVerde').addEventListener('input', ()=>{ CONFIG.umbralVerde = num($('#cfgUmbralVerde').value); saveConfig(); recalcAll(); });
+$('#cfgUmbralAmarillo').addEventListener('input', ()=>{ CONFIG.umbralAmarillo = num($('#cfgUmbralAmarillo').value); saveConfig(); recalcAll(); });
+$('#resetConfigBtn').addEventListener('click', ()=>{
+  if(!confirm('¿Restaurar todos los valores de configuración a los iniciales?')) return;
+  CONFIG = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+  saveConfig(); initConfigUI(); populateNewCategoriaSelect(); recalcAll();
+});
+
+function initConfigUI(){
+  $('#cfgTc').value = CONFIG.tc;
+  $('#cfgUmbralVerde').value = CONFIG.umbralVerde;
+  $('#cfgUmbralAmarillo').value = CONFIG.umbralAmarillo;
+  renderTaxTable();
+  renderListaDeptoTable();
+  renderVlcTable();
+  renderElasTable();
+}
+initConfigUI();
+
+function recalcAll(){
+  recalcExisting();
+  recalcNew();
+}
+
+/* ======================================================================
+   ESCENARIOS Y SIMULACIÓN
+   ====================================================================== */
+function showScenarios(){
+  $('#scnEmptyNote').style.display = 'none';
+  $('#scnContent').style.display = 'block';
+  renderElasBox();
+  renderModeVentas();
+  buildPrintSummary();
+}
+wireSwitch('#simShowSwitch', '#simBody', ()=>{});
+
+/* --- Unidad de volumen: Paquetes o Hectolitros --- */
+let simVolUnit = 'paq';
+function simGetPaquetes(){
+  if(!currentProduct) return 0;
+  const val = num($('#simPaquetes').value, 0);
+  if(simVolUnit==='hl'){
+    return currentProduct.litros>0 ? (val*100)/currentProduct.litros : 0;
+  }
+  return val;
+}
+function simUpdateEquivHint(){
+  if(!currentProduct){ $('#simPaquetesEquiv').textContent=''; return; }
+  const val = num($('#simPaquetes').value, 0);
+  if(simVolUnit==='hl'){
+    $('#simPaquetesEquiv').textContent = `≈ ${fmt(simGetPaquetes(),0)} paquetes`;
+  } else {
+    const hl = currentProduct.litros>0 ? (val*currentProduct.litros)/100 : 0;
+    $('#simPaquetesEquiv').textContent = `≈ ${fmt(hl,2)} HL`;
+  }
+}
+$$('#simVolUnitPills .pill').forEach(p=>{
+  p.addEventListener('click', ()=>{
+    const newUnit = p.dataset.unit;
+    if(newUnit===simVolUnit) return;
+    if(currentProduct && currentProduct.litros>0){
+      const currentVal = num($('#simPaquetes').value, 0);
+      const newVal = newUnit==='hl' ? (currentVal*currentProduct.litros)/100 : (currentVal*100)/currentProduct.litros;
+      $('#simPaquetes').value = Math.round(newVal*100)/100;
+    }
+    simVolUnit = newUnit;
+    $$('#simVolUnitPills .pill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');
+    $('#simPaquetesLabel').textContent = newUnit==='hl' ? 'Hectolitros a vender' : 'Paquetes a vender';
+    renderModeVentas();
+  });
+});
+
+/* --- Elasticidad de la demanda (Categoría + Calibre) --- */
+function elasKey(prod){ return `${prod.categoriaExcel||prod.categoria||''}|${prod.calibre||''}`; }
+function getElasticidad(prod){
+  const key = elasKey(prod);
+  if(CONFIG.elasticidades[key]===undefined) CONFIG.elasticidades[key] = -1.0;
+  return CONFIG.elasticidades[key];
+}
+let simElasOn = false;
+function simElasGetter(){ return simElasOn; }
+function simElasAvailable(){
+  return !!currentProduct && currentProduct.priceMethod && currentProduct.priceMethod!=='actual';
+}
+$('#simElasSwitch').addEventListener('click', ()=>{
+  if(!simElasAvailable()) return;
+  simElasOn = !simElasOn;
+  $('#simElasSwitch').querySelector('.switch-track').classList.toggle('on', simElasOn);
+  renderElasBox();
+  renderModeVentas();
+});
+
+function renderElasBox(){
+  const summaryEl = $('#simElasSummaryText');
+  const editBtn = $('#elasEditBtn');
+  const swTrack = $('#simElasSwitch').querySelector('.switch-track');
+
+  if(!simElasAvailable()){
+    simElasOn = false;
+    swTrack.classList.remove('on');
+    $('#simElasSwitch').classList.add('disabled');
+    summaryEl.textContent = 'La elasticidad solo se aplica cuando simulás un precio distinto al Política (Propuesto o Desde PTC).';
+    editBtn.style.display = 'none';
+    return;
+  }
+  $('#simElasSwitch').classList.remove('disabled');
+
+  if(!currentProduct || !simElasGetter()){
+    summaryEl.textContent = 'Aplicar elasticidad';
+    editBtn.style.display = 'none';
+    return;
+  }
+  const bd = currentProduct;
+  const val = getElasticidad(bd);
+  const precioRef = num(bd.precioReferencia, bd.precio);
+  const pctP = precioRef ? (bd.precio-precioRef)/precioRef*100 : 0;
+  const pctQ = val * pctP;
+  const paquetesBase = simGetPaquetes();
+  const paquetesAjustado = paquetesBase * (1+pctQ/100);
+  summaryEl.innerHTML = `<b>${bd.categoriaExcel||bd.categoria||'—'}</b> • ${bd.calibre||'—'} • Elasticidad ${fmt(val,2)}`
+    + (precioRef && precioRef!==bd.precio
+      ? ` • Precio: ${fmt(precioRef,0)} → ${fmt(bd.precio,0)} (${pctP>=0?'+':''}${fmt(pctP,1)}%) • Volumen esperado: ${fmt(paquetesBase,0)} → ${fmt(paquetesAjustado,0)} paq (${pctQ>=0?'+':''}${fmt(pctQ,1)}%)`
+      : '');
+  editBtn.style.display = 'inline-block';
+  editBtn.onclick = ()=>{
+    const nuevo = prompt(`Elasticidad para ${bd.categoriaExcel||bd.categoria||'s/categoría'} · ${bd.calibre||'s/calibre'}:\n(Ej. -1.2 = por cada 1% que sube el precio, el volumen cae 1.2%)`, val);
+    if(nuevo===null) return;
+    const n = parseFloat(String(nuevo).replace(',','.'));
+    if(isNaN(n)) return;
+    CONFIG.elasticidades[elasKey(bd)] = n;
+    saveConfig();
+    renderElasBox();
+    renderModeVentas();
+  };
+}
+
+/* --- Comparación vs. precio actual + recomendación --- */
+function renderDescuentoROI(paquetesBase, paquetesAjustado){
+  const bd = currentProduct;
+  const wrap = $('#descuentoRoiWrap');
+  const precioRef = num(bd.precioReferencia, bd.precio);
+  const esDescuento = bd.priceMethod && bd.priceMethod!=='actual' && precioRef && bd.precio < precioRef;
+  if(!esDescuento){
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = 'block';
+
+  const costoDescuento = (precioRef - bd.precio) * paquetesAjustado;
+  const paquetesAdicionales = bd.macoConRoyalty>0 ? costoDescuento/bd.macoConRoyalty : null;
+  const hlAdicionales = (paquetesAdicionales!==null && bd.litros>0) ? (paquetesAdicionales*bd.litros)/100 : null;
+
+  const bdPolitica = computeBreakdown({
+    categoria: bd.categoria, precioPaquete: precioRef, litrosPorPaquete: bd.litros,
+    vic: bd.vic, vlc: bd.vlc, maquila: bd.maquila,
+    royaltyApplies: bd.royaltyApplies, royaltyPct: bd.royaltyPct, tc: bd.tc, isMass: bd.isMass
+  });
+  const utilidadBase = bdPolitica.macoConRoyalty * paquetesBase;
+  const utilidadConDescuento = bd.macoConRoyalty * paquetesAjustado;
+  const beneficioIncremental = utilidadConDescuento - utilidadBase;
+  const roiDescuento = costoDescuento>0 ? (beneficioIncremental/costoDescuento)*100 : null;
+  const volumenIncremental = paquetesAjustado - paquetesBase;
+
+  $('#descuentoRoiKpis').innerHTML = `
+    <div class="kpi"><div class="k-label">Costo del descuento</div><div class="k-val">${fmtBs(costoDescuento,0)}</div></div>
+    <div class="kpi"><div class="k-label">Paq. adicionales p/recuperar</div><div class="k-val">${paquetesAdicionales!==null?fmt(paquetesAdicionales,0):'—'}</div></div>
+    <div class="kpi"><div class="k-label">HL adicionales</div><div class="k-val">${hlAdicionales!==null?fmt(hlAdicionales,2):'—'}</div></div>
+    <div class="kpi"><div class="k-label">ROI del descuento</div><div class="k-val">${roiDescuento!==null?fmt(roiDescuento,1)+'%':'—'}</div></div>
+  `;
+
+  const seRecupera = paquetesAdicionales!==null && volumenIncremental >= paquetesAdicionales;
+  let msg;
+  if(paquetesAdicionales===null){
+    msg = `<div class="obj-answer"><div class="headline" style="font-size:13px;">No se puede calcular la recuperación con el MACO actual.</div></div>`;
+  } else if(volumenIncremental>0){
+    msg = seRecupera
+      ? `<div class="obj-answer" style="background:var(--good-soft);"><div class="headline" style="font-size:13px;color:var(--good);">✅ El descuento cuesta ${fmtBs(costoDescuento,0)}. Necesitás vender ${fmt(paquetesAdicionales,0)} paquetes adicionales para cubrirlo, y la elasticidad proyecta ${fmt(volumenIncremental,0)} adicionales — se recupera.</div></div>`
+      : `<div class="obj-answer" style="background:var(--bad-soft);"><div class="headline" style="font-size:13px;color:var(--bad);">❌ El descuento cuesta ${fmtBs(costoDescuento,0)}. Necesitás vender ${fmt(paquetesAdicionales,0)} paquetes adicionales para cubrirlo, pero la elasticidad solo proyecta ${fmt(volumenIncremental,0)} — no se recupera con este volumen.</div></div>`;
+  } else {
+    msg = `<div class="obj-answer" style="background:var(--bad-soft);"><div class="headline" style="font-size:13px;color:var(--bad);">❌ No debés vender esto sin más volumen: el descuento cuesta ${fmtBs(costoDescuento,0)} y necesitás ${fmt(paquetesAdicionales,0)} paquetes adicionales solo para cubrirlo (activá "Aplicar elasticidad" para proyectar si el volumen extra alcanza).</div></div>`;
+  }
+  $('#descuentoRoiConclusion').innerHTML = msg;
+}
+
+/* --- Resumen del escenario --- */
+function renderResumenEscenario(paquetesBase, paquetesAjustado, elasOn, elasVal){
+  const bd = currentProduct;
+  const precioRef = num(bd.precioReferencia, bd.precio);
+  const hayPrecioRef = precioRef && precioRef!==bd.precio;
+  $('#simResumenEscenario').innerHTML = `
+    <div class="kpi"><div class="k-label">Precio</div><div class="k-val" style="font-size:15px;">${hayPrecioRef ? `${fmt(precioRef,0)} → ${fmt(bd.precio,0)}` : fmtBs(bd.precio)}</div></div>
+    <div class="kpi"><div class="k-label">Elasticidad aplicada</div><div class="k-val" style="font-size:15px;">${elasOn ? fmt(elasVal,2) : 'No aplicada'}</div></div>
+    <div class="kpi"><div class="k-label">Volumen</div><div class="k-val" style="font-size:15px;">${elasOn && hayPrecioRef ? `${fmt(paquetesBase,0)} → ${fmt(paquetesAjustado,0)}` : fmt(paquetesBase,0)}</div></div>
+  `;
+}
+
+/* --- Impacto vs. Precio Política + conclusión --- */
+function renderImpactoPolitica(paquetesBase, paquetesAjustado){
+  const bd = currentProduct;
+  const precioRef = num(bd.precioReferencia, bd.precio);
+  const wrap = $('#simComparacionWrap');
+  if(!precioRef || precioRef===bd.precio){
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = 'block';
+
+  const bdAntes = computeBreakdown({
+    categoria: bd.categoria, precioPaquete: precioRef, litrosPorPaquete: bd.litros,
+    vic: bd.vic, vlc: bd.vlc, maquila: bd.maquila,
+    royaltyApplies: bd.royaltyApplies, royaltyPct: bd.royaltyPct, tc: bd.tc, isMass: bd.isMass
+  });
+
+  const ventaAntes = bdAntes.precio * paquetesBase;
+  const ventaDespues = bd.precio * paquetesAjustado;
+  const ventaDelta = ventaDespues - ventaAntes;
+
+  const utilidadAntes = bdAntes.macoConRoyalty * paquetesBase;
+  const utilidadDespues = bd.macoConRoyalty * paquetesAjustado;
+  const utilidadDelta = utilidadDespues - utilidadAntes;
+
+  const macoTotalAntes = bdAntes.macoSinRoyalty * paquetesBase;
+  const macoTotalDespues = bd.macoSinRoyalty * paquetesAjustado;
+  const macoTotalDelta = macoTotalDespues - macoTotalAntes;
+
+  const macoPaqDelta = bd.macoSinRoyalty - bdAntes.macoSinRoyalty;
+  const usdA = bd.isMass ? bd.macoUsdKg : bd.macoUsdHl;
+  const usdB = bdAntes.isMass ? bdAntes.macoUsdKg : bdAntes.macoUsdHl;
+  const usdDelta = usdA - usdB;
+  const rentDelta = bd.macoPct - bdAntes.macoPct;
+
+  const cls = (v)=> v>=0 ? 'kpi-up' : 'kpi-down';
+  $('#simComparacion').innerHTML = `
+    <div class="kpi ${cls(ventaDelta)}"><div class="k-label">Venta</div><div class="k-val">${ventaDelta>=0?'+':''}${fmtBs(ventaDelta,0)}</div></div>
+    <div class="kpi ${cls(utilidadDelta)}"><div class="k-label">Utilidad</div><div class="k-val">${utilidadDelta>=0?'+':''}${fmtBs(utilidadDelta,0)}</div></div>
+    <div class="kpi ${cls(macoTotalDelta)}"><div class="k-label">MACO Total</div><div class="k-val">${macoTotalDelta>=0?'+':''}${fmtBs(macoTotalDelta,0)}</div></div>
+  `;
+  $('#simComparacion2').innerHTML = `
+    <div class="kpi ${cls(macoPaqDelta)}"><div class="k-label">MACO Bs/Paq</div><div class="k-val">${macoPaqDelta>=0?'+':''}${fmtBs(macoPaqDelta)}</div></div>
+    <div class="kpi ${cls(usdDelta)}"><div class="k-label">MACO USD/${bd.isMass?'Kg':'HL'}</div><div class="k-val">${usdDelta>=0?'+':''}${fmtUsd(usdDelta)}</div></div>
+    <div class="kpi ${cls(rentDelta)}"><div class="k-label">MACO %</div><div class="k-val">${rentDelta>=0?'+':''}${fmt(rentDelta,1)} pp</div></div>
+  `;
+
+  const pctVolumen = paquetesBase ? (paquetesAjustado-paquetesBase)/paquetesBase*100 : 0;
+  const mejora = utilidadDelta >= 0;
+  let frase;
+  if(Math.abs(pctVolumen)>0.05){
+    frase = `Aunque el volumen esperado ${pctVolumen>=0?'aumenta':'cae'} un ${fmt(Math.abs(pctVolumen),1)}%, ` +
+      (mejora
+        ? `el nuevo precio mejora el MACO y la utilidad respecto al Precio Política, por lo que se recomienda aplicarlo.`
+        : `la reducción del precio disminuye el MACO y la utilidad respecto al Precio Política, por lo que no se recomienda aplicar este precio.`);
+  } else {
+    frase = mejora
+      ? `El nuevo precio mejora el MACO y la utilidad respecto al Precio Política (${fmtBs(utilidadDelta,0)}), por lo que se recomienda aplicarlo.`
+      : `El nuevo precio reduce el MACO y la utilidad respecto al Precio Política (${fmtBs(utilidadDelta,0)}), por lo que no se recomienda aplicarlo.`;
+  }
+  $('#simConclusion').innerHTML = `<div class="obj-answer" style="background:var(--${mejora?'good':'bad'}-soft);"><div class="headline" style="font-size:13px;color:var(--${mejora?'good':'bad'});">${mejora?'✅':'❌'} ${frase}</div></div>`;
+}
+
+/* --- Modo pills --- */
+$$('#simModePills .pill').forEach(p=>{
+  p.addEventListener('click', ()=>{
+    $$('#simModePills .pill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');
+    const mode = p.dataset.mode;
+    $$('.sim-mode').forEach(m=> m.style.display = (m.id==='simMode_'+mode) ? 'block' : 'none');
+  });
+});
+
+/* --- Modo 1: Simulación Comercial --- */
+function renderModeVentas(){
+  if(!currentProduct) return;
+  const paquetesBase = simGetPaquetes();
+  let paquetes = paquetesBase;
+  let pctP = 0, pctQ = 0;
+  const bd = currentProduct;
+  const elasOn = simElasGetter();
+  const elasVal = getElasticidad(bd);
+
+  if(elasOn){
+    const precioRef = num(bd.precioReferencia, bd.precio);
+    pctP = precioRef ? (bd.precio-precioRef)/precioRef*100 : 0;
+    pctQ = elasVal * pctP;
+    paquetes = paquetesBase * (1+pctQ/100);
+  }
+  renderResumenEscenario(paquetesBase, paquetes, elasOn, elasVal);
+  renderImpactoPolitica(paquetesBase, paquetes);
+  renderDescuentoROI(paquetesBase, paquetes);
+
+  const ventaTotal = bd.precio * paquetes;
+  const iceTotal = bd.ice * paquetes;
+  const ivaTotal = bd.iva * paquetes;
+  const itTotal = bd.it * paquetes;
+  const alicuotaTotal = bd.alicuota * paquetes;
+  const netoTotal = bd.netoImponible * paquetes;
+  const vicTotal = bd.vic * paquetes;
+  const vlcTotal = bd.vlc * paquetes;
+  const maquilaTotal = bd.maquila * paquetes;
+  const royaltyTotal = bd.royaltyMonto * paquetes;
+  const macoTotal = bd.macoConRoyalty * paquetes;
+
+  $('#simVentasResults').innerHTML = `
+    <div class="kpi"><div class="k-label">Venta</div><div class="k-val">${fmtBs(ventaTotal,0)}</div></div>
+    <div class="kpi"><div class="k-label">MACO</div><div class="k-val">${fmtBs(macoTotal,0)}</div></div>
+    <div class="kpi"><div class="k-label">MACO Bs/Paq</div><div class="k-val">${fmtBs(bd.macoSinRoyalty)}</div></div>
+    <div class="kpi"><div class="k-label">MACO USD/${bd.isMass?'Kg':'HL'}</div><div class="k-val">${fmtUsd(bd.isMass?bd.macoUsdKg:bd.macoUsdHl)}</div></div>
+    <div class="kpi"><div class="k-label">MACO %</div><div class="k-val">${fmtPct(bd.macoPct)}</div></div>
+  `;
+
+  const ledgerRows = [
+    {op:'', lbl:'Venta', val:ventaTotal, cls:'subtotal'},
+    {op:'−', lbl:'ICE', val:iceTotal, cls:'neg'},
+    {op:'−', lbl:'IVA', val:ivaTotal, cls:'neg'},
+    {op:'−', lbl:'IT', val:itTotal, cls:'neg'},
+    {op:'−', lbl:'Alícuota', val:alicuotaTotal, cls:'neg'},
+    {op:'=', lbl:'Neto imponible', val:netoTotal, cls:'subtotal'},
+    {op:'−', lbl:'VIC', val:vicTotal, cls:'neg'},
+    {op:'−', lbl:'VLC', val:vlcTotal, cls:'neg'},
+  ];
+  if(bd.maquila) ledgerRows.push({op:'−', lbl:'Maquila', val:maquilaTotal, cls:'neg'});
+  if(bd.royaltyApplies) ledgerRows.push({op:'−', lbl:'Royalty', val:royaltyTotal, cls:'neg'});
+  ledgerRows.push({op:'=', lbl:'MACO', val:macoTotal, cls:'final'});
+  $('#simVentasLedger').innerHTML = ledgerRows.map(r=>`
+    <div class="ledger-row ${r.cls||''}">
+      <span class="op">${r.op}</span>
+      <span class="lbl">${r.lbl}</span>
+      <span class="val">${fmtBs(r.val,0)}</span>
+    </div>`).join('');
+
+  simUpdateEquivHint();
+  renderElasBox();
+  buildPrintSummary();
+}
+$('#simPaquetes').addEventListener('input', renderModeVentas);
+
+/* --- Modo 2: Objetivo Comercial --- */
+function updateObjComercialFields(){
+  const type = $('#objComercialType').value;
+  $('#objUtilVolWrap').style.display = type==='utilvol' ? 'block' : 'none';
+  $('#objPrecioMacoWrap').style.display = type==='preciomaco' ? 'block' : 'none';
+  $('#objComercialValueRow').style.display = type==='roi' ? 'flex' : 'none';
+  $('#objRepartoWrap').style.display = type==='reparto' ? 'block' : 'none';
+  $('#objComercialCalcBtn').style.display = type ? 'inline-block' : 'none';
+  if(type==='roi'){
+    $('#objComercialValueLabel').textContent = 'Inversión inicial (Bs)';
+    $('#objComercialValue').value = 10000;
+    $('#objComercialUnitWrap').style.display = 'none';
+    $('#objRoiPaquetesWrap').style.display = 'block';
+  }
+}
+$('#objComercialType').addEventListener('change', updateObjComercialFields);
+updateObjComercialFields();
+
+wirePillGroup('#objUtilVolPills', (m)=>{
+  $('#objUtilVolValueLabel').textContent = m==='volumen' ? 'Volumen objetivo' : 'Utilidad objetivo (Bs)';
+  $('#objUtilVolUnitWrap').style.display = m==='volumen' ? 'block' : 'none';
+  $('#objUtilVolValue').value = m==='volumen' ? 1000 : 50000;
+});
+wirePillGroup('#objPrecioMacoPills', (m)=>{
+  $('#objPrecioMacoValueLabel').textContent = m==='pct' ? 'MACO objetivo (%)' : 'MACO objetivo (Bs/Paq)';
+  $('#objPrecioMacoValue').value = m==='pct' ? 25 : 10;
+});
+
+$('#objRepartoPctEmpresa').addEventListener('input', ()=>{
+  const pct = Math.max(0, Math.min(100, num($('#objRepartoPctEmpresa').value)));
+  $('#objRepartoPctOtro').value = fmt(100 - pct, 1);
+});
+$$('#objRepartoUnitPills .pill').forEach(p=>{
+  p.addEventListener('click', ()=>{
+    $$('#objRepartoUnitPills .pill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');
+    const unit = p.dataset.unit;
+    $('#objRepartoVolLabel').textContent = unit==='hl' ? 'Hectolitros a vender' : 'Paquetes a vender';
+  });
+});
+const objRepartoCostosAdicGetter = wireSwitch('#objRepartoCostosAdicSwitch', null, ()=>{});
+
+function getCostosBD(){
+  const costoUnit = num($('#ctCostoUnit').value);
+  const {flete} = ctFletePorUnidad();
+  const esPaquete = $('#ctUnitMode .pill.active').dataset.m==='paquete';
+  const unidPorPaq = esPaquete ? Math.max(1, num($('#ctUnidPorPaq').value,1)) : 1;
+  const fleteEfectivo = flete * unidPorPaq;
+  const costoAdic = num($('#ctCostoAdic').value);
+  const precio = ctGetPrecioVenta(costoUnit);
+  const ivaPct = num($('#ctIva').value);
+  const itPct = num($('#ctIt').value);
+
+  let comisionesFijas = 0, comisionesPctSum = 0;
+  CT_COMISIONES.forEach(c=>{
+    if(c.base==='costo'){ comisionesFijas += costoUnit*(c.pct/100); }
+    else { comisionesPctSum += c.pct; }
+  });
+
+  const comisionesPctBs = precio * (comisionesPctSum/100);
+  const costosTotal = costoAdic + comisionesFijas + comisionesPctBs;
+  const fixedCosts = costoUnit + fleteEfectivo + costoAdic + comisionesFijas;
+  const margenBs = precio - fixedCosts - precio*((ivaPct+itPct+comisionesPctSum)/100);
+  const margenPct = precio>0 ? margenBs/precio*100 : 0;
+
+  return {
+    source:'costos', nombre: $('#ctNombre').value.trim() || 'Producto (Costos)',
+    marca: $('#ctNombre').value.trim() || 'Producto (Costos)', calibre: esPaquete?'Paquete':'Unidad', empaque: esPaquete?unidPorPaq:1,
+    precio, litros: 0,
+    taxCfg: {iva: ivaPct, it: itPct+comisionesPctSum, alicuota: 0}, ice: 0,
+    vic: costoUnit, vlc: fleteEfectivo, maquila: costoAdic + comisionesFijas,
+    costosAdicTotal: costosTotal,
+    royaltyApplies: false, royaltyPct: 0,
+    macoConRoyalty: margenBs, macoSinRoyalty: margenBs, macoPct: margenPct,
+    macoBsHl: 0, isMass: false
+  };
+}
+function getActiveBD(){
+  const activeTab = $('.tab-btn.active') ? $('.tab-btn.active').dataset.tab : '';
+  if(activeTab==='costos') return getCostosBD();
+  if(activeTab==='existing'){
+    if(!currentProduct || currentProduct.source!=='existing') recalcExisting();
+    return (currentProduct && currentProduct.source==='existing') ? currentProduct : null;
+  }
+  if(activeTab==='new'){
+    if(!currentProduct || currentProduct.source!=='new') recalcNew();
+    return (currentProduct && currentProduct.source==='new') ? currentProduct : null;
+  }
+  return null;
+}
+
+$('#objComercialCalcBtn').addEventListener('click', ()=>{
+  const bd = getActiveBD();
+  if(!bd){ $('#objComercialAnswer').innerHTML = '<div class="hint">Primero calculá un producto.</div>'; return; }
+  const type = $('#objComercialType').value;
+  const r = bd.royaltyApplies ? bd.royaltyPct/100 : 0;
+  const a = (bd.taxCfg.iva + bd.taxCfg.it)/100;
+  const b = bd.taxCfg.alicuota/100;
+  let cards = '';
+  let conclusion = '';
+
+  if(type==='utilvol'){
+    const modo = $('#objUtilVolPills .pill.active').dataset.m;
+    const target = num($('#objUtilVolValue').value);
+    if(modo==='utilidad'){
+      const paquetes = bd.macoConRoyalty !== 0 ? Math.ceil(target / bd.macoConRoyalty) : 0;
+      const hl = bd.litros>0 ? (paquetes*bd.litros)/100 : 0;
+      cards = `
+        <div class="kpi"><div class="k-label">Paquetes necesarios</div><div class="k-val">${fmt(paquetes,0)}</div></div>
+        <div class="kpi"><div class="k-label">HL necesarios</div><div class="k-val">${fmt(hl,2)}</div></div>
+        <div class="kpi"><div class="k-label">MACO actual/Paq</div><div class="k-val">${fmtBs(bd.macoConRoyalty)}</div></div>
+        <div class="kpi"><div class="k-label">Utilidad objetivo</div><div class="k-val">${fmtBs(target,0)}</div></div>
+      `;
+      conclusion = `Con tu precio y costos actuales, necesitás vender <b>${fmt(paquetes,0)} paquetes</b> (≈ ${fmt(hl,2)} HL) para llegar a Bs ${fmt(target,0)} de utilidad.`;
+    } else {
+      const unit = $('#objUtilVolUnit').value;
+      const paquetes = unit==='hl' ? (bd.litros>0 ? (target*100)/bd.litros : 0) : target;
+      const hl = bd.litros>0 ? (paquetes*bd.litros)/100 : 0;
+      const utilidadTotal = bd.macoConRoyalty * paquetes;
+      cards = `
+        <div class="kpi"><div class="k-label">Paquetes</div><div class="k-val">${fmt(paquetes,0)}</div></div>
+        <div class="kpi"><div class="k-label">HL equivalentes</div><div class="k-val">${fmt(hl,2)}</div></div>
+        <div class="kpi"><div class="k-label">Utilidad esperada</div><div class="k-val">${fmtBs(utilidadTotal,0)}</div></div>
+        <div class="kpi"><div class="k-label">Rentabilidad</div><div class="k-val">${fmtPct(bd.macoPct)}</div></div>
+      `;
+      conclusion = `Vendiendo ${fmt(paquetes,0)} paquetes (≈ ${fmt(hl,2)} HL) esperás una utilidad de <b>${fmtBs(utilidadTotal,0)}</b>.`;
+    }
+  } else if(type==='preciomaco'){
+    const modo = $('#objPrecioMacoPills .pill.active').dataset.m;
+    const target = num($('#objPrecioMacoValue').value);
+    let precio;
+    if(modo==='pct'){
+      const m = target/100;
+      const denom = (1-a-b) - (r<1 ? m/(1-r) : 0);
+      precio = denom!==0 ? (bd.ice*(1-a) + bd.vic + bd.vlc + bd.maquila) / denom : 0;
+    } else {
+      const macoSinRoyaltyObjetivo = r<1 ? target/(1-r) : target;
+      precio = (1-a-b)!==0 ? (macoSinRoyaltyObjetivo + bd.vic + bd.vlc + bd.maquila + bd.ice*(1-a)) / (1-a-b) : 0;
+    }
+    const precioDelta = bd.precio ? (precio-bd.precio)/bd.precio*100 : 0;
+    const targetLabel = modo==='pct' ? fmt(target,1)+'%' : fmtBs(target)+'/Paq';
+    cards = `
+      <div class="kpi"><div class="k-label">Precio requerido</div><div class="k-val">${precio>0?fmtBs(precio):'No alcanzable'}</div></div>
+      <div class="kpi"><div class="k-label">Precio actual</div><div class="k-val">${fmtBs(bd.precio)}</div></div>
+      <div class="kpi"><div class="k-label">Diferencia</div><div class="k-val">${precio>0?(precioDelta>=0?'+':'')+fmt(precioDelta,1)+'%':'—'}</div></div>
+      <div class="kpi"><div class="k-label">MACO objetivo</div><div class="k-val">${targetLabel}</div></div>
+    `;
+    conclusion = precio>0
+      ? `Para lograr ${modo==='pct'?'una rentabilidad de '+fmt(target,1)+'%':'Bs '+fmt(target)+' de MACO por paquete'}, el precio de venta debe ser de al menos <b>${fmtBs(precio)}</b>.`
+      : `Con los costos actuales, ese objetivo de MACO no es alcanzable subiendo el precio — revisá el % o el valor objetivo.`;
+  } else if(type==='roi'){
+    const inversion = num($('#objComercialValue').value);
+    const paquetesEquilibrio = bd.macoConRoyalty !== 0 ? Math.ceil(inversion / bd.macoConRoyalty) : 0;
+    const hlEquilibrio = bd.litros>0 ? (paquetesEquilibrio*bd.litros)/100 : 0;
+    const paquetesRef = num($('#objRoiPaquetes').value);
+    const utilidadRef = bd.macoConRoyalty * paquetesRef;
+    const roiPct = inversion>0 ? (utilidadRef/inversion)*100 : 0;
+    const payback = (paquetesRef>0 && paquetesEquilibrio>0) ? paquetesEquilibrio/paquetesRef : null;
+
+    let nivel, nivelTxt;
+    if(payback===null){ nivel='bad'; nivelTxt='no conveniente'; }
+    else if(payback<=1){ nivel='good'; nivelTxt='financieramente recomendable'; }
+    else if(payback<=2){ nivel='warn'; nivelTxt='requiere revisión'; }
+    else { nivel='bad'; nivelTxt='no conveniente con este volumen'; }
+
+    $('#objComercialAnswer').innerHTML = `
+      <div class="kpi-hero" style="margin-top:10px;">
+        <div class="kpi-hero-label">Punto de equilibrio</div>
+        <div class="kpi-hero-val" style="font-size:26px;">${fmt(paquetesEquilibrio,0)} paq <span style="font-size:16px;color:var(--ink-faint);">(≈ ${fmt(hlEquilibrio,2)} HL)</span></div>
+      </div>
+      <div class="hint" style="margin-top:6px;">El "Payback" y "Tiempo estimado" usan como base el campo <b>"Paquetes a vender"</b> de arriba (${fmt(paquetesRef,0)} paquetes). No es necesariamente un mes — es la cantidad que vos cargaste ahí. Si ese número representa lo que vendés en un mes, entonces el resultado sí está en meses.</div>
+      <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-top:10px;">
+        <div class="kpi" title="Retorno sobre la inversión: utilidad esperada ÷ inversión, con el volumen actual del escenario."><div class="k-label">ROI ⓘ</div><div class="k-val">${fmt(roiPct,1)}%</div></div>
+        <div class="kpi" title="Cuántas veces necesitás repetir el volumen de arriba (Paquetes a vender) para recuperar la inversión."><div class="k-label">Payback ⓘ</div><div class="k-val">${payback!==null ? fmt(payback,1)+'x' : '—'}</div></div>
+        <div class="kpi" title="Utilidad que dejaría vender el volumen de arriba (Paquetes a vender)."><div class="k-label">Utilidad esperada ⓘ</div><div class="k-val">${fmtBs(utilidadRef,0)}</div></div>
+        <div class="kpi" title="Multiplicá esto por lo que representa tu 'Paquetes a vender' (¿una semana? ¿un mes?) para saber el tiempo real."><div class="k-label">Repeticiones ⓘ</div><div class="k-val">${payback!==null ? fmt(payback,1)+'x' : '—'}</div></div>
+      </div>
+      <div class="obj-answer" style="margin-top:10px;background:var(--${nivel}-soft);">
+        <div class="headline" style="font-size:13px;color:var(--${nivel});">
+          ${nivel==='good'?'🟢':nivel==='warn'?'🟡':'🔴'} Con un volumen de ${fmt(paquetesRef,0)} paquetes, la inversión se recupera repitiendo ese volumen ${payback!==null?fmt(payback,1):'—'} veces, con un ROI de ${fmt(roiPct,1)}%. La inversión es ${nivelTxt}.
+        </div>
+      </div>
+    `;
+    return;
+  } else if(type==='reparto'){
+    const pctEmpresa = Math.max(0, Math.min(100, num($('#objRepartoPctEmpresa').value)));
+    const pctOtro = 100 - pctEmpresa;
+    const esCostos = bd.source==='costos';
+    const unit = esCostos ? 'paq' : $('#objRepartoUnitPills .pill.active').dataset.unit;
+    const volumen = num($('#objRepartoVolumen').value);
+    const tc = CONFIG.tc || 1;
+    const incluirCostosAdic = objRepartoCostosAdicGetter();
+
+    const bdReparto = esCostos
+      ? {costosAdicTotal: 0, macoConRoyalty: bd.macoConRoyalty, macoBsHl: 0}
+      : computeBreakdown({
+          categoria: bd.categoria, precioPaquete: bd.precio, litrosPorPaquete: bd.litros,
+          vic: bd.vic, vlc: bd.vlc, maquila: bd.maquila, costosAdicApplies: incluirCostosAdic,
+          royaltyApplies: bd.royaltyApplies, royaltyPct: bd.royaltyPct, tc: bd.tc, isMass: bd.isMass
+        });
+
+    const paquetes = unit==='hl' ? (bd.litros>0 ? (volumen*100)/bd.litros : 0) : volumen;
+    const hl = unit==='hl' ? volumen : (bd.litros>0 ? (volumen*bd.litros)/100 : 0);
+
+    const costoBasePorPaquete = bd.vic + bd.vlc + (incluirCostosAdic ? bdReparto.costosAdicTotal : 0);
+    const utilidadTotalBs = unit==='hl' ? bdReparto.macoBsHl * volumen : bdReparto.macoConRoyalty * volumen;
+    const inversionBs = paquetes * costoBasePorPaquete;
+    const utilidadEmpresaBs = utilidadTotalBs * (pctEmpresa/100);
+    const utilidadOtroBs = utilidadTotalBs * (pctOtro/100);
+    const conv = 1/tc;
+    const utilidadEmpresa = utilidadEmpresaBs * conv;
+    const utilidadOtro = utilidadOtroBs * conv;
+    const inversion = inversionBs * conv;
+    const roiOtro = inversion>0 ? (utilidadOtro/inversion)*100 : null;
+    const macoEmpresaUsdHl = hl>0 ? utilidadEmpresa/hl : 0;
+    const macoOtroUsdHl = hl>0 ? utilidadOtro/hl : 0;
+
+    cards = `
+      <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+        <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border);color:var(--ink-soft);">Paquetes a vender</td><td class="num" style="padding:6px 8px;border-bottom:1px solid var(--border);">${fmt(paquetes,0)}</td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border);color:var(--ink-soft);">HL a vender</td><td class="num" style="padding:6px 8px;border-bottom:1px solid var(--border);">${fmt(hl,1)}</td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border);color:var(--ink-soft);">Utilidad esperada VC (${fmt(pctEmpresa,1)}%)</td><td class="num" style="padding:6px 8px;border-bottom:1px solid var(--border);">${fmtUsd(utilidadEmpresa,0)}</td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border);color:var(--ink-soft);">Utilidad esperada Dueño de Marca (${fmt(pctOtro,1)}%)</td><td class="num" style="padding:6px 8px;border-bottom:1px solid var(--border);">${fmtUsd(utilidadOtro,0)}</td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border);color:var(--ink-soft);">MACO VC (usd/HL)</td><td class="num" style="padding:6px 8px;border-bottom:1px solid var(--border);">${fmtUsd(macoEmpresaUsdHl)}</td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border);color:var(--ink-soft);">MACO Dueño de Marca (usd/HL)</td><td class="num" style="padding:6px 8px;border-bottom:1px solid var(--border);">${fmtUsd(macoOtroUsdHl)}</td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border);font-weight:700;color:var(--ink);">Inversión (usd)</td><td class="num" style="padding:6px 8px;border-bottom:1px solid var(--border);font-weight:700;">${fmtUsd(inversion,0)}</td></tr>
+        <tr><td style="padding:6px 8px;font-weight:700;color:var(--ink);">ROI</td><td class="num" style="padding:6px 8px;font-weight:700;">${roiOtro!==null?fmt(roiOtro,1)+'%':'—'}</td></tr>
+      </table>
+    `;
+    conclusion = (inversion>0
+      ? `Con ${fmt(paquetes,0)} paquetes (${fmt(hl,1)} HL), la Utilidad esperada VC es <b>${fmtUsd(utilidadEmpresa,0)}</b> y la Utilidad esperada Dueño de Marca es <b>${fmtUsd(utilidadOtro,0)}</b>. Con una inversión de ${fmtUsd(inversion,0)}, el ROI es <b>${roiOtro!==null?fmt(roiOtro,1)+'%':'—'}</b>.`
+      : `Con ${fmt(paquetes,0)} paquetes (${fmt(hl,1)} HL), la Utilidad esperada VC es <b>${fmtUsd(utilidadEmpresa,0)}</b> y la Utilidad esperada Dueño de Marca es <b>${fmtUsd(utilidadOtro,0)}</b>. Ingresá costos para calcular la inversión y el ROI.`)
+      + (incluirCostosAdic ? ' <i>(Incluye VIC, VLC y los Costos configurados.)</i>' : ' <i>(Solo incluye VIC y VLC — activá el switch de arriba para sumar los Costos.)</i>');
+  }
+  const wrapClass = type==='reparto' ? 'card' : 'kpi-grid';
+  const wrapStyle = type==='reparto' ? 'margin-top:10px;padding:12px 4px;' : 'grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:10px;';
+  $('#objComercialAnswer').innerHTML = `
+    <div class="${wrapClass}" style="${wrapStyle}">${cards}</div>
+    <div class="obj-answer" style="margin-top:10px;"><div class="headline" style="font-size:13px;">${conclusion}</div></div>
+  `;
+});
+
+/* --- Exportar PDF --- */
+function buildPrintSummary(){ /* no-op: se imprime la vista real, ver @media print */ }
+$('#scnExportPdf').addEventListener('click', ()=>{
+  if(!currentProduct){ alert('Primero calculá un producto.'); return; }
+  window.print();
+});
+
+/* ======================================================================
+   MÓDULO: CALCULADORA VENTAS (precio C.E. / margen estimado)
+   ====================================================================== */
+let VT_ROWS = [];
+let vtIdSeq = 1;
+
+function vtActiveRows(){
+  return EXCEL_ALL_ROWS.filter(r=>r.estado.toLowerCase()==='activo');
+}
+
+function vtInferDepto(lista){
+  const s = (lista||'').toUpperCase();
+  if(s.includes('LPZ') || s.includes('LA PAZ')) return 'La Paz';
+  if(s.includes('CBB') || s.includes('COCHABAMBA')) return 'Cochabamba';
+  if(s.includes('PROVINC')) return 'Santa Cruz Provincias';
+  if(s.includes('SCZ') || s.includes('SZC') || s.includes('SANTA CRUZ')) return 'Santa Cruz Ciudad';
+  if(s.includes('ORU')) return 'Oruro';
+  return 'Nacional';
+}
+
+function vtOnDataLoaded(){
+  const n = vtActiveRows().length;
+  $('#vtFileStatus').textContent = n ? `${n} SKU activos disponibles para buscar` : 'Importar Excel para poder buscar ítems';
+  vtPopulateLista();
+}
+
+$('#vtFileInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    try{
+      const data = new Uint8Array(evt.target.result);
+      const wb = XLSX.read(data, {type:'array'});
+      const sheetName = pickBestSheet(wb);
+      const ws = wb.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(ws, {defval:''});
+      importExcelRows(json);
+      vtOnDataLoaded();
+    }catch(err){
+      $('#vtFileStatus').textContent = 'Error al leer el archivo: ' + err.message;
+    }
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+function vtPopulateLista(){
+  const listas = uniq(vtActiveRows().map(r=>r.listaPrecio).filter(Boolean));
+  $('#vtSelLista').innerHTML = '<option value="">Seleccionar…</option>' + listas.map(l=>`<option value="${l}">${l}</option>`).join('');
+  $('#vtSelLista').disabled = !listas.length;
+  ['#vtSelLinea','#vtSelMarca','#vtSelCalibre','#vtSelSabor','#vtSelEmpaque'].forEach(s=>{ $(s).disabled = true; $(s).innerHTML=''; });
+  $('#vtAddRow').disabled = true;
+}
+
+function vtCascade(level){
+  const rows = vtActiveRows();
+  const listaSel = $('#vtSelLista').value;
+  const lineaSel = $('#vtSelLinea').value;
+  const marcaSel = $('#vtSelMarca').value;
+  const calibreSel = $('#vtSelCalibre').value;
+  const saborSel = $('#vtSelSabor').value;
+
+  if(level<=0){
+    const lineas = uniq(rows.filter(r=>r.listaPrecio===listaSel).map(r=>r.categoria));
+    $('#vtSelLinea').innerHTML = '<option value="">Seleccionar…</option>' + lineas.map(c=>`<option value="${c}">${c}</option>`).join('');
+    $('#vtSelLinea').disabled = !listaSel;
+    ['#vtSelMarca','#vtSelCalibre','#vtSelSabor','#vtSelEmpaque'].forEach(s=>{ $(s).disabled=true; $(s).innerHTML=''; });
+    $('#vtAddRow').disabled = true;
+  }
+  if(level<=1){
+    const marcas = uniq(rows.filter(r=>r.listaPrecio===listaSel && r.categoria===lineaSel).map(r=>r.marca));
+    $('#vtSelMarca').innerHTML = '<option value="">Seleccionar…</option>' + marcas.map(m=>`<option value="${m}">${m}</option>`).join('');
+    $('#vtSelMarca').disabled = !lineaSel;
+    ['#vtSelCalibre','#vtSelSabor','#vtSelEmpaque'].forEach(s=>{ $(s).disabled=true; $(s).innerHTML=''; });
+    $('#vtAddRow').disabled = true;
+  }
+  if(level<=2){
+    const calibres = uniq(rows.filter(r=>r.listaPrecio===listaSel && r.categoria===lineaSel && r.marca===marcaSel).map(r=>r.calibre));
+    $('#vtSelCalibre').innerHTML = '<option value="">Seleccionar…</option>' + calibres.map(c=>`<option value="${c}">${c}</option>`).join('');
+    $('#vtSelCalibre').disabled = !marcaSel;
+    ['#vtSelSabor','#vtSelEmpaque'].forEach(s=>{ $(s).disabled=true; $(s).innerHTML=''; });
+    $('#vtAddRow').disabled = true;
+  }
+  if(level<=3){
+    const sabores = uniq(rows.filter(r=>r.listaPrecio===listaSel && r.categoria===lineaSel && r.marca===marcaSel && r.calibre===calibreSel).map(r=>r.sabor));
+    $('#vtSelSabor').innerHTML = '<option value="">Seleccionar…</option>' + sabores.map(s=>`<option value="${s}">${s||'(sin sabor)'}</option>`).join('');
+    $('#vtSelSabor').disabled = !calibreSel;
+    $('#vtSelEmpaque').innerHTML=''; $('#vtSelEmpaque').disabled=true;
+    $('#vtAddRow').disabled = true;
+  }
+  if(level<=4){
+    const empaques = uniq(rows.filter(r=>r.listaPrecio===listaSel && r.categoria===lineaSel && r.marca===marcaSel && r.calibre===calibreSel && r.sabor===saborSel).map(r=>r.empaque));
+    $('#vtSelEmpaque').innerHTML = '<option value="">Seleccionar…</option>' + empaques.map(e=>`<option value="${e}">${e}</option>`).join('');
+    $('#vtSelEmpaque').disabled = !saborSel;
+    $('#vtAddRow').disabled = true;
+  }
+}
+$('#vtSelLista').addEventListener('change', ()=>vtCascade(0));
+$('#vtSelLinea').addEventListener('change', ()=>vtCascade(1));
+$('#vtSelMarca').addEventListener('change', ()=>vtCascade(2));
+$('#vtSelCalibre').addEventListener('change', ()=>vtCascade(3));
+$('#vtSelSabor').addEventListener('change', ()=>vtCascade(4));
+$('#vtSelEmpaque').addEventListener('change', ()=>{ $('#vtAddRow').disabled = !$('#vtSelEmpaque').value; });
+
+$('#vtAddRow').addEventListener('click', ()=>{
+  const row = vtActiveRows().find(r=>
+    r.listaPrecio===$('#vtSelLista').value && r.categoria===$('#vtSelLinea').value &&
+    r.marca===$('#vtSelMarca').value && r.calibre===$('#vtSelCalibre').value &&
+    r.sabor===$('#vtSelSabor').value && r.empaque===$('#vtSelEmpaque').value);
+  if(!row) return;
+  const retiro = $('#vtSelRetiro').value === 'si';
+  const litros = parseCalibreToLiters(row.calibre) * num(row.empaque,1);
+  VT_ROWS.push({
+    id: vtIdSeq++,
+    nombre: `${row.categoria} · ${row.marca} · ${row.calibre} · ${row.sabor||'s/sabor'} · x${row.empaque}`,
+    categoria: row.categoria,
+    listaPrecio: row.listaPrecio,
+    litros, vic: row.vic,
+    retiro,
+    tipoEvaluacion: $('#vtSelTipo').value,
+    fechaInicio: $('#vtSelFechaInicio').value,
+    fechaLimite: $('#vtSelFechaLimite').value,
+    precioPolitica: row.precioVigente,
+    tipoIngreso: 'pct',
+    pctDesc: 0,
+    precioNeto: row.precioVigente,
+    cantidad: 0
+  });
+  renderVtTable();
+});
+
+function vtRowVlc(row){
+  return row.retiro ? 0 : (CONFIG.vlc[vtInferDepto(row.listaPrecio)] ?? CONFIG.vlc['Nacional'] ?? 0);
+}
+
+function vtCompute(row){
+  const vlc = vtRowVlc(row);
+  return computeBreakdown({
+    categoria: row.categoria, precioPaquete: row.precioNeto, litrosPorPaquete: row.litros,
+    vic: row.vic, vlc, royaltyApplies:false, royaltyPct:0, tc: CONFIG.tc
+  });
+}
+
+function vtIndicadores(bd, row){
+  const margenContribucionPaq = bd.macoConRoyalty;
+  const margenContribucionTotal = margenContribucionPaq * row.cantidad;
+  const costoDescuento = Math.max(0, row.precioPolitica - row.precioNeto) * row.cantidad;
+  const paquetesRecuperacion = (costoDescuento>0 && margenContribucionPaq>0) ? costoDescuento/margenContribucionPaq : 0;
+  const roiPromo = costoDescuento>0 ? ((margenContribucionTotal - costoDescuento)/costoDescuento)*100 : null;
+  return {margenContribucionPaq, margenContribucionTotal, costoDescuento, paquetesRecuperacion, roiPromo};
+}
+
+function vtIsPending(row){
+  return !(row.cantidad>0);
+}
+
+function vtComentarioIA(bd, row, ind){
+  const sem = semaphoreClass(bd.macoPct);
+  const short = sem.cls==='good' ? 'Factible' : sem.cls==='warn' ? 'Revisar' : 'No factible';
+  const emoji = sem.cls==='good' ? '🟢' : sem.cls==='warn' ? '🟡' : '🔴';
+  let text;
+  if(sem.cls==='bad'){
+    text = 'No factible. La pérdida de margen no se recupera con el volumen estimado.';
+  } else if(ind.costoDescuento>0){
+    const paq = Math.round(ind.paquetesRecuperacion);
+    if(paq<=0){
+      text = sem.cls==='good'
+        ? 'Factible. La acción comercial mantiene una rentabilidad adecuada; no se requieren paquetes adicionales para recuperar el descuento.'
+        : 'Revisar. El margen queda ajustado; no se requieren paquetes adicionales para recuperar el descuento, pero conviene monitorear.';
+    } else {
+      text = sem.cls==='good'
+        ? `Factible. El descuento cuesta ${fmtBs(ind.costoDescuento,0)} y se recupera con ${fmt(paq,0)} paquetes adicionales (ROI ${ind.roiPromo!==null?fmt(ind.roiPromo,0)+'%':'—'}).`
+        : `Revisar. El descuento reduce el margen y requiere ${fmt(paq,0)} paquetes adicionales para recuperarse (ROI ${ind.roiPromo!==null?fmt(ind.roiPromo,0)+'%':'—'}).`;
+    }
+  } else {
+    text = sem.cls==='good'
+      ? 'Factible. La acción comercial mantiene una rentabilidad adecuada.'
+      : 'Revisar. El margen queda ajustado respecto al Precio Política.';
+  }
+  return {cls:sem.cls, short, emoji, text};
+}
+
+function vtRowHtml(row){
+  const bd = vtCompute(row);
+  const ind = vtIndicadores(bd, row);
+  const pending = vtIsPending(row);
+  const cls = ind.margenContribucionPaq>=0 ? '' : 'style="color:var(--bad);"';
+  const ia = vtComentarioIA(bd, row, ind);
+  const dash = '<span style="color:var(--ink-faint);">Pendiente</span>';
+  const inputVal = row.tipoIngreso==='neto' ? fmt(row.precioNeto,2) : fmt(row.pctDesc,1);
+  const inputStep = row.tipoIngreso==='neto' ? '0.01' : '0.1';
+  const otherHint = row.tipoIngreso==='neto' ? `≈ ${fmt(row.pctDesc,1)}% desc.` : `≈ Bs ${fmt(row.precioNeto,2)} neto`;
+  return `<tr data-row="${row.id}">
+      <td style="text-align:left;font-size:11.5px;min-width:200px;white-space:normal;">${row.nombre}</td>
+      <td class="num">${fmtBs(row.precioPolitica)}</td>
+      <td>
+        <select data-f="tipoIngreso" style="width:112px;">
+          <option value="pct" ${row.tipoIngreso==='pct'?'selected':''}>% Descuento</option>
+          <option value="neto" ${row.tipoIngreso==='neto'?'selected':''}>Precio Neto</option>
+        </select>
+      </td>
+      <td><input type="number" step="${inputStep}" data-f="valorIngreso" value="${inputVal}" title="${otherHint}" style="width:90px;"></td>
+      <td><input type="number" step="1" data-f="cantidad" value="${row.cantidad||''}" placeholder="0" style="width:64px;"></td>
+      <td class="num" ${cls}>${pending?dash:fmtBs(ind.margenContribucionPaq)}</td>
+      <td class="num" ${cls}>${pending?dash:fmtBs(ind.margenContribucionTotal,0)}</td>
+      <td class="num">${pending?dash:(ind.costoDescuento>0?fmtBs(ind.costoDescuento,0):'—')}</td>
+      <td class="num">${pending?dash:(ind.roiPromo!==null?fmt(ind.roiPromo,0)+'%':'—')}</td>
+      <td>${pending?'<span class="vt-verdict vt-verdict-pending" title="Ingresá la cantidad estimada">Pendiente</span>':`<span class="vt-verdict vt-verdict-${ia.cls}">${ia.emoji} ${ia.short}</span>`}</td>
+      <td style="text-align:left;font-size:11px;max-width:260px;white-space:normal;">${pending?'Ingresá la cantidad estimada para ver el análisis.':ia.text}</td>
+      <td><button class="icon-btn vt-del" title="Eliminar">✕</button></td>
+    </tr>`;
+}
+
+function renderVtTable(){
+  const body = $('#vtTableBody');
+  if(!VT_ROWS.length){
+    body.innerHTML = `<tr><td colspan="12" style="text-align:center;color:var(--ink-faint);padding:18px;">Agregá un ítem para empezar.</td></tr>`;
+    return;
+  }
+  body.innerHTML = VT_ROWS.map(vtRowHtml).join('');
+}
+
+function vtUpdateRowInPlace(tr, row){
+  const bd = vtCompute(row);
+  const ind = vtIndicadores(bd, row);
+  const pending = vtIsPending(row);
+  const dash = '<span style="color:var(--ink-faint);">Pendiente</span>';
+  const colorCls = ind.margenContribucionPaq>=0 ? '' : 'var(--bad)';
+  const cells = tr.children;
+  cells[5].innerHTML = pending?dash:fmtBs(ind.margenContribucionPaq);
+  cells[5].style.color = pending ? '' : colorCls;
+  cells[6].innerHTML = pending?dash:fmtBs(ind.margenContribucionTotal,0);
+  cells[6].style.color = pending ? '' : colorCls;
+  cells[7].innerHTML = pending?dash:(ind.costoDescuento>0?fmtBs(ind.costoDescuento,0):'—');
+  cells[8].innerHTML = pending?dash:(ind.roiPromo!==null?fmt(ind.roiPromo,0)+'%':'—');
+  const ia = vtComentarioIA(bd, row, ind);
+  cells[9].innerHTML = pending
+    ? '<span class="vt-verdict vt-verdict-pending" title="Ingresá la cantidad estimada">Pendiente</span>'
+    : `<span class="vt-verdict vt-verdict-${ia.cls}">${ia.emoji} ${ia.short}</span>`;
+  cells[10].textContent = pending ? 'Ingresá la cantidad estimada para ver el análisis.' : ia.text;
+  const valInput = tr.querySelector('[data-f="valorIngreso"]');
+  if(valInput && document.activeElement!==valInput){
+    valInput.title = row.tipoIngreso==='neto' ? `≈ ${fmt(row.pctDesc,1)}% desc.` : `≈ Bs ${fmt(row.precioNeto,2)} neto`;
+  }
+}
+
+$('#vtTableBody').addEventListener('input', (e)=>{
+  const tr = e.target.closest('tr[data-row]');
+  if(!tr) return;
+  const id = Number(tr.dataset.row);
+  const row = VT_ROWS.find(r=>r.id===id);
+  if(!row) return;
+  const field = e.target.dataset.f;
+  if(field==='valorIngreso'){
+    if(row.tipoIngreso==='neto'){
+      row.precioNeto = num(e.target.value);
+      row.pctDesc = row.precioPolitica ? (1 - row.precioNeto/row.precioPolitica)*100 : 0;
+    } else {
+      row.pctDesc = num(e.target.value);
+      row.precioNeto = row.precioPolitica * (1 - row.pctDesc/100);
+    }
+  } else if(field==='cantidad'){
+    row.cantidad = num(e.target.value);
+  }
+  vtUpdateRowInPlace(tr, row);
+});
+$('#vtTableBody').addEventListener('change', (e)=>{
+  if(e.target.dataset.f !== 'tipoIngreso') return;
+  const tr = e.target.closest('tr[data-row]');
+  const id = Number(tr.dataset.row);
+  const row = VT_ROWS.find(r=>r.id===id);
+  if(!row) return;
+  row.tipoIngreso = e.target.value;
+  renderVtTable();
+});
+$('#vtTableBody').addEventListener('click', (e)=>{
+  if(!e.target.classList.contains('vt-del')) return;
+  const tr = e.target.closest('tr[data-row]');
+  const id = Number(tr.dataset.row);
+  VT_ROWS = VT_ROWS.filter(r=>r.id!==id);
+  renderVtTable();
+});
+
+vtOnDataLoaded();
+renderVtTable();
+
+/* ============================= TAB: COSTOS ============================= */
+let CT_COMISIONES = [
+  {id:1, nombre:'Transporte', pct:7, base:'precio'},
+  {id:2, nombre:'Cometa', pct:15, base:'precio'}
+];
+let ctComisionIdSeq = 3;
+
+function ctFletePorUnidad(){
+  const camion = num($('#ctCamionCosto').value);
+  const pallets = num($('#ctPallets').value, 1);
+  const cajasPallet = num($('#ctCajasPallet').value, 1);
+  const unidCaja = num($('#ctUnidCaja').value, 1);
+  const unidCamion = pallets * cajasPallet * unidCaja;
+  const flete = unidCamion>0 ? camion/unidCamion : 0;
+  return {unidCamion, flete};
+}
+
+function renderCtComisiones(){
+  const list = $('#ctComisionesList');
+  list.innerHTML = CT_COMISIONES.map(c=>`
+    <div class="ct-comision-row" data-id="${c.id}">
+      <input type="text" class="ct-com-nombre" value="${c.nombre}">
+      <input type="number" step="0.1" class="ct-com-pct" value="${c.pct}">
+      <select class="ct-com-base">
+        <option value="precio" ${c.base==='precio'?'selected':''}>% sobre Precio venta</option>
+        <option value="costo" ${c.base==='costo'?'selected':''}>% sobre VIC (costo)</option>
+      </select>
+      <button class="icon-btn ct-com-del" title="Eliminar">✕</button>
+    </div>`).join('');
+  list.querySelectorAll('.ct-comision-row').forEach(row=>{
+    const id = Number(row.dataset.id);
+    const c = CT_COMISIONES.find(x=>x.id===id);
+    row.querySelector('.ct-com-nombre').addEventListener('input', e=>{ c.nombre = e.target.value; recalcCostos(); });
+    row.querySelector('.ct-com-pct').addEventListener('input', e=>{ c.pct = num(e.target.value); recalcCostos(); });
+    row.querySelector('.ct-com-base').addEventListener('change', e=>{ c.base = e.target.value; recalcCostos(); });
+    row.querySelector('.ct-com-del').addEventListener('click', ()=>{
+      CT_COMISIONES = CT_COMISIONES.filter(x=>x.id!==id);
+      renderCtComisiones();
+      recalcCostos();
+    });
+  });
+}
+$('#ctAddComisionBtn').addEventListener('click', ()=>{
+  CT_COMISIONES.push({id: ctComisionIdSeq++, nombre:'Nuevo costo', pct:0, base:'precio'});
+  renderCtComisiones();
+  recalcCostos();
+});
+
+wirePillGroup('#ctUnitMode', (m)=>{
+  const esPaquete = m==='paquete';
+  $('#ctUnidPorPaqWrap').style.display = esPaquete ? 'block' : 'none';
+  const suf = esPaquete ? '(Bs/paquete)' : '(Bs/unidad)';
+  $('#ctCostoUnitLabel').textContent = 'VIC — Costo ' + suf;
+  $('#ctPrecioVentaLabel').textContent = 'Precio de venta ' + suf;
+  recalcCostos();
+});
+
+wirePillGroup('#ctPriceMethod', (m)=>{
+  $('#ctM_manual').style.display = m==='manual' ? 'block' : 'none';
+  $('#ctM_margen').style.display = m==='margen' ? 'block' : 'none';
+  $('#ctM_ptc').style.display = m==='ptc' ? 'block' : 'none';
+  recalcCostos();
+});
+
+function ctGetPrecioVenta(costoUnit){
+  const method = $('#ctPriceMethod .pill.active').dataset.m;
+  if(method==='margen'){
+    const margenDeseado = num($('#ctMargenDeseado').value);
+    return margenDeseado<100 ? costoUnit / (1 - margenDeseado/100) : 0;
+  }
+  if(method==='ptc'){
+    const ptc = num($('#ctPtc').value);
+    const margenCanal = num($('#ctMargenCanal').value);
+    return ptc / (1 + margenCanal/100);
+  }
+  return num($('#ctPrecioVenta').value);
+}
+
+function recalcCostos(){
+  const {unidCamion, flete: fletePorUnidadReal} = ctFletePorUnidad();
+  const esPaquete = $('#ctUnitMode .pill.active').dataset.m==='paquete';
+  const unidPorPaq = esPaquete ? Math.max(1, num($('#ctUnidPorPaq').value, 1)) : 1;
+  const flete = fletePorUnidadReal * unidPorPaq;
+  $('#ctFleteHint').textContent = `${fmt(unidCamion,0)} unidades por camión completo → VLC (flete) de ${fmtBs(fletePorUnidadReal,4)} por unidad` + (esPaquete ? ` → ${fmtBs(flete,4)} por paquete de ${fmt(unidPorPaq,0)} unidades.` : '.');
+
+  const costoUnit = num($('#ctCostoUnit').value);
+  const costoAdic = num($('#ctCostoAdic').value);
+  const precioVenta = ctGetPrecioVenta(costoUnit);
+  $('#ctPrecioFinal').textContent = fmtBs(precioVenta);
+
+  const iva = precioVenta * (num($('#ctIva').value)/100);
+  const it = precioVenta * (num($('#ctIt').value)/100);
+
+  const comisionesCalc = CT_COMISIONES.map(c=>{
+    const baseVal = c.base==='costo' ? costoUnit : precioVenta;
+    return {nombre:c.nombre, pct:c.pct, monto: baseVal * (c.pct/100)};
+  });
+  const comisionesTotal = comisionesCalc.reduce((s,c)=>s+c.monto,0);
+
+  const margenBs = precioVenta - costoUnit - flete - costoAdic - iva - it - comisionesTotal;
+  const margenPct = precioVenta>0 ? (margenBs/precioVenta)*100 : 0;
+
+  $('#ctKpiMargen').textContent = fmtBs(margenBs);
+  $('#ctKpiMargenPct').textContent = fmt(margenPct,1)+'%';
+  const sem = margenPct>=20 ? 'good' : margenPct>=8 ? 'warn' : 'bad';
+  $('#ctKpiMargenPctWrap').className = 'kpi kpi-' + sem;
+
+  const suf = esPaquete ? 'paquete' : 'unidad';
+  const netoImponible = precioVenta - iva - it;
+  const rows = [
+    {lbl:`Precio de venta (Bs/${suf})`, val:precioVenta, cls:'subtotal', dec:2},
+    {lbl:`IVA (${fmt(num($('#ctIva').value),1)}%)`, val:iva, cls:'neg', dec:2},
+    {lbl:`IT (${fmt(num($('#ctIt').value),1)}%)`, val:it, cls:'neg', dec:2},
+    {lbl:'Neto Imponible', val:netoImponible, cls:'subtotal', dec:2},
+    {lbl:'VIC (Costo)', val:costoUnit, cls:'neg', dec:2},
+    {lbl:'VLC (Flete)', val:flete, cls:'neg', dec:4},
+  ];
+  if(costoAdic) rows.push({lbl:'Costo adicional', val:costoAdic, cls:'neg', dec:2});
+  comisionesCalc.forEach(c=>{
+    rows.push({lbl:`${c.nombre} (${fmt(c.pct,1)}%)`, val:c.monto, cls:'neg', dec:2});
+  });
+  rows.push({lbl:'Margen', val:margenBs, cls:'final', dec:2});
+
+  $('#ctLedger').innerHTML = rows.map((r,i)=>`
+    <div class="ledger-row ${r.cls||''}">
+      <span class="op">${i===0?'':(r.cls==='final'?'=':(r.cls==='subtotal'?'=':'−'))}</span>
+      <span class="lbl">${r.lbl}</span>
+      <span class="val">${fmtBs(r.val, r.dec)}</span>
+    </div>`).join('');
+}
+['ctNombre','ctCostoUnit','ctCostoAdic','ctCamionCosto','ctPallets','ctCajasPallet','ctUnidCaja','ctUnidPorPaq','ctIva','ctIt','ctPrecioVenta','ctMargenDeseado','ctPtc','ctMargenCanal'].forEach(id=>{
+  $('#'+id).addEventListener('input', recalcCostos);
+});
+renderCtComisiones();
+recalcCostos();
+
+/* ============================= RESUMEN DE ESCENARIOS ============================= */
+function loadResumen(){
+  try{ return JSON.parse(localStorage.getItem('mc_resumen_v1')||'[]'); }catch(e){ return []; }
+}
+function saveResumen(){ localStorage.setItem('mc_resumen_v1', JSON.stringify(SAVED_SCENARIOS)); }
+let SAVED_SCENARIOS = loadResumen();
+let resumenIdSeq = (SAVED_SCENARIOS.reduce((m,s)=>Math.max(m,s.id||0),0)) + 1;
+
+function addToResumen(scenario){
+  scenario.id = resumenIdSeq++;
+  scenario.fecha = new Date().toLocaleDateString('es-BO');
+  SAVED_SCENARIOS.push(scenario);
+  saveResumen();
+  renderResumen();
+  alert(`"${scenario.nombre||'(sin nombre)'}" se agregó al Resumen.`);
+}
+
+function renderResumen(){
+  const body = $('#resumenTableBody');
+  if(!body) return;
+  if(!SAVED_SCENARIOS.length){
+    body.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--ink-faint);padding:18px;">Todavía no agregaste ningún escenario.</td></tr>`;
+    return;
+  }
+  body.innerHTML = SAVED_SCENARIOS.map(s=>`
+    <tr data-id="${s.id}">
+      <td style="text-align:left;font-size:11.5px;">${s.tipo}</td>
+      <td style="text-align:left;font-size:11.5px;">${s.nombre||'—'}</td>
+      <td style="text-align:left;font-size:11px;color:var(--ink-soft);">${s.metodo||'—'}</td>
+      <td class="num">${fmtBs(s.precio)} <span style="color:var(--ink-faint);font-size:10px;">${s.precioLabel||''}</span></td>
+      <td class="num">${fmtBs(s.resultado)}</td>
+      <td class="num">${fmt(s.resultadoPct,1)}%</td>
+      <td class="num">${s.usdHl!==null && s.usdHl!==undefined ? fmtUsd(s.usdHl) : '—'}</td>
+      <td style="text-align:left;font-size:11px;color:var(--ink-faint);">${s.fecha}</td>
+      <td><button class="icon-btn resumen-del" title="Eliminar">✕</button></td>
+    </tr>`).join('');
+  body.querySelectorAll('.resumen-del').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const id = Number(e.target.closest('tr').dataset.id);
+      SAVED_SCENARIOS = SAVED_SCENARIOS.filter(s=>s.id!==id);
+      saveResumen();
+      renderResumen();
+    });
+  });
+}
+
+const CT_METODO_LABELS = {manual:'Manual', margen:'Por margen deseado', ptc:'Desde PTC'};
+const EX_METODO_LABELS = {actual:'Política', propuesto:'Propuesto', ptc:'Desde PTC'};
+const NW_METODO_LABELS = {propuesto:'Propuesto', ptc:'Desde PTC'};
+
+$('#exAddResumenBtn').addEventListener('click', ()=>{
+  if(!currentProduct || currentProduct.source!=='existing'){ alert('Primero calculá un producto en esta pestaña.'); return; }
+  const bd = currentProduct;
+  addToResumen({
+    tipo:'Existente', nombre: bd.nombre, precio: bd.precio, precioLabel: bd.isMass?'Bs/unidad':'Bs/paq',
+    resultado: bd.macoConRoyalty, resultadoPct: bd.macoPct,
+    metodo: EX_METODO_LABELS[exState.priceMethod] || exState.priceMethod,
+    usdHl: bd.isMass ? bd.macoUsdKg : bd.macoUsdHl,
+    usdHlLabel: bd.isMass ? '/Kg' : '/HL',
+    detalleHtml: $('#exLedger').innerHTML
+  });
+});
+$('#nwAddResumenBtn').addEventListener('click', ()=>{
+  if(!currentProduct || currentProduct.source!=='new'){ alert('Primero calculá un producto en esta pestaña.'); return; }
+  const bd = currentProduct;
+  addToResumen({
+    tipo:'Nuevo', nombre: bd.nombre, precio: bd.precio, precioLabel: bd.isMass?'Bs/unidad':'Bs/paq',
+    resultado: bd.macoConRoyalty, resultadoPct: bd.macoPct,
+    metodo: NW_METODO_LABELS[nwState.priceMethod] || nwState.priceMethod,
+    usdHl: bd.isMass ? bd.macoUsdKg : bd.macoUsdHl,
+    usdHlLabel: bd.isMass ? '/Kg' : '/HL',
+    detalleHtml: $('#nwLedger').innerHTML
+  });
+});
+$('#ctAddResumenBtn').addEventListener('click', ()=>{
+  const nombre = $('#ctNombre').value.trim() || 'Producto sin nombre';
+  const costoUnit = num($('#ctCostoUnit').value);
+  const precioVenta = ctGetPrecioVenta(costoUnit);
+  const margenBs = num($('#ctKpiMargen').textContent.replace('Bs','').replace(/\./g,'').replace(',','.'));
+  const margenPct = num($('#ctKpiMargenPct').textContent.replace('%','').replace(',','.'));
+  const esPaquete = $('#ctUnitMode .pill.active').dataset.m==='paquete';
+  const metodo = $('#ctPriceMethod .pill.active').dataset.m;
+  addToResumen({
+    tipo:'Costos', nombre, precio: precioVenta, precioLabel: esPaquete?'Bs/paq':'Bs/ud',
+    resultado: margenBs, resultadoPct: margenPct,
+    metodo: CT_METODO_LABELS[metodo] || metodo,
+    usdHl: null,
+    detalleHtml: $('#ctLedger').innerHTML
+  });
+});
+
+$('#resumenClearBtn').addEventListener('click', ()=>{
+  if(!confirm('¿Vaciar todo el resumen? Esta acción no se puede deshacer.')) return;
+  SAVED_SCENARIOS = [];
+  saveResumen();
+  renderResumen();
+});
+$('#resumenExportBtn').addEventListener('click', ()=>{
+  if(!SAVED_SCENARIOS.length){ alert('Todavía no hay escenarios guardados para exportar.'); return; }
+  $('#resumenTableWrap').style.display = '';
+  $('#resumenPresentacion').style.display = 'none';
+  window.print();
+});
+
+function renderResumenPresentacion(){
+  const cont = $('#resumenPresentacion');
+  cont.innerHTML = SAVED_SCENARIOS.map(s=>{
+    const conceptoLabel = s.tipo==='Costos' ? 'Margen' : 'MACO';
+    return `
+    <div class="resumen-ppt-card">
+      <h4>${s.nombre||'(sin nombre)'}</h4>
+      <div class="sub">${s.tipo}${s.metodo?' · Método de precio: '+s.metodo:''}</div>
+      <div class="line" style="font-weight:600;margin-bottom:8px;">
+        Precio de venta: <b>${fmtBs(s.precio,0)}</b> ${s.precioLabel||''} &nbsp;·&nbsp;
+        ${conceptoLabel} final: <b>${fmtBs(s.resultado,0)}</b> (${fmt(s.resultadoPct,0)}%)
+        ${s.usdHl!==null && s.usdHl!==undefined ? ' &nbsp;·&nbsp; Equivalente: <b>'+fmtUsd(s.usdHl,0)+'</b>'+(s.usdHlLabel||'/HL') : ''}
+      </div>
+      <div class="ledger">${s.detalleHtml||'<div class="hint">Sin detalle disponible.</div>'}</div>
+    </div>`;
+  }).join('');
+}
+$('#resumenExportPptBtn').addEventListener('click', ()=>{
+  if(!SAVED_SCENARIOS.length){ alert('Todavía no hay escenarios guardados para exportar.'); return; }
+  renderResumenPresentacion();
+  $('#resumenTableWrap').style.display = 'none';
+  $('#resumenPresentacion').style.display = 'block';
+  window.print();
+  setTimeout(()=>{
+    $('#resumenTableWrap').style.display = '';
+    $('#resumenPresentacion').style.display = 'none';
+  }, 500);
+});
+renderResumen();
+
+/* ============================= CALCULADORA MASIVA ============================= */
+let MV_ROWS = [];
+$('#mvTable').classList.add('hide-ptc');
+wireSwitch('#mvPtcSwitch', '#mvPtcFieldWrap', (on)=>{
+  $('#mvTable').classList.toggle('hide-ptc', !on);
+});
+try{
+  const savedTitle = localStorage.getItem('mc_mv_title_v1');
+  if(savedTitle) $('#mvTitleInput').value = savedTitle;
+}catch(e){}
+$('#mvTitleInput').addEventListener('input', ()=>{
+  try{ localStorage.setItem('mc_mv_title_v1', $('#mvTitleInput').value); }catch(e){}
+});
+let mvIdSeq = 1;
+
+$('#mvExportBtn').addEventListener('click', ()=>{
+  if(!MV_ROWS.length){ alert('Todavía no agregaste ninguna fila para exportar.'); return; }
+  document.body.classList.add('print-mv-only');
+  window.print();
+  setTimeout(()=>{ document.body.classList.remove('print-mv-only'); }, 500);
+});
+$('#mvAddRowBtn').addEventListener('click', ()=>{
+  const bd = getActiveBD();
+  if(!bd){ alert('Primero calculá un producto en Producto existente, Producto nuevo o Costos.'); return; }
+  const escenario = $('#mvEscenarioInput').value.trim() || 'Actual';
+  const ptc = num($('#mvPtcInput').value);
+  const empaque = num(bd.empaque, 1);
+  const precioUnidad = empaque>0 ? bd.precio/empaque : bd.precio;
+  const margenPdv = ptc>0 ? (ptc-precioUnidad)/ptc*100 : null;
+  MV_ROWS.push({
+    id: mvIdSeq++,
+    categoria: bd.categoriaExcel || bd.categoria || (bd.source==='costos' ? 'Costos' : ''),
+    marca: bd.marca || bd.nombre || '',
+    calibre: bd.calibre || '—',
+    empaque: empaque,
+    precio: bd.precio,
+    vic: bd.vic,
+    vlc: bd.vlc,
+    costos: bd.costosAdicTotal || 0,
+    escenario: escenario,
+    maco: bd.macoConRoyalty!==undefined ? bd.macoConRoyalty : bd.macoSinRoyalty,
+    macoPct: bd.macoPct,
+    ptc: ptc,
+    margenPdv: margenPdv
+  });
+  renderMvTable();
+});
+
+const MV_GROUP_COLORS = ['#DCEAF7','#FFF6C9','#DFF5DC','#F3E3F5','#FDE6D8'];
+
+function renderMvTable(){
+  const body = $('#mvTableBody');
+  if(!MV_ROWS.length){
+    body.innerHTML = `<tr><td colspan="16" style="text-align:center;color:var(--ink-faint);padding:18px;">Todavía no agregaste ninguna fila.</td></tr>`;
+    return;
+  }
+  const groupKey = r => `${r.marca}__${r.calibre}__${r.empaque}`;
+  let html = '';
+  let colorIdx = -1;
+  let lastKey = null;
+  let i = 0;
+  while(i < MV_ROWS.length){
+    const key = groupKey(MV_ROWS[i]);
+    let groupEnd = i;
+    while(groupEnd+1 < MV_ROWS.length && groupKey(MV_ROWS[groupEnd+1])===key) groupEnd++;
+    const groupSize = groupEnd - i + 1;
+    if(key !== lastKey){ colorIdx = (colorIdx+1) % MV_GROUP_COLORS.length; lastKey = key; }
+    const color = MV_GROUP_COLORS[colorIdx];
+
+    for(let g=0; g<groupSize; g++){
+      const row = MV_ROWS[i+g];
+      const isFirstOfGroup = g===0;
+      const prevRow = g>0 ? MV_ROWS[i+g-1] : null;
+      const deltaBs = prevRow ? row.maco - prevRow.maco : null;
+      const deltaPp = prevRow ? row.macoPct - prevRow.macoPct : null;
+      const deltaColor = (deltaBs!==null && deltaBs<0) ? 'color:var(--bad);' : (deltaBs!==null ? 'color:var(--good);' : '');
+
+      html += `<tr data-row="${row.id}" style="background:${color};">`;
+      html += `<td class="num">${i+g+1}</td>`;
+      html += `<td style="font-size:11px;"><input type="text" data-f="escenario" value="${row.escenario}" style="width:75px;font-size:11px;text-align:center;"></td>`;
+      if(isFirstOfGroup){
+        html += `<td rowspan="${groupSize}"><input type="text" class="mv-producto-input" data-f="marca" value="${row.marca}"></td>`;
+        html += `<td rowspan="${groupSize}" style="font-size:11px;">${row.calibre}</td>`;
+        html += `<td rowspan="${groupSize}" class="num">${fmt(row.empaque,0)}</td>`;
+      }
+      html += `<td class="num">${fmtBs(row.precio,0)}</td>`;
+      html += `<td class="num">${fmtBs(row.vic,1)}</td>`;
+      html += `<td class="num">${fmtBs(row.vlc,1)}</td>`;
+      html += `<td class="num">${fmtBs(row.costos,1)}</td>`;
+      html += `<td class="num">${fmtBs(row.maco,1)}</td>`;
+      html += `<td class="num">${fmt(row.macoPct,0)}%</td>`;
+      html += `<td class="num" style="${deltaColor}">${deltaBs!==null ? (deltaBs>=0?'+':'')+fmtBs(deltaBs,1) : '—'}</td>`;
+      html += `<td class="num" style="${deltaColor}">${deltaPp!==null ? (deltaPp>=0?'+':'')+fmt(deltaPp,0)+'pp' : '—'}</td>`;
+      html += `<td class="num mv-ptc-col"><input type="number" step="0.01" data-f="ptc" value="${row.ptc}" style="width:65px;text-align:center;"></td>`;
+      html += `<td class="num mv-margenpdv-cell mv-ptc-col">${row.margenPdv!==null ? fmt(row.margenPdv,1)+'%' : '—'}</td>`;
+      html += `<td><button class="icon-btn mv-del" title="Eliminar">✕</button></td>`;
+      html += `</tr>`;
+    }
+    i = groupEnd + 1;
+  }
+  body.innerHTML = html;
+}
+
+$('#mvTableBody').addEventListener('input', (e)=>{
+  const tr = e.target.closest('tr[data-row]');
+  if(!tr || !e.target.dataset.f) return;
+  const row = MV_ROWS.find(r=>r.id===Number(tr.dataset.row));
+  if(!row) return;
+  const field = e.target.dataset.f;
+  if(field==='ptc'){
+    row.ptc = num(e.target.value);
+    const precioUnidad = row.empaque>0 ? row.precio/row.empaque : row.precio;
+    row.margenPdv = row.ptc>0 ? (row.ptc-precioUnidad)/row.ptc*100 : null;
+    tr.querySelector('.mv-margenpdv-cell').textContent = row.margenPdv!==null ? fmt(row.margenPdv,1)+'%' : '—';
+  } else if(field==='escenario'){
+    row.escenario = e.target.value;
+  } else if(field==='marca'){
+    row.marca = e.target.value;
+  }
+});
+$('#mvTableBody').addEventListener('change', (e)=>{
+  if(e.target.dataset.f==='marca') renderMvTable();
+});
+$('#mvTableBody').addEventListener('click', (e)=>{
+  if(!e.target.classList.contains('mv-del')) return;
+  const tr = e.target.closest('tr[data-row]');
+  MV_ROWS = MV_ROWS.filter(r=>r.id!==Number(tr.dataset.row));
+  renderMvTable();
+});
+renderMvTable();
+
+/* ============================= INIT ============================= */
+recalcExisting();
+recalcNew();
+
+})();
+</script>
+</body>
+</html>
