@@ -107,6 +107,8 @@ h1,h2,h3,h4{font-family:var(--display);margin:0;letter-spacing:-0.01em;}
 .card-fill .btn{margin-top:auto;}
 .card h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-faint);font-weight:600;margin-bottom:13px;}
 .card h3 .n{color:var(--accent);margin-right:6px;}
+.vt-step-sublabel{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);font-weight:600;margin:16px 0 2px;padding-top:12px;border-top:1px solid var(--border);}
+.vt-step-sublabel .n{color:var(--accent);margin-right:6px;}
 
 .datasrc-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
 .upload-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:2px 2px;}
@@ -126,7 +128,7 @@ h1,h2,h3,h4{font-family:var(--display);margin:0;letter-spacing:-0.01em;}
 
 .field{margin-bottom:10px;}
 .field label{display:block;font-size:11.5px;color:var(--ink-soft);margin-bottom:4px;font-weight:500;}
-.field input[type=text],.field input[type=number],.field select{
+.field input[type=text],.field input[type=number],.field input[type=password],.field input[type=date],.field select{
   width:100%;padding:7px 10px;border:1px solid var(--border-strong);border-radius:7px;
   background:var(--surface-alt);color:var(--ink);
 }
@@ -235,6 +237,13 @@ tr.editable-row td{cursor:default;}
 #mvTable.hide-ptc .mv-ptc-col{display:none;}
 #mvTable thead th{background:var(--accent);color:#fff;font-weight:600;text-align:center;border:1px solid var(--accent);}
 #mvTable tbody tr:hover td{filter:brightness(0.94);}
+
+#vtExcTable{border:1px solid var(--border-strong);}
+#vtExcTable thead th{background:var(--accent);color:#fff;font-weight:700;border-right:1px solid rgba(255,255,255,.18);white-space:nowrap;}
+#vtExcTable thead th:last-child{border-right:none;}
+#vtExcTable td{border-right:1px solid var(--border);}
+#vtExcTable td:last-child{border-right:none;}
+#vtExcTable tbody tr:hover td{filter:brightness(0.96);}
 #mvTable td, #mvTable th{padding:7px 8px;border:1px solid var(--border);text-align:center;}
 #mvTable input.mv-producto-input{width:110px;font-size:11px;border:1px solid transparent;background:transparent;padding:2px 4px;text-align:center;}
 #mvTable input.mv-producto-input:hover, #mvTable input.mv-producto-input:focus{border-color:var(--border-strong);background:var(--surface);}
@@ -279,6 +288,123 @@ tr.editable-row td{cursor:default;}
 .ct-comision-row input[type="text"]{font-size:11.5px;padding:4px 6px;}
 .ct-comision-row input[type="number"]{width:100%;text-align:right;font-family:var(--mono);font-size:11.5px;padding:4px 4px;}
 .ct-comision-row select{font-size:10.5px;padding:3px 2px;}
+:root{
+  --anim-purple:#17324A; --anim-pink:#2c5478; --anim-teal:#5dc3e8; --anim-yellow:#FFC93C;
+  --anim-grad:linear-gradient(120deg,#17324A 0%,#2c5478 100%);
+  --anim-grad-soft:#eef3f8;
+}
+.vt-combo-cards{display:flex;flex-direction:column;gap:18px;}
+.vt-combo-card{
+  border-radius:14px;overflow:hidden;border:2px solid var(--border-strong);
+  box-shadow:0 1px 3px rgba(23,50,74,.08);background:var(--surface);
+}
+.vt-combo-card-head{
+  background:var(--surface);border-left:4px solid #17324A;border-bottom:1px solid var(--border);
+  color:var(--ink);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.vt-combo-card-name{font-family:var(--display);font-weight:800;font-size:15px;letter-spacing:.01em;color:#17324A;}
+.vt-combo-card-sub{font-size:11px;color:#8a99a8;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px;}
+.vt-combo-card-del{background:#f4f6f8;border:none;color:#8a99a8;border-radius:50%;width:26px;height:26px;cursor:pointer;font-size:13px;line-height:1;flex-shrink:0;}
+.vt-combo-card-del:hover{background:#e7ebef;color:#4b5b6b;}
+.vt-combo-card-body{display:grid;grid-template-columns:1.6fr 1fr;gap:0;}
+.vt-combo-left{padding:16px 18px;border-right:1px solid var(--border);overflow-x:auto;}
+.vt-combo-left table{width:100%;border-collapse:collapse;font-size:12px;}
+.vt-combo-left th{
+  background:var(--anim-grad-soft);color:var(--anim-purple);font-weight:800;font-size:10.5px;
+  text-transform:uppercase;letter-spacing:.03em;padding:8px 8px;text-align:center;
+}
+.vt-combo-left th:first-child{border-radius:10px 0 0 10px;}
+.vt-combo-left th:last-child{border-radius:0 10px 10px 0;}
+.vt-combo-left td{padding:10px 8px;text-align:center;border-bottom:1px solid var(--border);font-family:var(--mono);}
+.vt-combo-left td:first-child{text-align:left;font-family:var(--body);font-weight:700;}
+.vt-combo-right{padding:14px 16px;display:flex;flex-direction:column;gap:8px;justify-content:center;background:var(--surface-alt);}
+.vt-combo-promo-label{
+  background:var(--anim-teal);color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.04em;padding:5px 12px;border-radius:20px;text-align:center;width:fit-content;
+}
+.vt-combo-promo-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+.vt-combo-promo-row .lbl{font-size:11.5px;color:var(--ink-soft);}
+.vt-combo-promo-row .val{font-family:var(--mono);font-size:13px;font-weight:700;}
+.vt-combo-promo-hero{
+  background:linear-gradient(120deg,#FFF3D6 0%,#FFE3EC 100%);border:2px solid var(--anim-yellow);border-radius:14px;padding:10px 14px;
+  display:flex;align-items:center;justify-content:space-between;margin:2px 0;
+}
+.vt-combo-promo-hero .lbl{font-size:11px;font-weight:800;color:#8A5A00;text-transform:uppercase;letter-spacing:.03em;}
+.vt-combo-promo-hero .val{font-family:var(--display);font-size:23px;font-weight:800;color:#8A5A00;}
+.vt-combo-margin{font-size:11.5px;padding-top:6px;border-top:1px dashed var(--border-strong);margin-top:4px;}
+.vt-combo-impacto{border-top:1px solid var(--border);padding:16px 18px;background:var(--surface-alt);}
+
+.vt-combo-card-head-clickable{cursor:pointer;}
+.vt-combo-card-content{padding:16px 18px;}
+.vt-combo-obj-tag{font-size:10.5px;font-weight:700;padding:4px 12px;border-radius:20px;white-space:nowrap;background:#eef2f6;color:#4b5b6b;}
+.vt-combo-badge{font-size:10.5px;font-weight:800;padding:4px 12px;border-radius:20px;white-space:nowrap;}
+.vt-combo-card.estado-good .vt-combo-badge{background:#d1fae5;color:#0e7355;}
+.vt-combo-card.estado-warn .vt-combo-badge{background:#fef3c7;color:#b45309;}
+.vt-combo-card.estado-bad .vt-combo-badge{background:#ffe4e6;color:#9f1239;}
+.vt-combo-collapse-toggle{background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:14px;padding:2px 4px;}
+.vt-combo-collapse-toggle:hover{color:var(--ink);}
+
+.vt-combo-kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;}
+.vt-combo-kpi-card{background:#f8f9fb;border:1px solid #eef1f4;border-radius:10px;padding:10px 6px;text-align:center;min-width:0;}
+.vt-combo-kpi-card .kpi-lbl{font-size:10px;font-weight:600;color:#8a99a8;margin-bottom:5px;line-height:1.25;}
+.vt-combo-kpi-card .kpi-val{font-family:var(--display);font-size:16px;font-weight:700;color:#17324A;white-space:nowrap;}
+@media (max-width:760px){
+  .vt-combo-kpi-row{grid-template-columns:repeat(2,1fr)!important;}
+}
+.vt-combo-kpi-card .kpi-val.good{color:#1a8f5e;}
+.vt-combo-kpi-card .kpi-val.bad{color:#e11d48;}
+
+.vt-combo-progress-wrap{margin-bottom:14px;}
+.vt-combo-progress-labels{display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:#8a99a8;margin-bottom:6px;}
+.vt-combo-progress-track{position:relative;height:8px;background:#eef1f4;border-radius:20px;overflow:visible;}
+.vt-combo-progress-fill{position:absolute;left:0;top:0;bottom:0;border-radius:20px;transition:width .25s;background:linear-gradient(90deg,#17324A,#5dc3e8);}
+.vt-combo-progress-marker{position:absolute;top:-3px;bottom:-3px;width:2px;border-radius:2px;background:#17324A;}
+
+
+.vt-combo-obj-note{font-size:11.5px;color:var(--ink-soft);background:var(--anim-grad-soft);border-radius:12px;padding:10px 14px;margin-bottom:14px;}
+.vt-combo-approval{background:linear-gradient(120deg,#FFFBEB,#FEF3C7);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:#8A5A00;}
+.vt-combo-approval label{display:flex;align-items:center;gap:7px;margin-bottom:6px;font-weight:700;}
+.vt-combo-approval label input{width:auto;margin:0;}
+.vt-combo-approval-name{width:100%;padding:7px 10px;border:1.5px solid var(--anim-yellow);border-radius:20px;font-size:12px;background:var(--surface);}
+.vt-combo-inputs-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px 14px;font-size:12px;color:#4b5b6b;margin:0 18px 14px;padding:12px 14px;background:var(--surface-alt);border-radius:10px;}
+.vt-combo-inputs-row .item{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.vt-combo-inputs-row .lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8a99a8;}
+.vt-combo-inputs-row .val{font-weight:700;color:#17324A;font-size:12.5px;font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+@media(max-width:900px){.vt-combo-inputs-row{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:640px){.vt-combo-inputs-row{grid-template-columns:repeat(2,1fr);}}
+
+.vt-combo-detail-toggle{background:none;border:none;color:var(--anim-purple);font-size:11.5px;font-weight:700;cursor:pointer;padding:2px 0;}
+.vt-combo-detail-toggle:hover{text-decoration:underline;}
+.vt-combo-detail-panel{background:var(--surface);border:1.5px solid #dce8f0;border-radius:14px;padding:2px 14px;margin-top:8px;}
+.vt-combo-detail-panel .result-line{padding:6px 0;font-size:12px;}
+.vt-combo-resumen{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;background:var(--anim-grad);color:#fff;border-radius:16px;padding:12px 18px;font-size:12.5px;font-weight:600;margin-top:6px;box-shadow:0 6px 18px rgba(23,50,74,.22);}
+.vt-combo-resumen-table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-top:10px;}
+.vt-combo-resumen-table{width:100%;border-collapse:collapse;font-size:12px;}
+.vt-combo-resumen-table th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-faint);font-weight:700;padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--surface-alt);}
+.vt-combo-resumen-table td{padding:9px 14px;border-bottom:1px solid var(--border);color:var(--accent-ink);font-weight:600;white-space:nowrap;}
+.vt-combo-resumen-table tr:last-child td{border-bottom:none;}
+.vt-combo-detail-panel .result-line .v{font-family:var(--mono);font-weight:600;}
+.vt-combo-detail-panel .result-line:last-child{border-bottom:none;}
+.vt-combo-ledger{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 12px;}
+.vt-combo-ledger .result-line{padding:5px 0;font-size:12px;}
+.vt-combo-ledger .result-line .v{font-family:var(--mono);font-weight:600;}
+.vt-combo-ledger .result-line:last-child{border-bottom:none;}
+.vt-combo-impacto-title{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);margin-bottom:12px;}
+.vt-combo-impacto-section{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:10px;}
+.vt-combo-impacto-section-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--accent-ink);margin-bottom:8px;}
+.vt-combo-impacto-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:4px;}
+.vt-combo-impacto-grid-3{grid-template-columns:repeat(3,1fr);margin-bottom:0;}
+.vt-combo-impacto-item{display:flex;flex-direction:column;gap:2px;}
+.vt-combo-impacto-item .lbl{font-size:10px;color:var(--ink-faint);}
+.vt-combo-impacto-item .val{font-family:var(--mono);font-size:13.5px;font-weight:700;color:var(--ink);}
+.vt-combo-be-box{display:flex;gap:10px;background:var(--warn-soft);border-radius:8px;padding:10px 14px;margin-bottom:2px;}
+.vt-combo-be-item{flex:1;display:flex;flex-direction:column;gap:2px;}
+.vt-combo-be-item .lbl{font-size:10px;color:#7A5A0F;font-weight:600;}
+.vt-combo-be-item .val{font-family:var(--mono);font-size:16px;font-weight:700;color:#5C4308;}
+.vt-combo-roi-box{display:flex;align-items:center;justify-content:space-between;gap:14px;border-radius:8px;padding:10px 14px;margin-top:10px;}
+@media(max-width:640px){.vt-combo-impacto-grid,.vt-combo-impacto-grid-3{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:640px){.vt-combo-card-body{grid-template-columns:1fr;} .vt-combo-left{border-right:none;border-bottom:1px solid var(--border);}}
+
 .vt-verdict{
   display:inline-block;font-size:11px;font-weight:700;line-height:1.4;
   padding:3px 9px;border-radius:20px;cursor:pointer;white-space:nowrap;
@@ -356,7 +482,8 @@ footer.note{margin-top:40px;font-size:11.5px;color:var(--ink-faint);text-align:c
 @page{ margin:10mm; }
 
 @media print{
-  .topbar, .back-btn, .upload-row, footer.note, #appMenu, #moduleVentas { display:none !important; }
+  .topbar, .back-btn, .upload-row, footer.note, #appMenu { display:none !important; }
+  body:not(.print-combo-only) #moduleVentas { display:none !important; }
   .btn-file-icon, #scnExportPdf, #exEditVlc, #exEditVic, #nwPtrUd, .icon-btn, #elasEditBtn, #objComercialCalcBtn { display:none !important; }
   #resumenExportBtn, #resumenExportPptBtn, #resumenClearBtn, #exAddResumenBtn, #nwAddResumenBtn, #ctAddResumenBtn { display:none !important; }
   #mvAddRowBtn, #mvExportBtn, #mvEscenarioInput, #mvPtcInput { display:none !important; }
@@ -364,6 +491,8 @@ footer.note{margin-top:40px;font-size:11.5px;color:var(--ink-faint);text-align:c
   body.print-mv-only .cols, body.print-mv-only .card-simulador, body.print-mv-only #scnExportPdf { display:none !important; }
   body.print-mv-only .card:not(#mvCard) { display:none !important; }
   body.print-mv-only #mvCard .row2 { display:none !important; }
+  body.print-combo-only .card:not(#vtComboCard) { display:none !important; }
+  body.print-combo-only #vtComboExportBtn, body.print-combo-only .vt-combo-card-del { display:none !important; }
   .tabs{ display:none !important; }
   body{ background:#fff; }
   .cols{ grid-template-columns:1fr 1.15fr 1.15fr !important; }
@@ -374,25 +503,27 @@ footer.note{margin-top:40px;font-size:11.5px;color:var(--ink-faint);text-align:c
 /* Menú principal */
 .menu-screen{
   min-height:100vh;display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(180deg,#EEF0F6 0%,var(--bg) 60%);padding:40px 24px;
+  background:#0E2233;padding:40px 24px;
+  position:relative;overflow:hidden;
 }
+.menu-inner{position:relative;z-index:1;}
 .menu-inner{max-width:820px;width:100%;text-align:center;}
 .menu-brand{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px;}
 .menu-brand .brand-text{text-align:left;}
 .menu-brand h1{font-size:17px;font-weight:600;}
 .menu-brand span{font-size:11px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em;}
-.menu-title{font-size:28px;font-weight:700;margin-bottom:8px;color:var(--ink);font-family:var(--display);letter-spacing:-.01em;}
-.menu-subtitle{font-size:13.5px;color:var(--ink-soft);margin:0 0 32px;max-width:520px;margin-left:auto;margin-right:auto;}
+.menu-title{font-size:34px;font-weight:800;margin-bottom:8px;color:var(--ink);font-family:var(--display);letter-spacing:-.02em;}
+.menu-subtitle{font-size:14px;font-weight:400;color:var(--ink-soft);margin:0 0 36px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.5;}
 .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
 @media(max-width:640px){.menu-grid{grid-template-columns:1fr;}}
 .menu-card{
-  text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:12px;
-  padding:22px 24px;transition:.15s;box-shadow:var(--shadow);border-top:3px solid var(--border-strong);
+  text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  padding:22px 24px;transition:.15s;box-shadow:0 4px 16px rgba(23,50,74,.06);border-top:3px solid var(--border-strong);
   display:flex;align-items:center;gap:16px;
 }
 .menu-card:nth-child(1){border-top-color:#33409B;}
 .menu-card:nth-child(2){border-top-color:#B08B2E;}
-.menu-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 18px rgba(30,38,104,.12);}
+.menu-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 10px 26px rgba(23,50,74,.10);}
 .menu-card-icon{
   width:44px;height:44px;border-radius:10px;background:var(--accent-soft);color:var(--accent-ink);
   display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:18px;flex-shrink:0;
@@ -401,6 +532,17 @@ footer.note{margin-top:40px;font-size:11.5px;color:var(--ink-faint);text-align:c
 .menu-card-btn{flex-shrink:0;}
 .menu-footnote{margin-top:28px;font-size:11.5px;color:var(--ink-faint);}
 .login-hero{margin-bottom:28px;}
+.menu-card.menu-card-illustrated{
+  flex-direction:column;align-items:center;text-align:center;padding:26px 22px 24px;border-radius:22px;
+}
+.menu-card-badge{
+  width:76px;height:76px;border-radius:20px;background:var(--accent-soft);
+  display:flex;align-items:center;justify-content:center;margin-bottom:14px;overflow:hidden;flex-shrink:0;
+}
+.menu-card-badge svg{width:100%;height:100%;display:block;}
+.menu-card.menu-card-illustrated .menu-card-title{font-size:16.5px;font-weight:700;margin-bottom:5px;}
+.menu-card-desc{font-size:12.5px;color:var(--ink-soft);line-height:1.5;margin-bottom:18px;min-height:34px;}
+.menu-card.menu-card-illustrated .menu-card-btn{align-self:center;padding:7px 22px;border-radius:20px;}
 .login-hero-mark{
   width:56px;height:56px;border-radius:14px;background:var(--accent);color:#fff;
   display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;
@@ -408,8 +550,207 @@ footer.note{margin-top:40px;font-size:11.5px;color:var(--ink-faint);text-align:c
 }
 .login-hero h1{font-family:var(--display);font-size:24px;font-weight:700;color:var(--ink);letter-spacing:-.01em;}
 .login-hero span{display:block;font-size:12px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;margin-top:6px;}
-.login-card{border-top:3px solid var(--accent);box-shadow:0 10px 30px rgba(23,50,74,.10);}
+.login-card{border-top:3px solid var(--accent);border-radius:20px;box-shadow:0 12px 34px rgba(23,50,74,.08);}
+.login-card .field input{border-radius:12px;}
+.login-card #loginBtn{border-radius:20px;padding:9px 0;}
 .login-footnote{margin-top:20px;font-size:11px;color:var(--ink-faint);}
+
+/* ======= Panel hero navy + mascot ======= */
+.hero-split{display:grid;grid-template-columns:1.1fr 0.9fr;border-radius:24px;overflow:hidden;box-shadow:0 20px 50px rgba(23,50,74,.18);}
+@media(max-width:720px){.hero-split{grid-template-columns:1fr;}}
+.hero-panel{
+  background:var(--accent);color:#fff;padding:32px 34px;position:relative;overflow:hidden;
+  min-height:340px;display:flex;flex-direction:column;text-align:left;
+}
+.hero-panel.hero-panel-menu{border-radius:24px;box-shadow:0 20px 50px rgba(23,50,74,.18);}
+.hero-panel-deco{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.hero-panel-deco::before{
+  content:'';position:absolute;top:-60px;right:-70px;width:220px;height:220px;border-radius:50%;
+  background:rgba(255,255,255,.06);
+}
+.hero-panel-deco::after{
+  content:'';position:absolute;bottom:-140px;left:40px;width:180px;height:180px;border-radius:50%;
+  background:rgba(255,255,255,.045);
+}
+.hero-top-row{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;margin-bottom:26px;}
+.hero-brand{display:flex;align-items:center;gap:10px;}
+.hero-brand-mark{
+  width:38px;height:38px;border-radius:10px;background:#fff;color:var(--accent);
+  display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:17px;flex-shrink:0;
+}
+.hero-brand-text{display:flex;flex-direction:column;line-height:1.25;}
+.hero-brand-text b{font-family:var(--display);font-size:13.5px;font-weight:700;}
+.hero-brand-text span{font-size:9.5px;letter-spacing:.08em;color:rgba(255,255,255,.65);}
+.hero-logout-btn{background:rgba(255,255,255,.14);color:#fff;border:none;border-radius:20px;}
+.hero-logout-btn:hover{background:rgba(255,255,255,.24);}
+.hero-title{font-family:var(--display);font-size:26px;font-weight:800;line-height:1.2;margin:0 0 10px;position:relative;z-index:1;max-width:78%;}
+.hero-subtitle{font-size:12.5px;font-style:italic;font-weight:400;color:rgba(255,255,255,.8);line-height:1.5;max-width:76%;position:relative;z-index:1;}
+.hero-mascot{position:absolute;right:26px;bottom:0;width:120px;z-index:1;}
+.hero-mascot svg{width:100%;height:auto;display:block;}
+.hero-form-panel{background:#fff;padding:36px 34px;display:flex;flex-direction:column;justify-content:center;}
+.hero-form-title{font-family:var(--display);font-size:17px;font-weight:700;text-align:center;margin:0 0 18px;color:var(--ink);}
+
+/* ======= Tarjetas compactas debajo del hero ======= */
+.menu-grid-compact{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;}
+@media(max-width:640px){.menu-grid-compact{grid-template-columns:1fr;}}
+.menu-card-compact{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:16px 18px;display:flex;align-items:center;gap:12px;text-align:left;
+  border-top:3px solid var(--border-strong);box-shadow:0 3px 12px rgba(23,50,74,.05);transition:.15s;
+}
+.menu-card-compact:nth-child(1){border-top-color:#5B4FCF;}
+.menu-card-compact:nth-child(2){border-top-color:#B08B2E;}
+.menu-card-compact:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(23,50,74,.09);}
+.menu-card-compact .menu-card-icon{width:38px;height:38px;font-size:15px;border-radius:10px;}
+.menu-card-compact .menu-card-title{font-size:13.5px;font-weight:600;line-height:1.3;}
+.menu-card-compact .menu-card-btn{margin-left:auto;}
+
+/* ======= Layout nuevo: panel unico azul (login y menu) ======= */
+.hero-brand-mark{background:#fff;padding:0;overflow:hidden;}
+.hero-brand-text span{font-size:10px;}
+.hero-menu-layout, .hero-login-layout{display:flex;align-items:center;gap:24px;position:relative;z-index:1;flex-wrap:wrap;}
+.hero-mascot-inline{position:static;width:110px;flex-shrink:0;}
+.hero-mascot-inline svg{width:100%;height:auto;display:block;}
+.hero-login-form{
+  background:#fff;border-radius:18px;padding:22px 24px;box-shadow:0 14px 34px rgba(0,0,0,.18);
+  flex:1;min-width:220px;max-width:280px;
+}
+.hero-login-form .field label{color:var(--accent);}
+.hero-login-caption{
+  text-align:center;color:#fff;font-family:var(--display);font-size:19px;font-weight:800;
+  margin-top:22px;position:relative;z-index:1;
+}
+.hero-panel-menu .hero-title{font-size:23px;margin-bottom:6px;max-width:none;}
+.hero-panel-menu .hero-subtitle{max-width:none;font-style:normal;font-size:13px;}
+
+.menu-tools-panel{background:var(--surface);border-radius:20px;padding:22px 26px 26px;margin-top:18px;box-shadow:0 4px 16px rgba(23,50,74,.06);}
+.menu-tools-label{font-size:11px;font-weight:700;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;}
+.menu-card-desc-inline{font-size:11.5px;color:var(--ink-soft);margin-top:2px;}
+.menu-card-soon{opacity:.55;cursor:default;}
+.menu-card-soon:hover{transform:none;box-shadow:0 3px 12px rgba(23,50,74,.05);}
+.menu-card-soon .menu-card-icon{background:var(--surface-alt);color:var(--ink-faint);}
+
+/* ======= Diseño ps-* (tarjeta única fusionada, siguiendo el mockup) ======= */
+.ps-card{border-radius:16px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.28);}
+.ps-card-navy{background:#17324A;padding:2rem 2rem 2.5rem;position:relative;overflow:hidden;}
+.ps-deco-circle{position:absolute;top:-60px;right:-30px;width:200px;height:200px;border-radius:50%;background:#1e3f5c;}
+.ps-top-row{position:relative;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
+.ps-brand{display:flex;align-items:center;gap:10px;}
+.ps-brand-mark{width:34px;height:34px;border-radius:9px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.ps-brand-text{font-family:var(--display);font-size:11px;letter-spacing:.08em;color:#8fb3d1;margin:0;}
+.ps-logout-btn{font-family:var(--body);background:transparent;color:#8fb3d1;border:0.5px solid #2c4d6a;padding:6px 14px;font-size:12px;border-radius:8px;cursor:pointer;}
+.ps-logout-btn:hover{background:rgba(255,255,255,.06);}
+.ps-mascot{width:100%;}
+.ps-mascot svg{width:100%;height:auto;display:block;}
+
+.ps-login-grid{position:relative;display:grid;grid-template-columns:1fr 280px;gap:1.5rem;align-items:center;}
+@media(max-width:640px){.ps-login-grid{grid-template-columns:1fr;}}
+.ps-login-left{display:flex;flex-direction:column;align-items:center;gap:10px;}
+.ps-login-left .ps-mascot{width:170px;}
+.ps-login-caption{font-family:var(--display);font-size:26px;font-weight:600;color:#fff;margin:0;text-align:center;}
+.ps-login-form{background:#fff;border-radius:14px;padding:22px 20px;text-align:left;}
+.ps-form-title{font-family:var(--display);font-size:17px;font-weight:700;text-align:center;margin:0 0 18px;color:var(--ink);}
+.ps-login-form .field label{color:var(--ink-soft);}
+
+.ps-menu-top{border-radius:0;}
+.ps-menu-grid{position:relative;display:grid;grid-template-columns:130px 1fr;gap:1.25rem;align-items:center;}
+@media(max-width:560px){.ps-menu-grid{grid-template-columns:1fr;text-align:center;}}
+.ps-greeting{font-family:var(--display);font-size:24px;font-weight:600;color:#fff;margin:0 0 6px;}
+.ps-greeting-sub{font-size:13px;color:#8fb3d1;margin:0;}
+
+.ps-tools-panel{background:var(--surface-alt);padding:24px;}
+.ps-tools-label{font-family:var(--display);font-size:13px;color:var(--ink-faint);margin:0 0 12px;}
+.ps-tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;}
+.ps-tool-card{background:var(--surface);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:8px;cursor:pointer;border:1px solid var(--border);transition:.15s;position:relative;}
+.ps-tool-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(23,50,74,.08);border-color:var(--accent);}
+.ps-tool-icon{width:36px;height:36px;border-radius:9px;background:var(--surface-alt);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent);font-size:15px;}
+.ps-tool-title{font-family:var(--display);font-size:14px;font-weight:600;color:var(--ink);margin:0;}
+.ps-tool-desc{font-size:12px;color:var(--ink-soft);margin:0;}
+.ps-tool-btn{align-self:flex-start;margin-top:2px;}
+.ps-tool-soon{opacity:.5;cursor:default;}
+.ps-tool-soon:hover{transform:none;box-shadow:none;border-color:var(--border);}
+.ps-tool-soon .ps-tool-icon{color:var(--ink-faint);}
+
+/* ======= Tema dark vd-* (login/menú/toast) ======= */
+.vd-panel{background:#0B1A28;border-radius:16px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35);position:relative;}
+.vd-grid-bg{
+  position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size:40px 40px;
+}
+.vd-glow{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(93,195,232,.09) 0%,rgba(93,195,232,0) 70%);pointer-events:none;}
+.vd-brand{display:flex;align-items:center;gap:10px;position:relative;z-index:1;}
+.vd-brand-mark{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.06);border:0.5px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.vd-brand-text{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:.08em;color:#fff;}
+.vd-btn-primary{font-family:var(--display);background:#5dc3e8;color:#0B1A28;border:none;font-size:13px;font-weight:600;padding:10px 18px;border-radius:8px;cursor:pointer;}
+.vd-btn-primary:hover{background:#7bd0ee;}
+.vd-btn-ghost{font-family:var(--body);background:transparent;border:0.5px solid rgba(255,255,255,.14);color:#9db4c8;font-size:12px;font-weight:500;padding:8px 18px;border-radius:8px;cursor:pointer;position:relative;z-index:1;}
+.vd-btn-ghost:hover{background:rgba(255,255,255,.06);}
+
+/* Login */
+.vd-login-panel{display:flex;min-height:440px;}
+@media(max-width:700px){.vd-login-panel{flex-direction:column;}}
+.vd-login-left{position:relative;flex:1.1;padding:3rem;display:flex;flex-direction:column;justify-content:space-between;min-width:0;}
+.vd-login-title{position:relative;z-index:1;font-family:var(--display);font-size:30px;font-weight:600;color:#fff;margin:0;line-height:1.3;}
+.vd-login-right{width:380px;flex-shrink:0;background:#0F2437;padding:3rem 2.5rem;display:flex;flex-direction:column;justify-content:center;border-left:0.5px solid rgba(255,255,255,.06);text-align:left;}
+@media(max-width:700px){.vd-login-right{width:auto;border-left:none;border-top:0.5px solid rgba(255,255,255,.06);}}
+.vd-form-title{font-family:var(--display);font-size:18px;font-weight:600;color:#fff;margin:0 0 4px;}
+.vd-form-sub{font-size:12px;color:#6b8bab;margin:0 0 22px;}
+.vd-login-right .field label{font-size:12px;color:#9db4c8;}
+.vd-login-right .field input{background:rgba(255,255,255,.04);border:0.5px solid rgba(255,255,255,.12);color:#fff;}
+.vd-login-right .field input::placeholder{color:#4a6580;font-style:italic;}
+
+/* Dashboard / menu */
+.vd-dash-header{position:relative;padding:2.75rem 3rem 3rem;overflow:hidden;}
+.vd-top-row{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;margin-bottom:44px;}
+.vd-dash-title{position:relative;z-index:1;font-family:var(--display);font-size:27px;font-weight:600;color:#fff;margin:0 0 6px;}
+.vd-dash-sub{position:relative;z-index:1;font-size:13px;color:#7d9bb8;margin:0;}
+.vd-tools-panel{background:#0F2437;padding:2.25rem 3rem 2.75rem;border-top:0.5px solid rgba(255,255,255,.06);}
+.vd-tools-label{font-family:var(--display);font-size:11px;font-weight:500;letter-spacing:.06em;color:#5f7f9c;margin:0 0 18px;}
+.vd-tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+@media(max-width:700px){.vd-tools-grid{grid-template-columns:1fr;}}
+.vd-tool-card{background:rgba(255,255,255,.03);border:0.5px solid rgba(255,255,255,.1);border-radius:12px;padding:20px;cursor:pointer;transition:border-color .15s ease;}
+.vd-tool-card:hover{border-color:rgba(255,255,255,.22);}
+.vd-tool-icon{width:36px;height:36px;border-radius:9px;background:rgba(93,195,232,.1);display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-weight:700;color:#5dc3e8;font-size:15px;}
+.vd-tool-title{font-family:var(--display);font-size:14px;font-weight:600;color:#fff;margin:0 0 5px;}
+.vd-tool-desc{font-size:12px;color:#7d9bb8;margin:0 0 16px;line-height:1.5;}
+.vd-tool-btn{font-size:12px;padding:8px 16px;}
+.vd-tool-soon{background:rgba(255,255,255,.02);border:0.5px dashed rgba(255,255,255,.1);border-radius:12px;padding:20px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:default;}
+.vd-tool-soon-text{font-family:var(--display);font-size:13px;font-weight:500;color:#5f7f9c;margin:0;}
+
+/* Toast auditoria */
+.vd-toast-panel{min-height:0;padding:2rem;display:flex;align-items:center;justify-content:center;}
+.vd-toast{position:relative;z-index:1;display:flex;align-items:flex-start;gap:12px;background:#0F2437;border:0.5px solid rgba(240,194,69,.2);border-radius:10px;padding:14px 16px;max-width:360px;box-shadow:0 12px 30px rgba(0,0,0,.35);}
+.vd-toast-icon{width:26px;height:26px;border-radius:7px;background:rgba(240,194,69,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:13px;}
+.vd-toast-title{font-family:var(--display);font-size:13px;font-weight:600;color:#fff;margin:0 0 2px;}
+.vd-toast-sub{font-size:12px;color:#7d9bb8;margin:0;line-height:1.5;}
+.vd-toast-close{background:transparent;border:none;color:#4a6580;cursor:pointer;padding:2px;flex-shrink:0;font-size:13px;}
+.vd-toast-close:hover{color:#9db4c8;}
+
+/* Panel de Simulador de Precios (submenu) */
+.vd-sim-panel{padding:2rem 3.5rem 2.5rem;min-height:0;}
+.vd-back-link{position:relative;z-index:1;background:none;border:none;font-family:var(--body);font-size:12px;color:#7d9bb8;cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin-bottom:18px;padding:0;}
+.vd-back-link:hover{color:#9db4c8;}
+.vd-sim-header-row{position:relative;z-index:1;display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.vd-sim-icon{width:32px;height:32px;border-radius:9px;background:rgba(93,195,232,.1);display:flex;align-items:center;justify-content:center;color:#5dc3e8;font-weight:700;font-size:15px;flex-shrink:0;}
+.vd-sim-title{font-family:var(--display);font-size:18px;font-weight:600;color:#fff;margin:0;}
+.vd-import-hint{position:relative;z-index:1;display:flex;align-items:center;gap:6px;background:transparent;border:0;border-radius:8px;padding:0;margin-bottom:18px;}
+.vd-import-icon{font-size:12px;}
+.vd-import-text{font-size:11px;color:#5f7f9c;}
+.vd-import-btn{position:relative;overflow:hidden;background:transparent;border:0.5px solid rgba(255,255,255,.14);color:#9db4c8;font-size:10px;font-weight:500;padding:3px 9px;border-radius:5px;cursor:pointer;font-family:var(--body);}
+.vd-import-btn:hover{background:rgba(255,255,255,.06);}
+.vd-import-btn input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.vd-import-btn-icon{width:22px;height:22px;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#9db4c8;}
+.vd-sim-cards{position:relative;z-index:1;display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:820px;}
+@media(max-width:600px){.vd-sim-cards{grid-template-columns:1fr;}}
+.vd-sim-card{background:rgba(255,255,255,.03);border:0.5px solid rgba(255,255,255,.1);border-radius:12px;padding:20px 22px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:border-color .15s ease;}
+.vd-sim-card:hover{border-color:rgba(255,255,255,.22);}
+.vd-sim-card-left{display:flex;align-items:center;gap:14px;}
+.vd-sim-card-icon{width:36px;height:36px;border-radius:9px;background:rgba(93,195,232,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;color:#5dc3e8;}
+.vd-sim-card-title{font-family:var(--display);font-size:14px;font-weight:600;color:#fff;margin:0;}
+.vd-sim-card-btn{font-size:12px;padding:8px 16px;flex-shrink:0;}
+@media(max-width:640px){.hero-login-layout, .hero-menu-layout{flex-direction:column;text-align:center;}}
 
 .back-btn{
   appearance:none;border:none;background:none;cursor:pointer;color:var(--ink-faint);
@@ -418,66 +759,115 @@ footer.note{margin-top:40px;font-size:11.5px;color:var(--ink-faint);text-align:c
 .back-btn:hover{color:var(--accent-ink);}
 
 .vt-add-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
-.vt-add-grid-main{grid-template-columns:1.6fr 1.2fr 1.3fr 0.75fr 0.9fr 0.65fr 0.8fr;}
+.vt-add-grid-main{grid-template-columns:1.6fr 1.2fr 1.3fr 0.65fr 0.65fr 0.75fr;}
+.vt-add-grid-main.has-objetivo{grid-template-columns:1.3fr 1.4fr 1.5fr 1.1fr 1.2fr 0.6fr 0.6fr 0.7fr;}
+.vt-combo-row1{grid-template-columns:1.2fr 0.7fr 0.9fr 1fr 0.8fr 0.8fr 0.8fr;margin-top:8px;}
+.vt-combo-row2{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:0;}
+.vt-add-grid .field{min-width:0;}
+#vtObjMetaPdvs, #vtComboPaqComprometidos{max-width:120px;}
+@media(max-width:1200px){.vt-combo-row1{grid-template-columns:repeat(4,1fr);} .vt-combo-row2{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:640px){.vt-combo-row1{grid-template-columns:repeat(2,1fr);}}
+.msel{position:relative;}
+.msel-btn{
+  width:100%;text-align:left;padding:7px 9px;border:1px solid var(--border-strong);border-radius:7px;
+  font-family:var(--body);font-size:12.5px;background:var(--surface);color:var(--ink);cursor:pointer;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.msel-btn:after{content:"▾";float:right;color:var(--ink-faint);}
+.msel-btn.has-selection{color:var(--ink);font-weight:500;}
+.msel-panel{
+  display:none;position:absolute;z-index:20;top:calc(100% + 4px);left:0;right:0;
+  background:var(--surface);border:1px solid var(--border-strong);border-radius:8px;
+  box-shadow:0 6px 20px rgba(16,24,40,.12);max-height:180px;overflow-y:auto;padding:6px;
+}
+.msel-panel.open{display:block;}
+.msel-opt{display:flex;align-items:center;gap:7px;padding:5px 6px;font-size:12px;border-radius:5px;cursor:pointer;}
+.msel-opt:hover{background:var(--surface-alt);}
+.msel-opt input{width:auto;margin:0;accent-color:var(--accent);}
+.msel-all-opt{font-weight:700;border-bottom:1px solid var(--border);margin-bottom:4px;padding-bottom:8px;}
 @media(max-width:1200px){.vt-add-grid, .vt-add-grid-main{grid-template-columns:repeat(4,1fr);}}
 @media(max-width:640px){.vt-add-grid, .vt-add-grid-main{grid-template-columns:repeat(2,1fr);}}
+#vtAddItemCard #vtModePills{margin-bottom:14px;display:none;}
 </style>
 </head>
 <body>
 
 <!-- ======================= LOGIN ======================= -->
 <div id="loginScreen" class="menu-screen">
-  <div class="menu-inner" style="max-width:400px;">
-    <div class="login-hero">
-      <div class="login-hero-mark">₪</div>
-      <h1>Pricing Studio</h1>
-      <span>Valencia Citrus · Centro de Herramientas de Pricing</span>
+  <div class="menu-inner" style="max-width:820px;">
+    <div class="vd-panel vd-login-panel">
+      <div class="vd-grid-bg"></div>
+      <div class="vd-glow" style="top:50%;left:32%;transform:translate(-50%,-50%);width:480px;height:480px;"></div>
+      <div class="vd-login-left">
+        <div class="vd-brand"><div class="vd-brand-mark"><img src="data:image/png;base64,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" alt="Valencia Citrus" style="width:20px;height:20px;object-fit:contain;"></div><span class="vd-brand-text">VALENCIA CITRUS</span></div>
+        <p class="vd-login-title">¡Bienvenido a<br>Pricing Studio!</p>
+        <div></div>
+      </div>
+      <div class="vd-login-right">
+        <h1 class="vd-form-title">Iniciar sesión</h1>
+        <p class="vd-form-sub">Ingresá con tu cuenta corporativa.</p>
+        <div class="field"><label>Usuario</label><input type="text" id="loginUser" autocomplete="username" placeholder="usuario.vc"></div>
+        <div class="field"><label>Contraseña</label><input type="password" id="loginPass" autocomplete="current-password" placeholder="••••••"></div>
+        <div id="loginMsg" style="margin-top:2px;"></div>
+        <button class="vd-btn-primary" id="loginBtn" style="width:100%;margin-top:8px;">Ingresar</button>
+        <p class="login-footnote" style="text-align:center;color:#4a6580;">Acceso restringido a cuentas autorizadas por Valencia Citrus.</p>
+      </div>
     </div>
-    <div class="card login-card" style="text-align:left;">
-      <div class="field"><label>Usuario</label><input type="text" id="loginUser" autocomplete="username" placeholder="ej. usuario.vc"></div>
-      <div class="field"><label>Contraseña</label><input type="password" id="loginPass" autocomplete="current-password"></div>
-      <div id="loginMsg" style="margin-top:6px;"></div>
-      <button class="btn btn-primary btn-sm" id="loginBtn" style="width:100%;margin-top:10px;">Ingresar</button>
-    </div>
-    <p class="login-footnote">Acceso restringido a cuentas autorizadas por Valencia Citrus.</p>
   </div>
 </div>
 
-<!-- ======================= BIENVENIDA ======================= -->
+<!-- ======================= BIENVENIDA (toast de auditoría) ======================= -->
 <div id="welcomeScreen" class="menu-screen" style="display:none;">
   <div class="menu-inner" style="max-width:420px;">
-    <div class="obj-answer" style="background:var(--good-soft);text-align:center;">
-      <div class="headline" style="font-size:15px;color:var(--good);" id="welcomeText">Bienvenido/a</div>
+    <div class="vd-panel vd-toast-panel">
+      <div class="vd-grid-bg"></div>
+      <div class="vd-toast">
+        <div class="vd-toast-icon">🛡️</div>
+        <div style="flex:1;">
+          <p class="vd-toast-title" id="welcomeText">Sesión registrada</p>
+          <p class="vd-toast-sub" id="welcomeSub">Este acceso queda auditado.</p>
+        </div>
+        <button class="vd-toast-close" id="welcomeCloseBtn">✕</button>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- ======================= MENÚ PRINCIPAL ======================= -->
 <div id="appMenu" class="menu-screen" style="display:none;">
-  <div class="menu-inner">
-    <div class="menu-brand">
-      <div class="brand-mark">₪</div>
-      <div class="brand-text">
-        <h1>Pricing Studio</h1>
-        <span>Valencia Citrus</span>
+  <div class="menu-inner" style="max-width:820px;">
+    <div class="vd-panel">
+      <div class="vd-dash-header">
+        <div class="vd-grid-bg"></div>
+        <div class="vd-glow" style="top:-160px;right:-100px;width:460px;height:460px;"></div>
+        <div class="vd-top-row">
+          <div class="vd-brand"><div class="vd-brand-mark"><img src="data:image/png;base64,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" alt="Valencia Citrus" style="width:20px;height:20px;object-fit:contain;"></div><span class="vd-brand-text">VALENCIA CITRUS</span></div>
+          <button class="vd-btn-ghost" id="logoutBtn">Salir</button>
+        </div>
+        <p class="vd-dash-title" id="menuGreeting">Bienvenido</p>
+        <p class="vd-dash-sub">Elegí una herramienta para empezar.</p>
       </div>
-      <button class="btn btn-sm" id="logoutBtn" style="margin-left:auto;">Salir</button>
+      <div class="vd-tools-panel">
+        <p class="vd-tools-label">HERRAMIENTAS</p>
+        <div class="vd-tools-grid">
+          <div class="vd-tool-card" data-role-card="rentabilidad" data-goto="rentabilidad">
+            <div class="vd-tool-icon">₪</div>
+            <p class="vd-tool-title">Calculadora de rentabilidad</p>
+            <p class="vd-tool-desc">Margen y costo por producto.</p>
+            <button class="vd-btn-primary vd-tool-btn" data-goto="rentabilidad">Abrir</button>
+          </div>
+          <div class="vd-tool-card" data-role-card="ventas" data-goto="ventas">
+            <div class="vd-tool-icon">%</div>
+            <p class="vd-tool-title">Simulador de precios</p>
+            <p class="vd-tool-desc">Combos, descuentos y break even.</p>
+            <button class="vd-btn-primary vd-tool-btn" data-goto="ventas">Abrir</button>
+          </div>
+          <div class="vd-tool-card vd-tool-soon">
+            <p class="vd-tool-soon-text">Próximamente nuevo módulo</p>
+          </div>
+        </div>
+      </div>
     </div>
-    <h2 class="menu-title">Centro de Herramientas de Pricing</h2>
-    <p class="menu-subtitle">Un mismo lugar para calcular rentabilidad, simular precios y tomar decisiones comerciales con datos.</p>
-    <div class="menu-grid">
-      <div class="menu-card" data-role-card="rentabilidad">
-        <div class="menu-card-icon">₪</div>
-        <div class="menu-card-title">Calculadora de Rentabilidad</div>
-        <button class="btn btn-primary btn-sm menu-card-btn" data-goto="rentabilidad">Abrir</button>
-      </div>
-      <div class="menu-card" data-role-card="ventas">
-        <div class="menu-card-icon">%</div>
-        <div class="menu-card-title">Simulador de Precios</div>
-        <button class="btn btn-primary btn-sm menu-card-btn" data-goto="ventas">Abrir</button>
-      </div>
-    </div>
-    <div class="menu-footnote">Más herramientas de Pricing se irán agregando a este centro.</div>
   </div>
 </div>
 
@@ -949,10 +1339,14 @@ footer.note{margin-top:40px;font-size:11.5px;color:var(--ink-faint);text-align:c
           <div class="hint">Todo se guarda automáticamente en este navegador (LocalStorage). Al reabrir el archivo se mantiene.</div>
           <button class="btn btn-sm" style="margin-top:10px;" id="resetConfigBtn">Restaurar valores iniciales</button>
           <div class="field" style="margin-top:14px;">
-            <label>URL de datos en la nube (Google Sheets publicado como CSV)</label>
+            <label>URL "Lista de precio" en la nube (Google Sheets publicado como CSV)</label>
             <input type="text" id="cfgSheetUrl" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv">
           </div>
-          <div class="hint">Se guarda en este navegador. Botón ☁️ en el topbar de cada módulo trae siempre la última versión sin tener que reenviar el archivo.</div>
+          <div class="field" style="margin-top:10px;">
+            <label>URL "Venta" en la nube (misma planilla, pestaña Venta publicada como CSV)</label>
+            <input type="text" id="cfgSheetUrlVenta" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?gid=...&output=csv">
+          </div>
+          <div class="hint">Se guarda en este navegador. Botón ☁️ en el topbar de cada módulo trae siempre la última versión sin tener que reenviar el archivo. Cada pestaña de Google Sheets se publica por separado (Archivo → Compartir → Publicar en la web → elegí la pestaña → CSV), así que "Lista de precio" y "Venta" tienen cada una su propia URL aunque estén en la misma planilla.</div>
         </div>
         <div class="card">
           <h3><span class="n">08</span>Usuarios y accesos</h3>
@@ -1145,91 +1539,177 @@ footer.note{margin-top:40px;font-size:11.5px;color:var(--ink-faint);text-align:c
 
 <!-- ======================= MÓDULO: CALCULADORA VENTAS ======================= -->
 <div id="moduleVentas" style="display:none;">
-<div class="app">
 
-  <div class="topbar">
-    <div class="topbar-inner">
-      <div>
-        <div class="brand">
-          <button class="back-btn" data-goto="menu">← Menú</button>
-          <div class="brand-mark">%</div>
-          <div class="brand-text">
-            <h1>Simulador de Precios</h1>
-            <span>Precio C.E. y margen estimado por ítem</span>
-          </div>
+<div id="vtSubmenuScreen" class="menu-screen">
+  <div class="menu-inner" style="max-width:900px;">
+    <div id="vtSubmenuPanel" class="vd-panel vd-sim-panel">
+      <div class="vd-grid-bg"></div>
+      <button class="vd-back-link" data-goto="menu">← Menú</button>
+      <div class="vd-sim-header-row">
+        <div class="vd-sim-icon">%</div>
+        <p class="vd-sim-title">Simulador de precios</p>
+      </div>
+      <div class="vd-import-hint" id="vtUploadRow">
+        <button class="vd-import-btn vd-import-btn-icon" title="Importar Excel">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <input type="file" id="vtFileInput" accept=".xlsx,.xls">
+        </button>
+        <button class="vd-import-btn vd-import-btn-icon" id="vtCloudLoadBtn" title="Actualizar datos desde la nube">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h.79a4.5 4.5 0 1 1 0 9z"/><path d="M12 12v6M9.5 15.5 12 13l2.5 2.5"/></svg>
+        </button>
+        <span class="vd-import-text" id="vtFileStatus">Sin datos</span>
+        <label class="check-inline"><input type="checkbox" id="vtChkSoloActivos" checked>Solo activos</label>
+      </div>
+      <div id="vtSubmenu" class="vd-sim-cards">
+        <div class="vd-sim-card" data-vt-mode="combo">
+          <div class="vd-sim-card-left"><div class="vd-sim-card-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.89 1.45l8 4A2 2 0 0 1 22 7.24v9.53a2 2 0 0 1-1.11 1.79l-8 4a2 2 0 0 1-1.78 0l-8-4a2 2 0 0 1-1.11-1.8V7.24a2 2 0 0 1 1.11-1.79l8-4a2 2 0 0 1 1.78 0z"/><polyline points="2.32 6.16 12 11 21.68 6.16"/><line x1="12" y1="22.76" x2="12" y2="11"/></svg></div><p class="vd-sim-card-title">Armar combos</p></div>
+          <button class="vd-btn-primary vd-sim-card-btn">Abrir</button>
+        </div>
+        <div class="vd-sim-card" data-vt-mode="excepcional">
+          <div class="vd-sim-card-left"><div class="vd-sim-card-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><p class="vd-sim-card-title">Descuento por cliente</p></div>
+          <button class="vd-btn-primary vd-sim-card-btn">Abrir</button>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="upload-row" id="vtUploadRow">
-    <button class="btn-file-icon" title="Importar Excel">
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-      <input type="file" id="vtFileInput" accept=".xlsx,.xls">
-    </button>
-    <button class="btn-file-icon" id="vtCloudLoadBtn" title="Actualizar datos desde la nube">
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h.79a4.5 4.5 0 1 1 0 9z"/><path d="M12 12v6M9.5 15.5 12 13l2.5 2.5"/></svg>
-    </button>
-    <span class="hint" id="vtFileStatus">Importar Excel para poder buscar ítems</span>
-  </div>
+<div class="app">
+  <div id="vtWorkArea" style="display:none;">
+  <button class="back-btn" id="vtBackToSubmenu" style="margin-bottom:14px;">← Simulador de Precios</button>
+  <h2 id="vtModeTitle" style="font-family:var(--display);font-size:20px;font-weight:800;color:#17324A;margin:0 0 14px;">Armar combo</h2>
 
-  <div class="card">
-    <h3><span class="n">01</span>Agregar ítem</h3>
-    <div class="vt-add-grid vt-add-grid-main">
+  <div class="card" id="vtAddItemCard">
+    <h3><span class="n">01</span>Producto</h3>
+    <div class="pill-group" id="vtModePills" style="max-width:460px;margin-bottom:14px;">
+      <div class="pill active" data-m="combo">Armar combo</div>
+      <div class="pill" data-m="excepcional">Descuento excepcional</div>
+    </div>
+
+    <div class="vt-add-grid vt-add-grid-main" id="vtAddGridMain">
+      <div class="field" id="vtComboObjetivoField" style="display:none;"><label>Objetivo del combo <span style="color:var(--bad);">*</span></label>
+        <select id="vtComboObjetivo">
+          <option value="">Seleccionar…</option>
+          <option value="volumen">Volumen incremental</option>
+          <option value="cobertura">Cobertura / distribución</option>
+          <option value="liquidacion">Liquidación de stock</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div class="field" id="vtComboJustificacionWrap" style="display:none;">
+        <label>Justificación</label>
+        <input type="text" id="vtComboJustificacion" placeholder="Explicá por qué este combo no encaja en las otras categorías">
+      </div>
       <div class="field"><label>Lista de precio</label><select id="vtSelLista" disabled></select></div>
       <div class="field"><label>Línea</label><select id="vtSelLinea" disabled></select></div>
       <div class="field"><label>Marca</label><select id="vtSelMarca" disabled></select></div>
       <div class="field"><label>Calibre</label><select id="vtSelCalibre" disabled></select></div>
-      <div class="field"><label>Sabor</label><select id="vtSelSabor" disabled></select></div>
       <div class="field"><label>Empaque</label><select id="vtSelEmpaque" disabled></select></div>
-      <div class="field"><label>Retiro fáb.</label>
-        <select id="vtSelRetiro"><option value="no">No</option><option value="si">Sí</option></select>
+      <div class="field" style="display:none;"><label>SKU</label><select id="vtSelSku" disabled></select></div>
+    </div>
+
+    <!-- Campos modo Combo -->
+    <div id="vtWrapCombo" style="display:none;">
+      <div class="vt-step-sublabel"><span class="n">02</span>Condiciones comerciales</div>
+      <div class="vt-add-grid vt-combo-row1" style="margin-top:8px;">
+        <div class="field"><label>Nombre</label><input type="text" id="vtComboNombre" placeholder="Ingresar nombre del combo"></div>
+        <div class="field"><label>Cantidad</label><input type="number" id="vtComboCantidad" min="1" placeholder="Ingresar paq"></div>
+        <div class="field"><label>Precio Política</label><input type="text" id="vtComboPrecioPolitica" disabled placeholder="Elegí un producto"></div>
+        <div class="field"><label>Tipo de precio</label>
+          <select id="vtComboPrecioModo">
+            <option value="paquete">Precio por paquete</option>
+            <option value="descuento">Descuento (%)</option>
+          </select>
+        </div>
+        <div class="field"><label id="vtComboPrecioLabel">Precio nuevo</label><input type="number" step="0.01" id="vtComboPrecioPromo"></div>
+        <div class="field"><label>Desde</label><input type="date" id="vtComboFechaInicio"></div>
+        <div class="field"><label>Hasta</label><input type="date" id="vtComboFechaLimite"></div>
+      </div>
+      <div class="vt-step-sublabel"><span class="n">03</span>Volumen o estrategia</div>
+      <div class="vt-add-grid vt-combo-row2">
+        <div class="field"><label>Canal</label>
+          <div class="msel" id="vtComboCanalMsel">
+            <button type="button" class="msel-btn" id="vtComboCanalBtn">Seleccionar canal(es)</button>
+            <div class="msel-panel" id="vtComboCanalPanel"></div>
+          </div>
+        </div>
+        <div class="field"><label>División</label>
+          <div class="msel" id="vtComboDivisionMsel">
+            <button type="button" class="msel-btn" id="vtComboDivisionBtn">Seleccionar división(es)</button>
+            <div class="msel-panel" id="vtComboDivisionPanel">
+              <label class="msel-opt msel-all-opt"><input type="checkbox" class="msel-all-check">Seleccionar todos</label>
+              <label class="msel-opt"><input type="checkbox" value="LA PAZ">La Paz</label>
+              <label class="msel-opt"><input type="checkbox" value="SANTA CRUZ">Santa Cruz</label>
+              <label class="msel-opt"><input type="checkbox" value="COCHABAMBA">Cochabamba</label>
+              <label class="msel-opt"><input type="checkbox" value="PROVINCIAS">Provincias</label>
+            </div>
+          </div>
+        </div>
+        <div class="field" id="vtObjCoberturaField" style="display:none;"><label>Clientes objetivo</label><input type="number" id="vtObjMetaPdvs" min="1" placeholder="Ingresar cantidad"></div>
+        <div class="field" id="vtComboVentaPromedioWrap">
+          <label>Venta promedio</label>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <input type="number" id="vtComboPromedioVenta" placeholder="Se completa solo" step="1">
+            <span class="hint" id="vtComboPromedioProrateado" style="margin:0;font-weight:600;white-space:nowrap;"></span>
+          </div>
+        </div>
+        <div class="field" id="vtComboPaqComprometidosWrap"><label>Paq. comprometidos</label><input type="number" id="vtComboPaqComprometidos" min="1" placeholder="Ingresar paq"></div>
+        <div class="field" id="vtObjStockRiesgoField" style="display:none;"><label>Stock en riesgo (paquetes)</label><input type="number" id="vtObjStockRiesgo" min="0" placeholder="Ingresar paquetes"></div>
+        <div class="field" id="vtObjDiasVencerField" style="display:none;"><label>Días a vender</label><input type="number" id="vtObjDiasVencer" min="1" placeholder="Ingresar días"></div>
       </div>
     </div>
-    <div class="vt-add-grid" style="grid-template-columns:repeat(3,1fr);margin-top:10px;">
-      <div class="field"><label>Tipo de evaluación</label>
-        <select id="vtSelTipo">
-          <option value="Oferta promocional">Oferta promocional</option>
-          <option value="Descuento">Descuento</option>
-          <option value="Bonificación">Bonificación</option>
-          <option value="Regulación de precio">Regulación de precio</option>
-          <option value="Ciclo comercial">Ciclo comercial</option>
-          <option value="Lanzamiento">Lanzamiento</option>
-          <option value="Otro">Otro</option>
+
+    <!-- Campos modo Descuento Excepcional -->
+    <div id="vtWrapExcepcional" class="vt-add-grid" style="grid-template-columns:repeat(3,1fr);margin-top:10px;display:none;">
+      <div class="field"><label>Precio Política</label><input type="text" id="vtExcPrecioPolitica" disabled placeholder="Elegí un producto"></div>
+      <div class="field"><label>Código cliente</label><input type="text" id="vtExcCodigo" placeholder="Ej. CL-0231"></div>
+      <div class="field"><label>Tipo de precio</label>
+        <select id="vtExcPrecioModo">
+          <option value="precio">Precio neto</option>
+          <option value="descuento">Descuento (%)</option>
         </select>
       </div>
-      <div class="field"><label>Vigencia desde</label><input type="date" id="vtSelFechaInicio"></div>
-      <div class="field"><label>Vigencia hasta</label><input type="date" id="vtSelFechaLimite"></div>
+      <div class="field"><label id="vtExcPrecioLabel">Precio neto (Bs/paq)</label><input type="number" step="0.01" id="vtExcPrecioEspecial"></div>
+      <div class="field"><label>Cantidad (paq.)</label><input type="number" min="1" id="vtExcCantidad" placeholder="Ingresar paq"></div>
+      <div class="field"><label>Compra habitual (paq.)</label><input type="number" min="0" id="vtExcVolumenHabitual" placeholder="Opcional"></div>
+      <div class="field"><label>Motivo</label><input type="text" id="vtExcMotivo" placeholder="Ej. Cliente estratégico, cierre de mes..."></div>
     </div>
+
     <button class="btn btn-primary btn-sm" id="vtAddRow" disabled style="margin-top:10px;">+ Agregar a la lista</button>
   </div>
 
-  <div class="card">
-    <h3><span class="n">02</span>Estimación</h3>
+  <div class="card" id="vtComboCard" style="display:none;">
+    <h3><span class="n">•</span>Combos armados <span id="vtComboCount" style="color:var(--ink-faint);font-weight:400;"></span></h3>
+    <div id="vtComboCardsWrap" class="vt-combo-cards"></div>
+    <button class="btn btn-primary btn-sm" id="vtComboExportBtn" style="margin-top:14px;">Exportar PDF</button>
+  </div>
+
+  <div class="card" id="vtExcCard" style="display:none;">
+    <h3><span class="n">•</span>Descuentos excepcionales</h3>
     <div class="scn-table-wrap">
-      <table id="vtTable">
+      <table id="vtExcTable">
         <thead>
           <tr>
+            <th style="text-align:left;">Código</th>
             <th style="text-align:left;">Producto</th>
-            <th style="text-align:right;">Precio política</th>
-            <th style="text-align:left;">Tipo de ingreso</th>
-            <th style="text-align:right;">% Desc. / Precio neto</th>
-            <th style="text-align:right;">Cantidad</th>
-            <th style="text-align:right;">Margen Bs/Paq</th>
-            <th style="text-align:right;">Margen total</th>
-            <th style="text-align:right;">Costo descuento</th>
+            <th style="text-align:right;">Precio Pol.</th>
+            <th style="text-align:right;">Precio Neto</th>
+            <th style="text-align:right;">% Desc.</th>
+            <th style="text-align:right;">Cant.</th>
             <th style="text-align:right;">ROI</th>
-            <th style="text-align:left;width:90px;">Estado</th>
-            <th style="text-align:left;">Comentario</th>
+            <th style="text-align:right;">Impacto</th>
+            <th style="text-align:left;">Motivo</th>
             <th></th>
           </tr>
         </thead>
-        <tbody id="vtTableBody"></tbody>
+        <tbody id="vtExcTableBody"></tbody>
       </table>
     </div>
   </div>
 
-  <footer class="note">Calculadora de ventas · el margen de contribución se estima con la cantidad de paquetes indicada</footer>
+  </div>
+
+  <footer class="note"></footer>
 </div>
 </div>
 <!-- ======================= /MÓDULO: CALCULADORA VENTAS ======================= -->
@@ -1263,6 +1743,7 @@ function showScreen(name){
   $('#moduleRentabilidad').style.display = name==='rentabilidad' ? 'block' : 'none';
   $('#moduleVentas').style.display = name==='ventas' ? 'block' : 'none';
   if(name==='ventas' && typeof vtOnDataLoaded==='function') vtOnDataLoaded();
+  if(name==='ventas' && typeof vtShowSubmenu==='function') vtShowSubmenu();
   window.scrollTo(0,0);
 }
 $$('[data-goto]').forEach(el=>{
@@ -1321,12 +1802,18 @@ function doLogin(){
   currentUser = found;
   logAccess(found.usuario);
   const fecha = new Date().toLocaleString('es-BO');
-  $('#welcomeText').textContent = `Hola, bienvenido/a ${found.usuario}. Tu ingreso quedó registrado el ${fecha}.`;
+  $('#welcomeText').textContent = `Sesión de ${found.usuario} registrada`;
+  $('#welcomeSub').textContent = `Este acceso queda auditado. ${fecha}`;
   $('#loginScreen').style.display = 'none';
   $('#welcomeScreen').style.display = 'flex';
-  setTimeout(async ()=>{
+  let advanced = false;
+  const advanceToMenu = async ()=>{
+    if(advanced) return;
+    advanced = true;
     $('#welcomeScreen').style.display = 'none';
     applyRoleUI();
+    const nombreLindo = found.usuario.split(/[._]/).map(p=>p.charAt(0).toUpperCase()+p.slice(1)).join(' ');
+    $('#menuGreeting').textContent = `Bienvenido, ${nombreLindo}`;
     showScreen('menu');
     if(loadEmbeddedData()) return;
     const linked = await tryAutoLoadLinkedFile();
@@ -1334,7 +1821,9 @@ function doLogin(){
       loadFromCloud('#fileStatus', true);
       loadFromCloud('#vtFileStatus', true);
     }
-  }, 1600);
+  };
+  setTimeout(advanceToMenu, 2200);
+  $('#welcomeCloseBtn').onclick = advanceToMenu;
 }
 $('#loginBtn').addEventListener('click', doLogin);
 $('#loginPass').addEventListener('keydown', (e)=>{ if(e.key==='Enter') doLogin(); });
@@ -1801,10 +2290,11 @@ async function importFileFromHandle(handle, statusSelector){
   const ws = wb.Sheets[sheetName];
   const json = XLSX.utils.sheet_to_json(ws, {defval:''});
   const kept = importExcelRows(json);
+  const ventaCount = tryImportVentaSheet(wb);
   const fecha = new Date().toLocaleString('es-BO');
   if(statusEl){
     statusEl.textContent = 'Vinculado';
-    statusEl.title = `${file.name} · vinculado · actualizado ${fecha} · ${json.length} filas → ${kept} SKU-lista válidos`;
+    statusEl.title = `${file.name} · vinculado · actualizado ${fecha} · ${json.length} filas → ${kept} SKU-lista válidos${ventaCount?' · '+ventaCount+' filas de venta':''}`;
   }
   if(typeof vtOnDataLoaded==='function') vtOnDataLoaded();
 }
@@ -1860,8 +2350,9 @@ $('#fileInput').addEventListener('change', (e)=>{
       const ws = wb.Sheets[sheetName];
       const json = XLSX.utils.sheet_to_json(ws, {defval:''});
       const kept = importExcelRows(json);
+      const ventaCount = tryImportVentaSheet(wb);
       $('#fileStatus').textContent = 'Cargado';
-      $('#fileStatus').title = `${file.name} · hoja "${sheetName}" · ${json.length} filas leídas → ${kept} SKU-lista válidos`;
+      $('#fileStatus').title = `${file.name} · hoja "${sheetName}" · ${json.length} filas leídas → ${kept} SKU-lista válidos${ventaCount?' · '+ventaCount+' filas de venta':''}`;
     }catch(err){
       $('#fileStatus').textContent = 'Error';
       $('#fileStatus').title = err.message;
@@ -1880,6 +2371,30 @@ function getSheetUrl(){
 }
 function saveSheetUrl(url){
   localStorage.setItem('mc_sheet_url_v1', url || '');
+}
+function getSheetUrlVenta(){
+  return localStorage.getItem('mc_sheet_url_venta_v1') || '';
+}
+function saveSheetUrlVenta(url){
+  localStorage.setItem('mc_sheet_url_venta_v1', url || '');
+}
+
+async function loadVentaFromCloud(){
+  const url = getSheetUrlVenta();
+  if(!url) return {attempted:false};
+  try{
+    const resp = await fetch(url, {cache:'no-store'});
+    if(!resp.ok) throw new Error('HTTP ' + resp.status);
+    const csvText = await resp.text();
+    const wb = XLSX.read(csvText, {type:'string'});
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const json = XLSX.utils.sheet_to_json(ws, {defval:''});
+    const kept = importVentaRows(json);
+    return {attempted:true, ok:true, count:kept};
+  }catch(err){
+    console.error('loadVentaFromCloud error:', err);
+    return {attempted:true, ok:false, error:err.message};
+  }
 }
 
 async function loadFromCloud(statusSelector, silent){
@@ -1900,10 +2415,13 @@ async function loadFromCloud(statusSelector, silent){
     const ws = wb.Sheets[sheetName];
     const json = XLSX.utils.sheet_to_json(ws, {defval:''});
     const kept = importExcelRows(json);
+    const ventaResult = await loadVentaFromCloud();
     const fecha = new Date().toLocaleString('es-BO');
     if(statusEl){
       statusEl.textContent = 'Cargado';
-      statusEl.title = `Desde la nube · ${fecha} · ${json.length} filas leídas → ${kept} SKU-lista válidos`;
+      let title = `Desde la nube · ${fecha} · ${json.length} filas leídas → ${kept} SKU-lista válidos`;
+      if(ventaResult.attempted) title += ventaResult.ok ? ` · ${ventaResult.count} filas de venta` : ' · venta: error al actualizar';
+      statusEl.title = title;
     }
     if(typeof vtOnDataLoaded==='function') vtOnDataLoaded();
   }catch(err){
@@ -1920,6 +2438,8 @@ $('#cloudLoadBtn').addEventListener('click', ()=> loadFromCloud('#fileStatus'));
 $('#vtCloudLoadBtn').addEventListener('click', ()=> loadFromCloud('#vtFileStatus'));
 $('#cfgSheetUrl').value = getSheetUrl();
 $('#cfgSheetUrl').addEventListener('input', ()=> saveSheetUrl($('#cfgSheetUrl').value.trim()));
+$('#cfgSheetUrlVenta').value = getSheetUrlVenta();
+$('#cfgSheetUrlVenta').addEventListener('input', ()=> saveSheetUrlVenta($('#cfgSheetUrlVenta').value.trim()));
 
 function pickBestSheet(wb){
   // Prefer a sheet whose name suggests "lista de precio"; otherwise the sheet
@@ -1962,6 +2482,67 @@ function findHeaderIndices(headers){
       return (broad>=0 && !/_id$|\bid\b/.test(norm[broad])) ? broad : -1;
     })()
   };
+}
+
+/* ============================= VENTA (paquetes promedio por Marca/Calibre/División/Canal) ============================= */
+let VT_VENTA_ROWS = [];
+
+const DIVISION_MAP = {
+  'CBB':'COCHABAMBA', 'COCHABAMBA':'COCHABAMBA',
+  'LPZ':'LA PAZ', 'LA PAZ':'LA PAZ',
+  'SCZ':'SANTA CRUZ', 'SANTA CRUZ':'SANTA CRUZ',
+  'PROVINCIAS':'PROVINCIAS'
+};
+function normalizeDivision(raw){
+  const clean = String(raw||'').toUpperCase().replace(/^DIVISION\s*/,'').trim();
+  return DIVISION_MAP[clean] || clean;
+}
+
+function findVentaSheetName(wb){
+  return wb.SheetNames.find(n=>/venta/i.test(n)) || null;
+}
+
+function importVentaRows(json){
+  if(!json.length) return 0;
+  const headers = Object.keys(json[0]);
+  const hLower = headers.map(h=>String(h).toLowerCase().trim());
+  const findCol = (regex)=>{ const i = hLower.findIndex(h=>regex.test(h)); return i>=0 ? headers[i] : null; };
+  const cMarca = findCol(/marca/);
+  const cCalibre = findCol(/calibre/);
+  const cDivision = findCol(/divisi/);
+  const cCanal = findCol(/canal/);
+  const cProm = findCol(/prom/);
+
+  const rows = [];
+  json.forEach(r=>{
+    const marca = String(r[cMarca]||'').trim();
+    const calibre = String(r[cCalibre]||'').trim();
+    if(!marca || !calibre) return;
+    rows.push({
+      marca,
+      calibre,
+      division: normalizeDivision(r[cDivision]),
+      canal: String(r[cCanal]||'').trim().toUpperCase(),
+      promedio: num(r[cProm])
+    });
+  });
+  VT_VENTA_ROWS = rows;
+  return rows.length;
+}
+
+function tryImportVentaSheet(wb){
+  const name = findVentaSheetName(wb);
+  if(!name) return 0;
+  const json = XLSX.utils.sheet_to_json(wb.Sheets[name], {defval:''});
+  return importVentaRows(json);
+}
+
+function lookupPromedioVenta(marca, calibre, division, canal){
+  const row = VT_VENTA_ROWS.find(r=>
+    r.marca.toUpperCase()===String(marca||'').toUpperCase() &&
+    r.calibre.toUpperCase()===String(calibre||'').toUpperCase() &&
+    r.division===division && r.canal===String(canal||'').toUpperCase());
+  return row ? row.promedio : null;
 }
 
 function importExcelRows(json){
@@ -3041,14 +3622,20 @@ $('#scnExportPdf').addEventListener('click', ()=>{
   window.print();
 });
 
+$('#vtComboExportBtn').addEventListener('click', ()=>{
+  if(!VT_COMBO_ROWS.length){ alert('Todavía no armaste ningún combo para exportar.'); return; }
+  document.body.classList.add('print-combo-only');
+  window.print();
+  setTimeout(()=>{ document.body.classList.remove('print-combo-only'); }, 500);
+});
+
 /* ======================================================================
    MÓDULO: CALCULADORA VENTAS (precio C.E. / margen estimado)
    ====================================================================== */
-let VT_ROWS = [];
-let vtIdSeq = 1;
-
 function vtActiveRows(){
-  return EXCEL_ALL_ROWS.filter(r=>r.estado.toLowerCase()==='activo');
+  const chk = $('#vtChkSoloActivos');
+  const soloActivos = !chk || chk.checked;
+  return soloActivos ? EXCEL_ALL_ROWS.filter(r=>r.estado.toLowerCase()==='activo') : EXCEL_ALL_ROWS.slice();
 }
 
 function vtInferDepto(lista){
@@ -3063,9 +3650,77 @@ function vtInferDepto(lista){
 
 function vtOnDataLoaded(){
   const n = vtActiveRows().length;
-  $('#vtFileStatus').textContent = n ? `${n} SKU activos disponibles para buscar` : 'Importar Excel para poder buscar ítems';
+  $('#vtFileStatus').textContent = n ? `Cargado` : 'Sin datos';
   vtPopulateLista();
+  vtPopulateCanales();
 }
+
+function vtGetCheckedChips(containerId){
+  return Array.from(document.querySelectorAll('#'+containerId+' input[type=checkbox]:checked:not(.msel-all-check)')).map(el=>el.value);
+}
+
+// Si están todas las opciones tildadas, mostrar "Todos" en vez de listarlas una por una.
+function vtChipsDisplay(containerId, selected){
+  const total = document.querySelectorAll('#'+containerId+' .msel-opt:not(.msel-all-opt) input[type=checkbox]').length;
+  if(total>0 && selected.length===total) return 'Todos';
+  return selected.join(', ');
+}
+
+function vtMselUpdateBtnLabel(panelId, btnId, placeholder){
+  const vals = vtGetCheckedChips(panelId);
+  const btn = $('#'+btnId);
+  if(!vals.length){ btn.textContent = placeholder; btn.classList.remove('has-selection'); return; }
+  btn.textContent = vals.length<=2 ? vals.join(', ') : `${vals.length} seleccionados`;
+  btn.classList.add('has-selection');
+}
+
+function vtSyncSelectAll(panel, changedEl){
+  const allCk = panel.querySelector('.msel-all-check');
+  if(!allCk) return;
+  const opts = Array.from(panel.querySelectorAll('.msel-opt:not(.msel-all-opt) input[type=checkbox]'));
+  if(changedEl===allCk){
+    opts.forEach(cb=>{ cb.checked = allCk.checked; });
+  } else {
+    allCk.checked = opts.length>0 && opts.every(cb=>cb.checked);
+  }
+}
+
+function vtWireMsel(mselId, btnId, panelId, placeholder, onChange){
+  const btn = $('#'+btnId);
+  const panel = $('#'+panelId);
+  btn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    document.querySelectorAll('.msel-panel.open').forEach(p=>{ if(p!==panel) p.classList.remove('open'); });
+    panel.classList.toggle('open');
+  });
+  panel.addEventListener('click', (e)=>e.stopPropagation());
+  panel.addEventListener('change', (e)=>{
+    vtSyncSelectAll(panel, e.target);
+    vtMselUpdateBtnLabel(panelId, btnId, placeholder);
+    if(onChange) onChange();
+  });
+  document.addEventListener('click', ()=>panel.classList.remove('open'));
+}
+
+function vtPopulateCanales(){
+  const panel = $('#vtComboCanalPanel');
+  if(!panel) return;
+  const prevChecked = vtGetCheckedChips('vtComboCanalPanel');
+  const canales = uniq(VT_VENTA_ROWS.map(r=>r.canal)).filter(Boolean).sort();
+  const allChecked = canales.length>0 && canales.every(c=>prevChecked.includes(c));
+  panel.innerHTML = canales.length
+    ? `<label class="msel-opt msel-all-opt"><input type="checkbox" class="msel-all-check" ${allChecked?'checked':''}>Seleccionar todos</label>`
+      + canales.map(c=>`<label class="msel-opt"><input type="checkbox" value="${c}" ${prevChecked.includes(c)?'checked':''}>${c}</label>`).join('')
+    : '<span class="hint" style="margin:0;">Cargá el Excel con la hoja "Venta" para ver los canales.</span>';
+  vtMselUpdateBtnLabel('vtComboCanalPanel', 'vtComboCanalBtn', 'Seleccionar canal(es)');
+}
+
+vtWireMsel('vtComboCanalMsel', 'vtComboCanalBtn', 'vtComboCanalPanel', 'Seleccionar canal(es)', ()=>vtUpdatePromedioVenta());
+vtWireMsel('vtComboDivisionMsel', 'vtComboDivisionBtn', 'vtComboDivisionPanel', 'Seleccionar división(es)', ()=>vtUpdatePromedioVenta());
+
+$('#vtChkSoloActivos').addEventListener('change', ()=>{
+  if(EXCEL_ALL_ROWS.length){ vtPopulateLista(); vtPopulateCanales(); }
+});
 
 $('#vtFileInput').addEventListener('change', (e)=>{
   const file = e.target.files[0];
@@ -3079,6 +3734,7 @@ $('#vtFileInput').addEventListener('change', (e)=>{
       const ws = wb.Sheets[sheetName];
       const json = XLSX.utils.sheet_to_json(ws, {defval:''});
       importExcelRows(json);
+      tryImportVentaSheet(wb);
       vtOnDataLoaded();
     }catch(err){
       $('#vtFileStatus').textContent = 'Error al leer el archivo: ' + err.message;
@@ -3091,7 +3747,7 @@ function vtPopulateLista(){
   const listas = uniq(vtActiveRows().map(r=>r.listaPrecio).filter(Boolean));
   $('#vtSelLista').innerHTML = '<option value="">Seleccionar…</option>' + listas.map(l=>`<option value="${l}">${l}</option>`).join('');
   $('#vtSelLista').disabled = !listas.length;
-  ['#vtSelLinea','#vtSelMarca','#vtSelCalibre','#vtSelSabor','#vtSelEmpaque'].forEach(s=>{ $(s).disabled = true; $(s).innerHTML=''; });
+  ['#vtSelLinea','#vtSelMarca','#vtSelCalibre','#vtSelEmpaque','#vtSelSku'].forEach(s=>{ $(s).disabled = true; $(s).innerHTML=''; });
   $('#vtAddRow').disabled = true;
 }
 
@@ -3101,231 +3757,671 @@ function vtCascade(level){
   const lineaSel = $('#vtSelLinea').value;
   const marcaSel = $('#vtSelMarca').value;
   const calibreSel = $('#vtSelCalibre').value;
-  const saborSel = $('#vtSelSabor').value;
+  const empaqueSel = $('#vtSelEmpaque').value;
 
   if(level<=0){
     const lineas = uniq(rows.filter(r=>r.listaPrecio===listaSel).map(r=>r.categoria));
     $('#vtSelLinea').innerHTML = '<option value="">Seleccionar…</option>' + lineas.map(c=>`<option value="${c}">${c}</option>`).join('');
     $('#vtSelLinea').disabled = !listaSel;
-    ['#vtSelMarca','#vtSelCalibre','#vtSelSabor','#vtSelEmpaque'].forEach(s=>{ $(s).disabled=true; $(s).innerHTML=''; });
+    ['#vtSelMarca','#vtSelCalibre','#vtSelEmpaque','#vtSelSku'].forEach(s=>{ $(s).disabled=true; $(s).innerHTML=''; });
     $('#vtAddRow').disabled = true;
   }
   if(level<=1){
     const marcas = uniq(rows.filter(r=>r.listaPrecio===listaSel && r.categoria===lineaSel).map(r=>r.marca));
     $('#vtSelMarca').innerHTML = '<option value="">Seleccionar…</option>' + marcas.map(m=>`<option value="${m}">${m}</option>`).join('');
     $('#vtSelMarca').disabled = !lineaSel;
-    ['#vtSelCalibre','#vtSelSabor','#vtSelEmpaque'].forEach(s=>{ $(s).disabled=true; $(s).innerHTML=''; });
+    ['#vtSelCalibre','#vtSelEmpaque','#vtSelSku'].forEach(s=>{ $(s).disabled=true; $(s).innerHTML=''; });
     $('#vtAddRow').disabled = true;
   }
   if(level<=2){
     const calibres = uniq(rows.filter(r=>r.listaPrecio===listaSel && r.categoria===lineaSel && r.marca===marcaSel).map(r=>r.calibre));
     $('#vtSelCalibre').innerHTML = '<option value="">Seleccionar…</option>' + calibres.map(c=>`<option value="${c}">${c}</option>`).join('');
     $('#vtSelCalibre').disabled = !marcaSel;
-    ['#vtSelSabor','#vtSelEmpaque'].forEach(s=>{ $(s).disabled=true; $(s).innerHTML=''; });
+    ['#vtSelEmpaque','#vtSelSku'].forEach(s=>{ $(s).disabled=true; $(s).innerHTML=''; });
     $('#vtAddRow').disabled = true;
   }
   if(level<=3){
-    const sabores = uniq(rows.filter(r=>r.listaPrecio===listaSel && r.categoria===lineaSel && r.marca===marcaSel && r.calibre===calibreSel).map(r=>r.sabor));
-    $('#vtSelSabor').innerHTML = '<option value="">Seleccionar…</option>' + sabores.map(s=>`<option value="${s}">${s||'(sin sabor)'}</option>`).join('');
-    $('#vtSelSabor').disabled = !calibreSel;
-    $('#vtSelEmpaque').innerHTML=''; $('#vtSelEmpaque').disabled=true;
+    const empaques = uniq(rows.filter(r=>r.listaPrecio===listaSel && r.categoria===lineaSel && r.marca===marcaSel && r.calibre===calibreSel).map(r=>r.empaque));
+    $('#vtSelEmpaque').innerHTML = '<option value="">Seleccionar…</option>' + empaques.map(e=>`<option value="${e}">${e}</option>`).join('');
+    $('#vtSelEmpaque').disabled = !calibreSel;
+    $('#vtSelSku').innerHTML=''; $('#vtSelSku').disabled=true;
     $('#vtAddRow').disabled = true;
   }
   if(level<=4){
-    const empaques = uniq(rows.filter(r=>r.listaPrecio===listaSel && r.categoria===lineaSel && r.marca===marcaSel && r.calibre===calibreSel && r.sabor===saborSel).map(r=>r.empaque));
-    $('#vtSelEmpaque').innerHTML = '<option value="">Seleccionar…</option>' + empaques.map(e=>`<option value="${e}">${e}</option>`).join('');
-    $('#vtSelEmpaque').disabled = !saborSel;
-    $('#vtAddRow').disabled = true;
+    const skuRows = rows.filter(r=>r.listaPrecio===listaSel && r.categoria===lineaSel && r.marca===marcaSel && r.calibre===calibreSel && r.empaque===empaqueSel);
+    $('#vtSelSku').innerHTML = '<option value="">Seleccionar…</option>' + skuRows.map(r=>`<option value="${r.sku}">${r.sku}</option>`).join('');
+    $('#vtSelSku').disabled = !empaqueSel;
+    if(skuRows.length>=1){
+      // Lista + Línea + Marca + Calibre + Empaque ya identifican el precio: se elige el SKU solo, sin mostrarlo.
+      $('#vtSelSku').value = skuRows[0].sku;
+      vtOnSkuSelected();
+    } else {
+      $('#vtAddRow').disabled = true;
+      $('#vtComboPrecioPolitica').value = '';
+      if($('#vtExcPrecioPolitica')) $('#vtExcPrecioPolitica').value = '';
+    }
   }
 }
 $('#vtSelLista').addEventListener('change', ()=>vtCascade(0));
 $('#vtSelLinea').addEventListener('change', ()=>vtCascade(1));
 $('#vtSelMarca').addEventListener('change', ()=>vtCascade(2));
 $('#vtSelCalibre').addEventListener('change', ()=>vtCascade(3));
-$('#vtSelSabor').addEventListener('change', ()=>vtCascade(4));
-$('#vtSelEmpaque').addEventListener('change', ()=>{ $('#vtAddRow').disabled = !$('#vtSelEmpaque').value; });
+$('#vtSelEmpaque').addEventListener('change', ()=>vtCascade(4));
+function vtOnSkuSelected(){
+  $('#vtAddRow').disabled = !$('#vtSelSku').value;
+  const row = vtFindSelectedRow();
+  $('#vtComboPrecioPolitica').value = row ? fmtBs(row.precioVigente) : '';
+  if($('#vtExcPrecioPolitica')) $('#vtExcPrecioPolitica').value = row ? fmtBs(row.precioVigente) : '';
+  vtUpdatePromedioVenta();
+}
+$('#vtSelSku').addEventListener('change', vtOnSkuSelected);
 
-$('#vtAddRow').addEventListener('click', ()=>{
-  const row = vtActiveRows().find(r=>
-    r.listaPrecio===$('#vtSelLista').value && r.categoria===$('#vtSelLinea').value &&
-    r.marca===$('#vtSelMarca').value && r.calibre===$('#vtSelCalibre').value &&
-    r.sabor===$('#vtSelSabor').value && r.empaque===$('#vtSelEmpaque').value);
-  if(!row) return;
-  const retiro = $('#vtSelRetiro').value === 'si';
-  const litros = parseCalibreToLiters(row.calibre) * num(row.empaque,1);
-  VT_ROWS.push({
-    id: vtIdSeq++,
-    nombre: `${row.categoria} · ${row.marca} · ${row.calibre} · ${row.sabor||'s/sabor'} · x${row.empaque}`,
-    categoria: row.categoria,
-    listaPrecio: row.listaPrecio,
-    litros, vic: row.vic,
-    retiro,
-    tipoEvaluacion: $('#vtSelTipo').value,
-    fechaInicio: $('#vtSelFechaInicio').value,
-    fechaLimite: $('#vtSelFechaLimite').value,
-    precioPolitica: row.precioVigente,
-    tipoIngreso: 'pct',
-    pctDesc: 0,
-    precioNeto: row.precioVigente,
-    cantidad: 0
-  });
-  renderVtTable();
-});
-
-function vtRowVlc(row){
-  return row.retiro ? 0 : (CONFIG.vlc[vtInferDepto(row.listaPrecio)] ?? CONFIG.vlc['Nacional'] ?? 0);
+function businessDaysBetween(startStr, endStr){
+  if(!startStr || !endStr) return 0;
+  const start = new Date(startStr+'T00:00:00');
+  const end = new Date(endStr+'T00:00:00');
+  if(end < start) return 0;
+  let count = 0;
+  const d = new Date(start);
+  while(d <= end){
+    const day = d.getDay();
+    if(day!==0 && day!==6) count++;
+    d.setDate(d.getDate()+1);
+  }
+  return count;
+}
+function businessDaysInMonth(year, month){
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  let count = 0;
+  for(let day=1; day<=daysInMonth; day++){
+    const wd = new Date(year, month, day).getDay();
+    if(wd!==0 && wd!==6) count++;
+  }
+  return count;
 }
 
-function vtCompute(row){
+function vtUpdateDiasHabiles(){
+  vtUpdatePromedioProrateado();
+}
+$('#vtComboFechaInicio').addEventListener('change', vtUpdateDiasHabiles);
+$('#vtComboFechaLimite').addEventListener('change', vtUpdateDiasHabiles);
+
+function vtUpdatePromedioProrateado(){
+  const el = $('#vtComboPromedioProrateado');
+  const fi = $('#vtComboFechaInicio').value;
+  const fl = $('#vtComboFechaLimite').value;
+  const promedio = num($('#vtComboPromedioVenta').value, null);
+  if(!fi || !fl || promedio===null){ el.textContent=''; return; }
+  const dias = businessDaysBetween(fi, fl);
+  const start = new Date(fi+'T00:00:00');
+  const diasMes = businessDaysInMonth(start.getFullYear(), start.getMonth());
+  if(dias<=0 || diasMes<=0){ el.textContent=''; return; }
+  const prorrateado = promedio / diasMes * dias;
+  el.textContent = `≈ ${fmt(prorrateado,0)} paq. esperados en esos ${dias} días`;
+}
+$('#vtComboPromedioVenta').addEventListener('input', vtUpdatePromedioProrateado);
+
+function vtUpdatePromedioVenta(){
+  const row = vtFindSelectedRow();
+  if(!row) return;
+  const canales = vtGetCheckedChips('vtComboCanalPanel');
+  const divisiones = vtGetCheckedChips('vtComboDivisionPanel');
+  if(!canales.length || !divisiones.length){ $('#vtComboPromedioVenta').value = ''; vtUpdatePromedioProrateado(); return; }
+  let total = 0;
+  let algunMatch = false;
+  canales.forEach(canal=>{
+    divisiones.forEach(division=>{
+      const prom = lookupPromedioVenta(row.marca, row.calibre, division, canal);
+      if(prom!==null){ total += prom; algunMatch = true; }
+    });
+  });
+  $('#vtComboPromedioVenta').value = algunMatch ? Math.round(total) : '';
+  vtUpdatePromedioProrateado();
+}
+
+/* ============================= MODO: Combo / Descuento Excepcional ============================= */
+let VT_MODE = 'combo';
+let VT_COMBO_ROWS = [];
+let VT_EXC_ROWS = [];
+let vtComboIdSeq = 1;
+let vtExcIdSeq = 1;
+
+function vtFindSelectedRow(){
+  return vtActiveRows().find(r=>
+    r.listaPrecio===$('#vtSelLista').value && r.categoria===$('#vtSelLinea').value &&
+    r.marca===$('#vtSelMarca').value && r.calibre===$('#vtSelCalibre').value &&
+    r.empaque===$('#vtSelEmpaque').value && r.sku===$('#vtSelSku').value);
+}
+
+function vtShowSubmenu(){
+  $('#vtSubmenuScreen').style.display = 'flex';
+  $('#vtWorkArea').style.display = 'none';
+}
+function vtEnterMode(mode){
+  $('#vtSubmenuScreen').style.display = 'none';
+  $('#vtWorkArea').style.display = 'block';
+  $$('#vtModePills .pill').forEach(p=>p.classList.toggle('active', p.dataset.m===mode));
+  vtApplyMode(mode);
+}
+const VT_MODE_LABELS = {combo:'Armar combo', excepcional:'Descuento excepcional'};
+function vtApplyMode(mode){
+  VT_MODE = mode;
+  $('#vtModeTitle').textContent = VT_MODE_LABELS[mode] || '';
+  $('#vtComboObjetivoField').style.display = mode==='combo' ? '' : 'none';
+  $('#vtAddGridMain').classList.toggle('has-objetivo', mode==='combo');
+  $('#vtWrapCombo').style.display = mode==='combo' ? '' : 'none';
+  $('#vtWrapExcepcional').style.display = mode==='excepcional' ? '' : 'none';
+  $('#vtComboCard').style.display = mode==='combo' ? '' : 'none';
+  $('#vtExcCard').style.display = mode==='excepcional' ? '' : 'none';
+  $('#vtAddRow').textContent = mode==='combo' ? '+ Agregar al combo' : '+ Agregar descuento';
+}
+$$('#vtSubmenu .vd-sim-card').forEach(card=>{
+  card.addEventListener('click', ()=> vtEnterMode(card.dataset.vtMode));
+});
+$('#vtBackToSubmenu').addEventListener('click', vtShowSubmenu);
+wirePillGroup('#vtModePills', vtApplyMode);
+
+function vtComputeForRow(row, precio){
   const vlc = vtRowVlc(row);
   return computeBreakdown({
-    categoria: row.categoria, precioPaquete: row.precioNeto, litrosPorPaquete: row.litros,
+    categoria: row.categoria, precioPaquete: precio, litrosPorPaquete: row.litros !== undefined ? row.litros : (parseCalibreToLiters(row.calibre) * num(row.empaque,1)),
     vic: row.vic, vlc, royaltyApplies:false, royaltyPct:0, tc: CONFIG.tc
   });
 }
 
-function vtIndicadores(bd, row){
-  const margenContribucionPaq = bd.macoConRoyalty;
-  const margenContribucionTotal = margenContribucionPaq * row.cantidad;
-  const costoDescuento = Math.max(0, row.precioPolitica - row.precioNeto) * row.cantidad;
-  const paquetesRecuperacion = (costoDescuento>0 && margenContribucionPaq>0) ? costoDescuento/margenContribucionPaq : 0;
-  const roiPromo = costoDescuento>0 ? ((margenContribucionTotal - costoDescuento)/costoDescuento)*100 : null;
-  return {margenContribucionPaq, margenContribucionTotal, costoDescuento, paquetesRecuperacion, roiPromo};
+let VT_COMBO_COLLAPSED = new Set();
+const VT_OBJ_LABELS = {
+  volumen: 'Volumen incremental',
+  cobertura: 'Cobertura / distribución',
+  liquidacion: 'Liquidación de stock',
+  otro: 'Otro'
+};
+
+// KPIs comunes a los objetivos que se deciden por ROI (volumen, cobertura, otro): Comprometido | Impacto en margen | ROI comercial | Brecha.
+function vtKpisComunes(c, roiComercial, margenIncrementalVal, diferenciaRoiMin){
+  return [
+    {label:'Comprometido', value: fmt(c.paqComprometidos,0)+' paq.'},
+    {label:'Impacto en margen', value: margenIncrementalVal!==null ? fmtBs(margenIncrementalVal) : '—'},
+    {label:'ROI comercial', value: roiComercial!==null ? fmt(roiComercial,0)+'%' : '—'},
+    {label:'Brecha', value: diferenciaRoiMin!==null ? (diferenciaRoiMin>=0?'+':'')+fmt(diferenciaRoiMin,0)+' paq.' : '—'}
+  ];
 }
 
-function vtIsPending(row){
-  return !(row.cantidad>0);
-}
+function vtEvaluarObjetivo(c, base){
+  const { vraNormal, macoActual, macoCombo, margenNormal, margenConCombo, margenIncremental, roiComercial, volumenRoiMinimo, diasCombo } = base;
+  const diferenciaRoiMin = volumenRoiMinimo!==null ? c.paqComprometidos - volumenRoiMinimo : null;
+  const obj = c.objetivo;
+  let conclusion=null, kpis=[], needsApproval=false, noteHtml='', margenIncrementalFinal=null, roiComercialFinal=null;
 
-function vtComentarioIA(bd, row, ind){
-  const sem = semaphoreClass(bd.macoPct);
-  const short = sem.cls==='good' ? 'Factible' : sem.cls==='warn' ? 'Revisar' : 'No factible';
-  const emoji = sem.cls==='good' ? '🟢' : sem.cls==='warn' ? '🟡' : '🔴';
-  let text;
-  if(sem.cls==='bad'){
-    text = 'No factible. La pérdida de margen no se recupera con el volumen estimado.';
-  } else if(ind.costoDescuento>0){
-    const paq = Math.round(ind.paquetesRecuperacion);
-    if(paq<=0){
-      text = sem.cls==='good'
-        ? 'Factible. La acción comercial mantiene una rentabilidad adecuada; no se requieren paquetes adicionales para recuperar el descuento.'
-        : 'Revisar. El margen queda ajustado; no se requieren paquetes adicionales para recuperar el descuento, pero conviene monitorear.';
-    } else {
-      text = sem.cls==='good'
-        ? `Factible. El descuento cuesta ${fmtBs(ind.costoDescuento,0)} y se recupera con ${fmt(paq,0)} paquetes adicionales (ROI ${ind.roiPromo!==null?fmt(ind.roiPromo,0)+'%':'—'}).`
-        : `Revisar. El descuento reduce el margen y requiere ${fmt(paq,0)} paquetes adicionales para recuperarse (ROI ${ind.roiPromo!==null?fmt(ind.roiPromo,0)+'%':'—'}).`;
+  if(obj==='volumen'){
+    if(vraNormal!==null && macoCombo>0){
+      margenIncrementalFinal = margenIncremental;
+      const cumpleRoi = roiComercial!==null && roiComercial >= VT_ROI_MINIMO_PCT;
+      if(!cumpleRoi || margenIncremental<=0){ conclusion='bad'; }
+      else{
+        const colchonPct = volumenRoiMinimo>0 ? (diferenciaRoiMin||0)/volumenRoiMinimo : 0;
+        conclusion = colchonPct < VT_COMBO_COLCHON_LIMITE_PCT ? 'warn' : 'good';
+      }
+      roiComercialFinal = roiComercial;
+      kpis = vtKpisComunes(c, roiComercial, margenIncremental, diferenciaRoiMin);
     }
-  } else {
-    text = sem.cls==='good'
-      ? 'Factible. La acción comercial mantiene una rentabilidad adecuada.'
-      : 'Revisar. El margen queda ajustado respecto al Precio Política.';
   }
-  return {cls:sem.cls, short, emoji, text};
+
+  else if(obj==='cobertura'){
+    if(c.metaPdvs>0){
+      // El "conviene / no conviene" lo decide el ROI, igual que en Volumen incremental —
+      // la meta de clientes nuevos/recompra es dato informativo, no lo que decide.
+      const cumpleRoi = roiComercial!==null && roiComercial >= VT_ROI_MINIMO_PCT;
+      if(!cumpleRoi){ conclusion = 'bad'; }
+      else{
+        const colchonPct = volumenRoiMinimo>0 ? (diferenciaRoiMin||0)/volumenRoiMinimo : 0;
+        conclusion = colchonPct < VT_COMBO_COLCHON_LIMITE_PCT ? 'warn' : 'good';
+      }
+      margenIncrementalFinal = margenIncremental;
+      roiComercialFinal = roiComercial;
+      kpis = vtKpisComunes(c, roiComercial, margenIncremental, diferenciaRoiMin);
+      noteHtml = `Busca atraer <b>${fmt(c.metaPdvs,0)}</b> clientes objetivo (dato informativo). Lo que decide si conviene es el volumen y el ROI comercial.`;
+    }
+  }
+
+  else if(obj==='liquidacion'){
+    if(c.stockRiesgo>0 && c.diasVencer>0){
+      const margenNetoUnitario = macoCombo;
+      const margenPositivo = margenNetoUnitario > 0;
+      const ritmoNecesario = c.stockRiesgo / c.diasVencer;
+      const debeVender = Math.ceil(c.stockRiesgo);
+      margenIncrementalFinal = margenPositivo ? c.stockRiesgo * margenNetoUnitario : margenNetoUnitario;
+      roiComercialFinal = null;
+      conclusion = margenPositivo ? 'good' : 'bad';
+
+      kpis = [
+        {label:'Margen neto (precio con combo)', value: fmtBs(margenNetoUnitario)},
+        {label:'Debe vender', value: fmt(debeVender,0)+' paq.'},
+        {label:'Ritmo necesario', value: fmt(ritmoNecesario,1)+' paq./día'}
+      ];
+
+      noteHtml = margenPositivo
+        ? `Margen neto por paquete positivo (${fmtBs(margenNetoUnitario)}). En los <b>${fmt(c.diasVencer,0)} días a vender</b> hay que vender <b>${fmt(ritmoNecesario,1)} paq./día</b> (unos <b>${fmt(debeVender,0)} paq.</b> en total) para liquidar el stock a tiempo.`
+        : `Margen neto por paquete negativo (${fmtBs(margenNetoUnitario)}) — se pierde margen aunque ayude a liquidar stock. Hay que corregir el precio antes de liquidar para que el margen neto sea positivo.`;
+    }
+  }
+
+  else if(obj==='otro'){
+    conclusion = null;
+    margenIncrementalFinal = margenIncremental;
+    roiComercialFinal = roiComercial;
+    kpis = vtKpisComunes(c, roiComercial, margenIncremental, diferenciaRoiMin);
+    noteHtml = `Justificación: "<b>${c.justificacion||'—'}</b>". Sin badge automático — guiate por el ROI comercial (mínimo recomendado ${VT_ROI_MINIMO_PCT}%); la decisión final queda a criterio manual.`;
+  }
+
+  return { conclusion, kpis, needsApproval, noteHtml, margenIncrementalFinal, roiComercialFinal };
 }
 
-function vtRowHtml(row){
-  const bd = vtCompute(row);
-  const ind = vtIndicadores(bd, row);
-  const pending = vtIsPending(row);
-  const cls = ind.margenContribucionPaq>=0 ? '' : 'style="color:var(--bad);"';
-  const ia = vtComentarioIA(bd, row, ind);
-  const dash = '<span style="color:var(--ink-faint);">Pendiente</span>';
-  const inputVal = row.tipoIngreso==='neto' ? fmt(row.precioNeto,2) : fmt(row.pctDesc,1);
-  const inputStep = row.tipoIngreso==='neto' ? '0.01' : '0.1';
-  const otherHint = row.tipoIngreso==='neto' ? `≈ ${fmt(row.pctDesc,1)}% desc.` : `≈ Bs ${fmt(row.precioNeto,2)} neto`;
-  return `<tr data-row="${row.id}">
-      <td style="text-align:left;font-size:11.5px;min-width:200px;white-space:normal;">${row.nombre}</td>
-      <td class="num">${fmtBs(row.precioPolitica)}</td>
-      <td>
-        <select data-f="tipoIngreso" style="width:112px;">
-          <option value="pct" ${row.tipoIngreso==='pct'?'selected':''}>% Descuento</option>
-          <option value="neto" ${row.tipoIngreso==='neto'?'selected':''}>Precio Neto</option>
-        </select>
-      </td>
-      <td><input type="number" step="${inputStep}" data-f="valorIngreso" value="${inputVal}" title="${otherHint}" style="width:90px;"></td>
-      <td><input type="number" step="1" data-f="cantidad" value="${row.cantidad||''}" placeholder="0" style="width:64px;"></td>
-      <td class="num" ${cls}>${pending?dash:fmtBs(ind.margenContribucionPaq)}</td>
-      <td class="num" ${cls}>${pending?dash:fmtBs(ind.margenContribucionTotal,0)}</td>
-      <td class="num">${pending?dash:(ind.costoDescuento>0?fmtBs(ind.costoDescuento,0):'—')}</td>
-      <td class="num">${pending?dash:(ind.roiPromo!==null?fmt(ind.roiPromo,0)+'%':'—')}</td>
-      <td>${pending?'<span class="vt-verdict vt-verdict-pending" title="Ingresá la cantidad estimada">Pendiente</span>':`<span class="vt-verdict vt-verdict-${ia.cls}">${ia.emoji} ${ia.short}</span>`}</td>
-      <td style="text-align:left;font-size:11px;max-width:260px;white-space:normal;">${pending?'Ingresá la cantidad estimada para ver el análisis.':ia.text}</td>
-      <td><button class="icon-btn vt-del" title="Eliminar">✕</button></td>
-    </tr>`;
-}
 
-function renderVtTable(){
-  const body = $('#vtTableBody');
-  if(!VT_ROWS.length){
-    body.innerHTML = `<tr><td colspan="12" style="text-align:center;color:var(--ink-faint);padding:18px;">Agregá un ítem para empezar.</td></tr>`;
+// Umbrales de negocio -- ajustables. Colchón mínimo sobre el volumen necesario para ROI mínimo para considerarlo "conviene" (verde) en vez de "al límite" (ámbar).
+const VT_COMBO_COLCHON_LIMITE_PCT = 0.10;
+// ROI Comercial mínimo (%) que se usa para calcular el volumen necesario en el análisis "Volumen para ROI mínimo".
+const VT_ROI_MINIMO_PCT = 33;
+
+function renderVtComboTable(){
+  const wrap = $('#vtComboCardsWrap');
+  $('#vtComboCount').textContent = VT_COMBO_ROWS.length ? `(${VT_COMBO_ROWS.length})` : '';
+  if(!VT_COMBO_ROWS.length){
+    wrap.innerHTML = `<div class="hint" style="text-align:center;padding:20px;">Todavía no armaste ningún combo.</div>`;
     return;
   }
-  body.innerHTML = VT_ROWS.map(vtRowHtml).join('');
-}
+  const items = VT_COMBO_ROWS.map((c,i)=>{
+    const descuentoUnitarioBs = c.precioUnitario - c.precioPromoUnitario;
+    const descuentoTotalBs = descuentoUnitarioBs * c.cantidad;
+    const pctDescuento = c.precioUnitario>0 ? (descuentoUnitarioBs/c.precioUnitario*100) : 0;
+    const bd = vtComputeForRow(c, c.precioPromoUnitario);
+    const macoCombo = bd.macoConRoyalty;
+    const bdActual = vtComputeForRow(c, c.precioUnitario);
+    const macoActual = bdActual.macoConRoyalty;
 
-function vtUpdateRowInPlace(tr, row){
-  const bd = vtCompute(row);
-  const ind = vtIndicadores(bd, row);
-  const pending = vtIsPending(row);
-  const dash = '<span style="color:var(--ink-faint);">Pendiente</span>';
-  const colorCls = ind.margenContribucionPaq>=0 ? '' : 'var(--bad)';
-  const cells = tr.children;
-  cells[5].innerHTML = pending?dash:fmtBs(ind.margenContribucionPaq);
-  cells[5].style.color = pending ? '' : colorCls;
-  cells[6].innerHTML = pending?dash:fmtBs(ind.margenContribucionTotal,0);
-  cells[6].style.color = pending ? '' : colorCls;
-  cells[7].innerHTML = pending?dash:(ind.costoDescuento>0?fmtBs(ind.costoDescuento,0):'—');
-  cells[8].innerHTML = pending?dash:(ind.roiPromo!==null?fmt(ind.roiPromo,0)+'%':'—');
-  const ia = vtComentarioIA(bd, row, ind);
-  cells[9].innerHTML = pending
-    ? '<span class="vt-verdict vt-verdict-pending" title="Ingresá la cantidad estimada">Pendiente</span>'
-    : `<span class="vt-verdict vt-verdict-${ia.cls}">${ia.emoji} ${ia.short}</span>`;
-  cells[10].textContent = pending ? 'Ingresá la cantidad estimada para ver el análisis.' : ia.text;
-  const valInput = tr.querySelector('[data-f="valorIngreso"]');
-  if(valInput && document.activeElement!==valInput){
-    valInput.title = row.tipoIngreso==='neto' ? `≈ ${fmt(row.pctDesc,1)}% desc.` : `≈ Bs ${fmt(row.precioNeto,2)} neto`;
-  }
-}
+    // Prorrateo del VRA normal (venta que haria de todas formas) segun los dias habiles reales del combo
+    const diasCombo = businessDaysBetween(c.fechaInicio, c.fechaLimite);
+    const startDate = c.fechaInicio ? new Date(c.fechaInicio+'T00:00:00') : null;
+    const diasMes = startDate ? businessDaysInMonth(startDate.getFullYear(), startDate.getMonth()) : 0;
+    const tieneProm = c.promedioVenta!==null && c.promedioVenta!==undefined;
+    const vraNormal = (tieneProm && diasMes>0) ? c.promedioVenta / diasMes * diasCombo : (tieneProm ? c.promedioVenta : null);
 
-$('#vtTableBody').addEventListener('input', (e)=>{
-  const tr = e.target.closest('tr[data-row]');
-  if(!tr) return;
-  const id = Number(tr.dataset.row);
-  const row = VT_ROWS.find(r=>r.id===id);
-  if(!row) return;
-  const field = e.target.dataset.f;
-  if(field==='valorIngreso'){
-    if(row.tipoIngreso==='neto'){
-      row.precioNeto = num(e.target.value);
-      row.pctDesc = row.precioPolitica ? (1 - row.precioNeto/row.precioPolitica)*100 : 0;
-    } else {
-      row.pctDesc = num(e.target.value);
-      row.precioNeto = row.precioPolitica * (1 - row.pctDesc/100);
+    // Descuento total de la campaña (base para el ROI Comercial) - Bs, no vuelve a restarse del margen
+    const descuentoTotalCampana = descuentoUnitarioBs * c.paqComprometidos;
+
+    let volumenCombo=null, margenNormal=null, margenConCombo=null, margenIncremental=null;
+    let roiComercial=null, volumenRoiMinimo=null, paquetesFaltantesRoi=null;
+
+    if(vraNormal!==null){
+      volumenCombo = c.paqComprometidos;
+      margenNormal = vraNormal * macoActual;
+      margenConCombo = c.paqComprometidos * macoCombo;
+      margenIncremental = margenConCombo - margenNormal;
+
+      if(descuentoTotalCampana>0) roiComercial = margenIncremental / descuentoTotalCampana * 100;
+
+      // Volumen necesario para que el ROI Comercial llegue al mínimo (VT_ROI_MINIMO_PCT).
+      // ROI(Q) = [Q*macoCombo - margenNormal] / [descuentoUnitarioBs*Q] * 100 = ROI_MIN
+      // => Q = margenNormal / (macoCombo - (ROI_MIN/100)*descuentoUnitarioBs)
+      const denomRoiMin = macoCombo - (VT_ROI_MINIMO_PCT/100)*descuentoUnitarioBs;
+      volumenRoiMinimo = (denomRoiMin>0) ? Math.ceil(margenNormal / denomRoiMin) : null;
+      paquetesFaltantesRoi = volumenRoiMinimo!==null ? Math.max(0, volumenRoiMinimo - c.paqComprometidos) : null;
     }
-  } else if(field==='cantidad'){
-    row.cantidad = num(e.target.value);
+
+    const evalObj = vtEvaluarObjetivo(c, {
+      vraNormal, macoActual, macoCombo, margenNormal, margenConCombo, margenIncremental,
+      roiComercial, volumenRoiMinimo, descuentoTotalCampana, diasCombo
+    });
+    const conclusion = evalObj.conclusion;
+    const kpis = evalObj.kpis;
+    const needsApproval = evalObj.needsApproval;
+    const objNoteHtml = evalObj.noteHtml || '';
+    const margenIncrementalFinal = evalObj.margenIncrementalFinal;
+    const roiComercialFinal = evalObj.roiComercialFinal;
+
+    const conclusionShort = conclusion==='good' ? '✓ Conviene' : conclusion==='warn' ? '✓ Conviene (ajustado)' : conclusion==='bad' ? '✕ No conviene' : null;
+    const estadoClase = conclusion || '';
+
+    const vigencia = (c.fechaInicio || c.fechaLimite) ? `${c.fechaInicio||'—'} → ${c.fechaLimite||'—'}` : '';
+    const collapsed = VT_COMBO_COLLAPSED.has(c.id);
+
+    // Barra de progreso: comprometidos vs break even
+    let barraHtml = '';
+    if((c.objetivo==='volumen' || c.objetivo==='otro' || c.objetivo==='cobertura') && volumenRoiMinimo!==null){
+      const escala = Math.max(c.paqComprometidos, volumenRoiMinimo) * 1.15;
+      const fillPct = escala>0 ? Math.min(100, c.paqComprometidos/escala*100) : 0;
+      const markerPct = escala>0 ? Math.min(100, volumenRoiMinimo/escala*100) : 0;
+      barraHtml = `<div class="vt-combo-progress-wrap">
+        <div class="vt-combo-progress-track"><div class="vt-combo-progress-fill ${estadoClase}" style="width:${fillPct}%;"></div><div class="vt-combo-progress-marker" style="left:${markerPct}%;"></div></div>
+      </div>`;
+    }
+
+    const html = `
+    <div class="vt-combo-card estado-${estadoClase}" data-id="${c.id}">
+      <div class="vt-combo-card-head vt-combo-card-head-clickable" style="display:block;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;">
+            <span class="vt-combo-card-name">${c.comboNombre}</span>
+            <span class="vt-combo-obj-tag">${VT_OBJ_LABELS[c.objetivo]||'Sin objetivo'}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+            ${conclusionShort ? `<span class="vt-combo-badge ${estadoClase}">${conclusionShort}</span>` : ''}
+            <button class="vt-combo-collapse-toggle" title="${collapsed?'Expandir':'Colapsar'}">${collapsed?'▸':'▾'}</button>
+            <button class="vt-combo-card-del" title="Eliminar">✕</button>
+          </div>
+        </div>
+        <div class="vt-combo-card-sub" title="${c.nombre}">${c.nombre}</div>
+        ${vigencia ? `<div style="font-size:11px;color:#8a99a8;margin-top:4px;">${vigencia}${diasCombo>0?' ('+diasCombo+' hábiles)':''}</div>` : ''}
+      </div>
+      <div class="vt-combo-inputs-row">
+        <div class="item"><span class="lbl">Precio política</span><span class="val">${fmtBs(c.precioUnitario)}</span></div>
+        <div class="item"><span class="lbl">Cantidad</span><span class="val">${fmt(c.cantidad,0)}</span></div>
+        <div class="item"><span class="lbl">% desc.</span><span class="val">${fmt(pctDescuento,1)}%</span></div>
+        <div class="item"><span class="lbl">Promo total</span><span class="val">${fmtBs(c.precioPromoTotal)}</span></div>
+        <div class="item"><span class="lbl">Canal</span><span class="val" title="${c.canal||'—'}">${c.canal||'—'}</span></div>
+        <div class="item"><span class="lbl">División</span><span class="val" title="${c.division||'—'}">${c.division||'—'}</span></div>
+      </div>
+      <div class="vt-combo-card-content" style="${collapsed?'display:none;':''}">
+        ${kpis.length ? `
+        <div class="vt-combo-kpi-row" style="grid-template-columns:repeat(${kpis.length},1fr);">
+          ${kpis.map(k=>{
+            const isSignedGap = /^brecha|^diferencia/i.test(k.label);
+            const isMargenImpact = /^impacto en margen/i.test(k.label);
+            const hasSign = typeof k.value==='string' && (k.value.trim().startsWith('+') || k.value.trim().startsWith('-'));
+            let valClass = '';
+            if(isSignedGap && hasSign){
+              const isPositive = k.value.trim().startsWith('+');
+              valClass = isPositive ? 'good' : 'bad';
+            } else if(isMargenImpact){
+              valClass = typeof k.value==='string' && k.value.includes('-') ? 'bad' : 'good';
+            }
+            return `<div class="vt-combo-kpi-card">
+            <div class="kpi-lbl">${k.label}</div>
+            <div class="kpi-val ${valClass}">${k.value}</div>
+          </div>`;
+          }).join('')}
+        </div>
+        ${objNoteHtml ? `<div class="vt-combo-obj-note">${objNoteHtml}</div>` : ''}
+        ${barraHtml}
+        ${needsApproval ? `
+        <div class="vt-combo-approval">
+          <label><input type="checkbox" class="vt-combo-approval-chk" ${c.aprobadoPor?'checked':''}> Requiere aprobación adicional (margen negativo tolerado)</label>
+          <input type="text" class="vt-combo-approval-name" placeholder="Aprobado por…" value="${c.aprobadoPor||''}" ${c.aprobadoPor?'':'disabled'}>
+        </div>` : ''}
+        ` : `<div class="hint" style="margin:0 0 12px;">Completá los datos del objetivo para ver el resultado del combo.</div>`}
+
+        ${(c.objetivo==='volumen' || c.objetivo==='cobertura' || c.objetivo==='otro') ? `
+        <button class="vt-combo-detail-toggle">▾ Ver detalle financiero</button>
+        <div class="vt-combo-detail-panel" style="display:none;">
+          <div class="result-line"><span>Volumen base (VRA)</span><span class="v">${vraNormal!==null ? fmt(vraNormal,0)+' paq.' : '—'}</span></div>
+          <div class="result-line"><span>MACO: Normal → Combo</span><span class="v">${fmtBs(macoActual)} → ${fmtBs(macoCombo)}</span></div>
+          <div class="result-line"><span>Margen con volumen base</span><span class="v">${margenNormal!==null ? fmtBs(margenNormal) : '—'}</span></div>
+          <div class="result-line"><span>Margen proyectado con combo</span><span class="v">${margenConCombo!==null ? fmtBs(margenConCombo) : '—'}</span></div>
+          <div class="result-line"><span>Impacto en margen</span><span class="v" style="${margenIncrementalFinal!==null && margenIncrementalFinal<0 ? 'color:var(--bad);' : margenIncrementalFinal!==null ? 'color:var(--good);' : ''}">${margenIncrementalFinal!==null ? fmtBs(margenIncrementalFinal) : '—'}</span></div>
+          <div class="result-line"><span>Inversión promocional</span><span class="v">${fmtBs(descuentoTotalCampana)}</span></div>
+          <div class="result-line"><span>Retorno sobre la inversión promocional (ROI) con ${fmt(c.paqComprometidos,0)} paq.</span><span class="v" style="${roiComercialFinal!==null && roiComercialFinal<VT_ROI_MINIMO_PCT ? 'color:var(--bad);' : roiComercialFinal!==null ? 'color:var(--good);' : ''}">${roiComercialFinal!==null ? fmt(roiComercialFinal,0)+'%' : '—'}</span></div>
+          <div class="result-line"><span>Volumen para ROI mínimo (${VT_ROI_MINIMO_PCT}%)</span><span class="v">${volumenRoiMinimo!==null ? fmt(volumenRoiMinimo,0)+' paq.' : 'No se alcanza con ningún volumen'}</span></div>
+          <div class="result-line"><span>Paquetes adicionales para ROI mínimo</span><span class="v" style="${paquetesFaltantesRoi!==null && paquetesFaltantesRoi>0 ? 'color:var(--bad);' : paquetesFaltantesRoi!==null ? 'color:var(--good);' : ''}">${paquetesFaltantesRoi!==null ? fmt(paquetesFaltantesRoi,0)+' paq.' : '—'}</span></div>
+        </div>
+        ${volumenRoiMinimo!==null ? `<div class="hint" style="margin:10px 0 0;">
+          Con <b>${fmt(c.paqComprometidos,0)} paquetes</b> comprometidos, el ROI Comercial es <b>${fmt(roiComercialFinal,0)}%</b>. Para llegar al mínimo de <b>${VT_ROI_MINIMO_PCT}%</b> necesitás vender <b>${fmt(volumenRoiMinimo,0)} paquetes</b>.${paquetesFaltantesRoi>0 ? ` Te faltan <b>${fmt(paquetesFaltantesRoi,0)} paquetes</b> para llegar a ese ROI.` : ' Ya superás ese volumen, por lo que conviene hacer el combo.'}
+        </div>` : `<div class="hint" style="margin:10px 0 0;">Con el margen y descuento actuales, ningún volumen alcanza un ROI Comercial de ${VT_ROI_MINIMO_PCT}% — el precio o el descuento del combo tendrían que ajustarse.</div>`}
+        ` : ''}
+      </div>
+    </div>`;
+    const diferenciaRoiMinRow = volumenRoiMinimo!==null ? c.paqComprometidos - volumenRoiMinimo : null;
+    return {
+      html, conclusion, margenIncremental: margenIncrementalFinal,
+      comboNombre: c.comboNombre,
+      objetivoLabel: VT_OBJ_LABELS[c.objetivo] || 'Sin objetivo',
+      comprometido: c.objetivo==='liquidacion' ? null : c.paqComprometidos,
+      roiComercial: roiComercialFinal,
+      brecha: c.objetivo==='liquidacion' ? null : diferenciaRoiMinRow
+    };
+  });
+  wrap.innerHTML = items.map(x=>x.html).join('') + vtComboResumenHtml(items);
+}
+
+function vtComboResumenHtml(items){
+  const evaluados = items.filter(x=>x.conclusion!==null);
+  if(evaluados.length<2) return '';
+  const conviene = evaluados.filter(x=>x.conclusion==='good' || x.conclusion==='warn').length;
+  const margenTotal = evaluados.reduce((sum,x)=>sum + (x.margenIncremental||0), 0);
+  const margenColor = margenTotal>=0 ? 'var(--good)' : 'var(--bad)';
+  const filas = items.map(x=>{
+    const impactoColor = x.margenIncremental!==null && x.margenIncremental<0 ? 'color:var(--bad);' : x.margenIncremental!==null ? 'color:var(--good);' : '';
+    const brechaColor = x.brecha!==null && x.brecha<0 ? 'color:var(--bad);' : x.brecha!==null ? 'color:var(--good);' : '';
+    const dot = x.conclusion==='good' ? '🟢' : x.conclusion==='warn' ? '🟡' : x.conclusion==='bad' ? '🔴' : '⚪';
+    return `<tr>
+      <td>${dot} ${x.comboNombre}</td>
+      <td>${x.objetivoLabel}</td>
+      <td>${x.comprometido!==null ? fmt(x.comprometido,0)+' paq.' : '—'}</td>
+      <td style="${impactoColor}">${x.margenIncremental!==null ? fmtBs(x.margenIncremental) : '—'}</td>
+      <td>${x.roiComercial!==null ? fmt(x.roiComercial,0)+'%' : '—'}</td>
+      <td style="${brechaColor}">${x.brecha!==null ? (x.brecha>=0?'+':'')+fmt(x.brecha,0)+' paq.' : '—'}</td>
+    </tr>`;
+  }).join('');
+  return `
+    <div class="vt-combo-resumen">
+      <div><b>${conviene} de ${evaluados.length}</b> combos conviene hacer</div>
+      <div>Margen incremental total de la campaña: <b style="color:${margenColor};">${fmtBs(margenTotal)}</b></div>
+    </div>
+    <div class="vt-combo-resumen-table-wrap">
+      <table class="vt-combo-resumen-table">
+        <thead><tr><th>Combo</th><th>Objetivo</th><th>Comprometido</th><th>Impacto en margen</th><th>ROI comercial</th><th>Brecha</th></tr></thead>
+        <tbody>${filas}</tbody>
+      </table>
+    </div>`;
+}
+
+function renderVtExcTable(){
+  const body = $('#vtExcTableBody');
+  if(!VT_EXC_ROWS.length){
+    body.innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--ink-faint);padding:16px;">Todavía no cargaste ningún descuento excepcional.</td></tr>`;
+    return;
   }
-  vtUpdateRowInPlace(tr, row);
+  body.innerHTML = VT_EXC_ROWS.map(e=>{
+    const descuentoBs = e.precioPolitica - e.precioEspecial;
+    const pctDescuento = e.precioPolitica>0 ? (descuentoBs/e.precioPolitica*100) : 0;
+    const bd = vtComputeForRow(e, e.precioEspecial);
+    const cantidad = e.cantidad || 0;
+    const impactoTotal = bd.macoConRoyalty * cantidad;
+    const impactoColor = impactoTotal>=0 ? 'style="color:var(--good);"' : 'style="color:var(--bad);"';
+    const descuentoTotalBs = descuentoBs * cantidad;
+    const roiExc = descuentoTotalBs>0 ? (impactoTotal/descuentoTotalBs*100) : null;
+    const roiColor = roiExc===null ? '' : (roiExc>=VT_ROI_MINIMO_PCT ? 'style="color:var(--good);font-weight:700;"' : 'style="color:var(--bad);font-weight:700;"');
+    const habitualHint = (e.volumenHabitual!==null && e.volumenHabitual!==undefined)
+      ? `<br><span style="font-size:10px;color:${cantidad>e.volumenHabitual?'var(--good)':'var(--bad)'};">${cantidad>e.volumenHabitual?'+':''}${fmt(cantidad-e.volumenHabitual,0)} vs. habitual</span>`
+      : '';
+    return `<tr data-id="${e.id}">
+      <td style="font-size:11.5px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${e.cliente}">${e.cliente}</td>
+      <td style="font-size:11.5px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${e.nombre}">${e.nombre}</td>
+      <td class="num">${fmtBs(e.precioPolitica)}</td>
+      <td class="num">${fmtBs(e.precioEspecial)}</td>
+      <td class="num">${fmt(pctDescuento,1)}%</td>
+      <td class="num">${fmt(cantidad,0)} paq.${habitualHint}</td>
+      <td class="num" ${roiColor}>${roiExc!==null ? fmt(roiExc,0)+'%' : '—'}</td>
+      <td class="num" ${impactoColor}>${fmtBs(impactoTotal)}</td>
+      <td style="font-size:11.5px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${e.motivo||''}">${e.motivo||'—'}</td>
+      <td><button class="icon-btn vt-exc-del" title="Eliminar">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+$('#vtComboCardsWrap').addEventListener('click', (e)=>{
+  if(e.target.closest('.vt-combo-card-del')){
+    const card = e.target.closest('.vt-combo-card[data-id]');
+    VT_COMBO_ROWS = VT_COMBO_ROWS.filter(c=>c.id!==Number(card.dataset.id));
+    VT_COMBO_COLLAPSED.delete(Number(card.dataset.id));
+    renderVtComboTable();
+    return;
+  }
+  if(e.target.closest('.vt-combo-detail-toggle')){
+    const btn = e.target.closest('.vt-combo-detail-toggle');
+    const panel = btn.nextElementSibling;
+    const open = panel.style.display !== 'none';
+    panel.style.display = open ? 'none' : 'block';
+    btn.textContent = open ? '▾ Ver detalle financiero' : '▴ Ocultar detalle financiero';
+    return;
+  }
+  if(e.target.closest('.vt-combo-card-head-clickable')){
+    const card = e.target.closest('.vt-combo-card[data-id]');
+    const id = Number(card.dataset.id);
+    if(VT_COMBO_COLLAPSED.has(id)) VT_COMBO_COLLAPSED.delete(id); else VT_COMBO_COLLAPSED.add(id);
+    renderVtComboTable();
+    return;
+  }
 });
-$('#vtTableBody').addEventListener('change', (e)=>{
-  if(e.target.dataset.f !== 'tipoIngreso') return;
-  const tr = e.target.closest('tr[data-row]');
-  const id = Number(tr.dataset.row);
-  const row = VT_ROWS.find(r=>r.id===id);
+$('#vtComboCardsWrap').addEventListener('change', (e)=>{
+  if(!e.target.classList.contains('vt-combo-approval-chk')) return;
+  const card = e.target.closest('.vt-combo-card[data-id]');
+  const row = VT_COMBO_ROWS.find(c=>c.id===Number(card.dataset.id));
+  const nameInput = card.querySelector('.vt-combo-approval-name');
+  if(e.target.checked){
+    nameInput.disabled = false;
+    nameInput.focus();
+  } else {
+    row.aprobadoPor = '';
+    nameInput.value = '';
+    nameInput.disabled = true;
+  }
+});
+$('#vtComboCardsWrap').addEventListener('blur', (e)=>{
+  if(!e.target.classList.contains('vt-combo-approval-name')) return;
+  const card = e.target.closest('.vt-combo-card[data-id]');
+  const row = VT_COMBO_ROWS.find(c=>c.id===Number(card.dataset.id));
+  row.aprobadoPor = e.target.value.trim();
+}, true);
+$('#vtExcTableBody').addEventListener('click', (e)=>{
+  if(!e.target.classList.contains('vt-exc-del')) return;
+  const tr = e.target.closest('tr[data-id]');
+  VT_EXC_ROWS = VT_EXC_ROWS.filter(x=>x.id!==Number(tr.dataset.id));
+  renderVtExcTable();
+});
+
+renderVtComboTable();
+renderVtExcTable();
+
+const VT_OBJ_WRAPS = {
+  cobertura: ['vtObjCoberturaField'],
+  liquidacion: ['vtObjStockRiesgoField', 'vtObjDiasVencerField']
+};
+$('#vtComboObjetivo').addEventListener('change', ()=>{
+  const obj = $('#vtComboObjetivo').value;
+  ['vtObjCoberturaField','vtObjStockRiesgoField','vtObjDiasVencerField'].forEach(id=>{ $('#'+id).style.display = 'none'; });
+  (VT_OBJ_WRAPS[obj]||[]).forEach(id=>{ $('#'+id).style.display = ''; });
+  $('#vtComboJustificacionWrap').style.display = obj==='otro' ? '' : 'none';
+  // Liquidación no compara contra venta normal: no necesita venta promedio ni paquetes comprometidos.
+  const esLiquidacion = obj==='liquidacion';
+  $('#vtComboVentaPromedioWrap').style.display = esLiquidacion ? 'none' : '';
+  $('#vtComboPaqComprometidosWrap').style.display = esLiquidacion ? 'none' : '';
+});
+
+$('#vtComboPrecioModo').addEventListener('change', ()=>{
+  const modo = $('#vtComboPrecioModo').value;
+  $('#vtComboPrecioLabel').textContent = modo==='descuento' ? 'Descuento %' : 'Precio nuevo';
+});
+
+$('#vtExcPrecioModo').addEventListener('change', ()=>{
+  const modo = $('#vtExcPrecioModo').value;
+  $('#vtExcPrecioLabel').textContent = modo==='descuento' ? 'Descuento %' : 'Precio neto (Bs/paq)';
+});
+
+$('#vtAddRow').addEventListener('click', ()=>{
+  const row = vtFindSelectedRow();
   if(!row) return;
-  row.tipoIngreso = e.target.value;
-  renderVtTable();
+  const litros = parseCalibreToLiters(row.calibre) * num(row.empaque,1);
+  const nombreProducto = `${row.categoria} · ${row.marca} · ${row.calibre} · ${row.sabor||'s/sabor'} · x${row.empaque}`;
+  const nombreProductoResumen = `${row.marca} · ${row.calibre} · x${row.empaque}`;
+
+  if(VT_MODE==='combo'){
+    const objetivo = $('#vtComboObjetivo').value;
+    const esLiquidacion = objetivo==='liquidacion';
+    const justificacion = $('#vtComboJustificacion').value.trim();
+    const comboNombre = $('#vtComboNombre').value.trim();
+    const cantidadRaw = $('#vtComboCantidad').value;
+    const cantidad = num(cantidadRaw);
+    const paqComprometidosRaw = $('#vtComboPaqComprometidos').value;
+    const paqComprometidos = num(paqComprometidosRaw);
+    const precioInput = num($('#vtComboPrecioPromo').value);
+    const modo = $('#vtComboPrecioModo').value;
+    const fechaInicio = $('#vtComboFechaInicio').value;
+    const fechaLimite = $('#vtComboFechaLimite').value;
+    const canales = vtGetCheckedChips('vtComboCanalPanel');
+    const divisiones = vtGetCheckedChips('vtComboDivisionPanel');
+    const promedioVentaRaw = $('#vtComboPromedioVenta').value;
+
+    // Campos propios de cada objetivo
+    const metaPdvs = num($('#vtObjMetaPdvs').value, null);
+    const stockRiesgo = num($('#vtObjStockRiesgo').value, null);
+    const diasVencer = num($('#vtObjDiasVencer').value, null);
+
+    const faltantes = [];
+    if(!objetivo) faltantes.push('Objetivo del combo');
+    if(objetivo==='otro' && !justificacion) faltantes.push('Justificación');
+    if(objetivo==='cobertura'){
+      if(!$('#vtObjMetaPdvs').value) faltantes.push('Clientes objetivo');
+    }
+    if(esLiquidacion){
+      if(!$('#vtObjStockRiesgo').value) faltantes.push('Stock en riesgo');
+      if(!$('#vtObjDiasVencer').value) faltantes.push('Días a vender');
+    }
+    if(!comboNombre) faltantes.push('Nombre del combo');
+    if(!cantidadRaw || cantidad<=0) faltantes.push('Cantidad (paq. x combo)');
+    if(!esLiquidacion && (!paqComprometidosRaw || paqComprometidos<=0)) faltantes.push('Paquetes comprometidos (total)');
+    if(precioInput<=0) faltantes.push(modo==='descuento' ? '% de descuento' : 'Precio nuevo');
+    if(!fechaInicio) faltantes.push('Vigencia desde');
+    if(!fechaLimite) faltantes.push('Vigencia hasta');
+    if(!canales.length) faltantes.push('Canal');
+    if(!divisiones.length) faltantes.push('División');
+    if(!esLiquidacion && !promedioVentaRaw) faltantes.push('Venta promedio');
+    if(faltantes.length){ alert('Completá estos campos antes de agregar el combo:\n• ' + faltantes.join('\n• ')); return; }
+
+    const precioPromoUnitario = modo==='descuento' ? row.precioVigente * (1 - precioInput/100) : precioInput;
+    const precioPromoTotal = precioPromoUnitario * cantidad;
+    VT_COMBO_ROWS.push({
+      id: vtComboIdSeq++,
+      comboNombre, nombre: nombreProductoResumen, sku: row.sku,
+      categoria: row.categoria, listaPrecio: row.listaPrecio, litros, vic: row.vic,
+      empaque: row.empaque, calibre: row.calibre, marca: row.marca,
+      cantidad, paqComprometidos, precioUnitario: row.precioVigente,
+      precioPromoUnitario, precioPromoTotal,
+      fechaInicio, fechaLimite,
+      canal: vtChipsDisplay('vtComboCanalPanel', canales),
+      division: vtChipsDisplay('vtComboDivisionPanel', divisiones),
+      promedioVenta: num(promedioVentaRaw, null),
+      objetivo, justificacion,
+      metaPdvs,
+      stockRiesgo, diasVencer,
+      aprobadoPor: ''
+    });
+    renderVtComboTable();
+  } else if(VT_MODE==='excepcional'){
+    const codigoCliente = $('#vtExcCodigo').value.trim() || 'Sin código';
+    const modo = $('#vtExcPrecioModo').value;
+    const precioInput = num($('#vtExcPrecioEspecial').value);
+    const cantidad = num($('#vtExcCantidad').value);
+    const volumenHabitual = num($('#vtExcVolumenHabitual').value, null);
+    const motivo = $('#vtExcMotivo').value.trim();
+    if(precioInput<=0){ alert(modo==='descuento' ? 'Cargá el % de descuento.' : 'Cargá el Precio especial.'); return; }
+    if(cantidad<=0){ alert('Cargá la Cantidad (paq.).'); return; }
+    const precioEspecial = modo==='descuento' ? row.precioVigente * (1 - precioInput/100) : precioInput;
+    VT_EXC_ROWS.push({
+      id: vtExcIdSeq++,
+      cliente: codigoCliente, nombre: nombreProducto,
+      categoria: row.categoria, listaPrecio: row.listaPrecio, litros, vic: row.vic,
+      empaque: row.empaque, calibre: row.calibre,
+      precioPolitica: row.precioVigente, precioEspecial, cantidad, volumenHabitual, motivo
+    });
+    renderVtExcTable();
+  }
 });
-$('#vtTableBody').addEventListener('click', (e)=>{
-  if(!e.target.classList.contains('vt-del')) return;
-  const tr = e.target.closest('tr[data-row]');
-  const id = Number(tr.dataset.row);
-  VT_ROWS = VT_ROWS.filter(r=>r.id!==id);
-  renderVtTable();
-});
+
+function vtRowVlc(row){
+  return row.retiro ? 0 : vlcForLista(row.listaPrecio);
+}
 
 vtOnDataLoaded();
-renderVtTable();
 
 /* ============================= TAB: COSTOS ============================= */
 let CT_COMISIONES = [
