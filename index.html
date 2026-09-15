@@ -1605,7 +1605,7 @@ footer.note{margin-top:40px;font-size:11.5px;color:var(--ink-faint);text-align:c
       <div class="field"><label>Marca</label><select id="vtSelMarca" disabled></select></div>
       <div class="field"><label>Calibre</label><select id="vtSelCalibre" disabled></select></div>
       <div class="field"><label>Empaque</label><select id="vtSelEmpaque" disabled></select></div>
-      <div class="field" style="display:none;"><label>SKU</label><select id="vtSelSku" disabled></select></div>
+      <div class="field"><label>SKU</label><select id="vtSelSku" disabled></select></div>
     </div>
 
     <!-- Campos modo Combo -->
@@ -2353,6 +2353,7 @@ $('#fileInput').addEventListener('change', (e)=>{
       const ventaCount = tryImportVentaSheet(wb);
       $('#fileStatus').textContent = 'Cargado';
       $('#fileStatus').title = `${file.name} · hoja "${sheetName}" · ${json.length} filas leídas → ${kept} SKU-lista válidos${ventaCount?' · '+ventaCount+' filas de venta':''}`;
+      if(typeof vtOnDataLoaded==='function') vtOnDataLoaded();
     }catch(err){
       $('#fileStatus').textContent = 'Error';
       $('#fileStatus').title = err.message;
@@ -3791,8 +3792,8 @@ function vtCascade(level){
     const skuRows = rows.filter(r=>r.listaPrecio===listaSel && r.categoria===lineaSel && r.marca===marcaSel && r.calibre===calibreSel && r.empaque===empaqueSel);
     $('#vtSelSku').innerHTML = '<option value="">Seleccionar…</option>' + skuRows.map(r=>`<option value="${r.sku}">${r.sku}</option>`).join('');
     $('#vtSelSku').disabled = !empaqueSel;
-    if(skuRows.length>=1){
-      // Lista + Línea + Marca + Calibre + Empaque ya identifican el precio: se elige el SKU solo, sin mostrarlo.
+    if(skuRows.length===1){
+      // Marca + Calibre + Empaque ya identifican un único SKU: se elige solo.
       $('#vtSelSku').value = skuRows[0].sku;
       vtOnSkuSelected();
     } else {
