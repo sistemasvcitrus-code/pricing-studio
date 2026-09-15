@@ -2373,8 +2373,10 @@ function getSheetUrl(){
 function saveSheetUrl(url){
   localStorage.setItem('mc_sheet_url_v1', url || '');
 }
+const DEFAULT_SHEET_CSV_URL_VENTA = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4pHxDABgSQtNWMNNC17-P8HKkyMWRjrGUpzmzu2SwcNzEvLPWFNCcyKbNnB8_Tya4r3fUkV1efFG7/pub?gid=696225325&single=true&output=csv';
+
 function getSheetUrlVenta(){
-  return localStorage.getItem('mc_sheet_url_venta_v1') || '';
+  return localStorage.getItem('mc_sheet_url_venta_v1') || DEFAULT_SHEET_CSV_URL_VENTA;
 }
 function saveSheetUrlVenta(url){
   localStorage.setItem('mc_sheet_url_venta_v1', url || '');
