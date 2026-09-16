@@ -1339,14 +1339,10 @@ footer.note{margin-top:40px;font-size:11.5px;color:var(--ink-faint);text-align:c
           <div class="hint">Todo se guarda automáticamente en este navegador (LocalStorage). Al reabrir el archivo se mantiene.</div>
           <button class="btn btn-sm" style="margin-top:10px;" id="resetConfigBtn">Restaurar valores iniciales</button>
           <div class="field" style="margin-top:14px;">
-            <label>URL "Lista de precio" en la nube (Google Sheets publicado como CSV)</label>
-            <input type="text" id="cfgSheetUrl" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv">
+            <label>URL del backend protegido (Google Apps Script)</label>
+            <input type="text" id="cfgAppsScriptUrl" placeholder="https://script.google.com/macros/s/XXXXX/exec">
           </div>
-          <div class="field" style="margin-top:10px;">
-            <label>URL "Venta" en la nube (misma planilla, pestaña Venta publicada como CSV)</label>
-            <input type="text" id="cfgSheetUrlVenta" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?gid=...&output=csv">
-          </div>
-          <div class="hint">Se guarda en este navegador. Botón ☁️ en el topbar de cada módulo trae siempre la última versión sin tener que reenviar el archivo. Cada pestaña de Google Sheets se publica por separado (Archivo → Compartir → Publicar en la web → elegí la pestaña → CSV), así que "Lista de precio" y "Venta" tienen cada una su propia URL aunque estén en la misma planilla.</div>
+          <div class="hint">Reemplaza a los links CSV públicos de antes. Este link solo devuelve datos si iniciás sesión con una cuenta de Google que esté en la lista de autorizados del script (ver instrucciones aparte). Se guarda en este navegador. Botón ☁️ en el topbar de cada módulo trae siempre la última versión.</div>
         </div>
         <div class="card">
           <h3><span class="n">08</span>Usuarios y accesos</h3>
@@ -2362,73 +2358,50 @@ $('#fileInput').addEventListener('change', (e)=>{
   reader.readAsArrayBuffer(file);
 });
 
-/* ============================= CARGA DESDE LA NUBE (Google Sheets publicado como CSV) ============================= */
-/* Reemplazá esta URL por la de tu Google Sheet: Archivo → Compartir → Publicar en la web → CSV.
-   También se puede fijar/editar desde Configuración → Datos (queda guardada en este navegador). */
-const DEFAULT_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4pHxDABgSQtNWMNNC17-P8HKkyMWRjrGUpzmzu2SwcNzEvLPWFNCcyKbNnB8_Tya4r3fUkV1efFG7/pub?gid=1919097294&single=true&output=csv';
+/* ============================= CARGA DESDE LA NUBE (backend protegido con Google Apps Script) ============================= */
+/* Este endpoint reemplaza a los CSV publicados en la web (que eran públicos por link).
+   Se despliega desde el propio Google Sheet: Extensiones → Apps Script → pegar el código del
+   archivo aparte → Implementar → Nueva implementación → Aplicación web → Ejecutar como "Yo" →
+   Quién tiene acceso "Cualquier usuario con una cuenta de Google" → Implementar → copiar la URL
+   y pegarla acá (o en Configuración → Datos). El script solo devuelve datos si el correo de
+   Google con el que iniciaste sesión está en la lista de autorizados dentro del script. */
+const DEFAULT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1Vu5KpiLZ4Ide4W2VuUaw6XKd6l9qTHuSSKe7SImU9rUrIf-o-C7_QsvSwZkJ8MkSLg/exec';
 
-function getSheetUrl(){
-  return localStorage.getItem('mc_sheet_url_v1') || DEFAULT_SHEET_CSV_URL;
+function getAppsScriptUrl(){
+  return localStorage.getItem('mc_apps_script_url_v1') || DEFAULT_APPS_SCRIPT_URL;
 }
-function saveSheetUrl(url){
-  localStorage.setItem('mc_sheet_url_v1', url || '');
-}
-const DEFAULT_SHEET_CSV_URL_VENTA = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4pHxDABgSQtNWMNNC17-P8HKkyMWRjrGUpzmzu2SwcNzEvLPWFNCcyKbNnB8_Tya4r3fUkV1efFG7/pub?gid=696225325&single=true&output=csv';
-
-function getSheetUrlVenta(){
-  return localStorage.getItem('mc_sheet_url_venta_v1') || DEFAULT_SHEET_CSV_URL_VENTA;
-}
-function saveSheetUrlVenta(url){
-  localStorage.setItem('mc_sheet_url_venta_v1', url || '');
-}
-
-async function loadVentaFromCloud(){
-  const url = getSheetUrlVenta();
-  if(!url) return {attempted:false};
-  try{
-    const resp = await fetch(url, {cache:'no-store'});
-    if(!resp.ok) throw new Error('HTTP ' + resp.status);
-    const csvText = await resp.text();
-    const wb = XLSX.read(csvText, {type:'string'});
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    const json = XLSX.utils.sheet_to_json(ws, {defval:''});
-    const kept = importVentaRows(json);
-    return {attempted:true, ok:true, count:kept};
-  }catch(err){
-    console.error('loadVentaFromCloud error:', err);
-    return {attempted:true, ok:false, error:err.message};
-  }
+function saveAppsScriptUrl(url){
+  localStorage.setItem('mc_apps_script_url_v1', url || '');
 }
 
 async function loadFromCloud(statusSelector, silent){
-  const url = getSheetUrl();
+  const url = getAppsScriptUrl();
   const statusEl = $(statusSelector);
   if(!url){
-    if(statusEl){ statusEl.textContent = 'Sin URL configurada'; statusEl.title = 'Configurá la URL en Configuración → Datos.'; }
-    if(!silent) alert('No hay una URL de Google Sheets configurada. Andá a Configuración → Datos y pegala ahí.');
+    if(statusEl){ statusEl.textContent = 'Sin URL configurada'; statusEl.title = 'Configurá la URL del backend en Configuración → Datos.'; }
+    if(!silent) alert('No hay una URL de backend configurada. Andá a Configuración → Datos y pegala ahí.');
     return;
   }
   if(statusEl){ statusEl.textContent = 'Actualizando…'; statusEl.title = url; }
   try{
     const resp = await fetch(url, {cache:'no-store'});
     if(!resp.ok) throw new Error('HTTP ' + resp.status);
-    const csvText = await resp.text();
-    const wb = XLSX.read(csvText, {type:'string'});
-    const sheetName = pickBestSheet(wb);
-    const ws = wb.Sheets[sheetName];
-    const json = XLSX.utils.sheet_to_json(ws, {defval:''});
-    const kept = importExcelRows(json);
-    const ventaResult = await loadVentaFromCloud();
+    const payload = await resp.json();
+    if(payload && payload.error){
+      throw new Error(payload.error + (payload.email ? ` (cuenta detectada: ${payload.email})` : ' (no se detectó sesión de Google activa)'));
+    }
+    const listaRows = payload.listaPrecio || [];
+    const ventaRows = payload.venta || [];
+    const kept = importExcelRows(listaRows);
+    const ventaCount = importVentaRows(ventaRows);
     const fecha = new Date().toLocaleString('es-BO');
     if(statusEl){
       statusEl.textContent = 'Cargado';
-      let title = `Desde la nube · ${fecha} · ${json.length} filas leídas → ${kept} SKU-lista válidos`;
-      if(ventaResult.attempted) title += ventaResult.ok ? ` · ${ventaResult.count} filas de venta` : ' · venta: error al actualizar';
-      statusEl.title = title;
+      statusEl.title = `Desde la nube (protegido) · ${fecha} · ${listaRows.length} filas leídas → ${kept} SKU-lista válidos · ${ventaCount} filas de venta`;
     }
     if(typeof vtOnDataLoaded==='function') vtOnDataLoaded();
   }catch(err){
-    const detalle = 'No se pudo actualizar desde la nube.\n\nMotivo técnico: ' + err.message + '\n\nURL usada:\n' + url + '\n\nSi el navegador bloqueó el pedido por seguridad (típico al abrir el archivo con doble clic), probá subiendo la calculadora a un hosting real (Cloudflare Pages) — ahí debería funcionar. Mientras tanto podés seguir usando "Importar Excel".';
+    const detalle = 'No se pudo actualizar desde la nube.\n\nMotivo técnico: ' + err.message + '\n\nURL usada:\n' + url + '\n\nSi el motivo es de autorización, iniciá sesión en este navegador con una cuenta de Google que esté en la lista de autorizados del script. Si el navegador bloqueó el pedido por seguridad (típico al abrir el archivo con doble clic), probá subiendo la calculadora a un hosting real. Mientras tanto podés seguir usando "Importar Excel".';
     if(statusEl){
       statusEl.textContent = 'Error al actualizar';
       statusEl.title = detalle;
@@ -2439,10 +2412,8 @@ async function loadFromCloud(statusSelector, silent){
 }
 $('#cloudLoadBtn').addEventListener('click', ()=> loadFromCloud('#fileStatus'));
 $('#vtCloudLoadBtn').addEventListener('click', ()=> loadFromCloud('#vtFileStatus'));
-$('#cfgSheetUrl').value = getSheetUrl();
-$('#cfgSheetUrl').addEventListener('input', ()=> saveSheetUrl($('#cfgSheetUrl').value.trim()));
-$('#cfgSheetUrlVenta').value = getSheetUrlVenta();
-$('#cfgSheetUrlVenta').addEventListener('input', ()=> saveSheetUrlVenta($('#cfgSheetUrlVenta').value.trim()));
+$('#cfgAppsScriptUrl').value = getAppsScriptUrl();
+$('#cfgAppsScriptUrl').addEventListener('input', ()=> saveAppsScriptUrl($('#cfgAppsScriptUrl').value.trim()));
 
 function pickBestSheet(wb){
   // Prefer a sheet whose name suggests "lista de precio"; otherwise the sheet
